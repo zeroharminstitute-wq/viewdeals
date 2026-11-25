@@ -54,8 +54,7 @@ def write_json(path, data):
 
 def write_text(path, text):
     """Write UTF-8 text with LF line endings on every platform."""
-    with open(path, "w", encoding="utf-8", newline="
-") as f:
+    with open(path, "w", encoding="utf-8", newline="\n") as f:
         f.write(text)
 
 
