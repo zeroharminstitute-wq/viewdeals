@@ -686,55 +686,120 @@ def layout(site, page, main):
 # Page bodies
 # --------------------------------------------------------------------------
 
+def page_head(site, page, h1, kicker=None, dek=None, art=None, art_alt="", extra="", dateline=True):
+    """Section-front header: kicker, H1, dek, dateline, optional illustration."""
+    parts = ['<header class="page-head' + (' page-head--art' if art else '') + '"><div class="page-head__text">']
+    if kicker:
+        parts.append(f'<p class="label page-head__kicker">{kicker}</p>')
+    parts.append(f"<h1>{t(h1)}</h1>")
+    if dek:
+        parts.append(f'<p class="dek">{dek}</p>')
+    if dateline:
+        parts.append(updated_line(page))
+    parts.append(extra + "</div>")
+    if art:
+        w, h = site.img(art)
+        parts.append(f'<img class="page-head__art" src="{link(page, art)}" width="{w}" height="{h}" alt="{e(art_alt)}" fetchpriority="high">')
+    parts.append("</header>")
+    return "".join(parts)
+
+
+def deal_stream(site, page, deals, std=6, hits=4):
+    """Rows of standard cards, interrupted by a compact quick-hits list so no page is a wall of tiles."""
+    out, i = [], 0
+    while i < len(deals):
+        chunk = deals[i:i + std]
+        i += len(chunk)
+        out.append('<div class="grid stream">' + "".join(
+            f'<div class="span-4">{deal_card(site, page, d)}</div>' for d in chunk) + "</div>")
+        rest = deals[i:i + hits]
+        if len(rest) >= 2 and len(deals) - i > 1:
+            i += len(rest)
+            out.append('<section class="quick-hits" data-search-section aria-label="Quick hits"><h3 class="quick-hits__head">Quick hits</h3>'
+                       f'<div class="quick-hits__list">{"".join(deal_card(site, page, d, "compact") for d in rest)}</div></section>')
+    return "".join(out)
+
+
+def deals_block(site, page, deals, annotate_first=False):
+    """One feature card, then the stream."""
+    if not deals:
+        return ""
+    first, rest = deals[0], deals[1:]
+    head = f'<div class="grid section-lead"><div class="span-12">{deal_card(site, page, first, "feature", lead=True, annotate="pick" if annotate_first else None)}</div></div>'
+    return head + deal_stream(site, page, rest)
+
+
 def render_home(site, page):
     live = site.live_deals()
     featured = [d for d in live if d.get("featured")]
     lead = featured[0] if featured else (live[0] if live else None)
-    rest_featured = [d for d in featured if d is not lead]
-    others = [d for d in live if not d.get("featured") and d is not lead]
-    soon = sorted([d for d in live if (parse_date(d["expires"]) - site.today).days <= ENDING_SOON_DAYS],
-                  key=lambda d: d["expires"])[:5]
+    picks = [d for d in featured if d is not lead][:2]
+    others = [d for d in live if d is not lead and d not in picks]
+    soon = sorted([d for d in live if d is not lead], key=lambda d: d["expires"])[:5]
+    count = len(live)
     out = [
-        "<h1>Today's best deals</h1>",
+        '<div class="front-index">',
+        '<div><h1>Today’s best deals</h1>',
         updated_line(page),
-        f'<p class="count">{v(f"{len(live)} live deals")}</p>',
+        f'<p class="count label">{v(f"{count} live deal" + ("s" if count != 1 else ""))} · hand-checked this morning</p></div>',
         '<form class="search" role="search" action="./" method="get">'
-        '<label for="q">Search today\'s deals</label>'
-        '<input id="q" name="q" type="search" autocomplete="off" placeholder="Try “headphones” or “gift”">'
-        '</form>',
-        '<p id="search-empty" class="empty" hidden>No deals match that search.</p>',
+        '<label for="q">Search today’s deals</label>'
+        '<input id="q" name="q" type="search" autocomplete="off" placeholder="Try “headphones” or “gift”"></form>',
+        "</div>",
+        '<p id="search-empty" class="empty" hidden>No deals match that search. Try a product type, a brand or a store.</p>',
     ]
     if lead:
-        out.append('<section class="lead" data-search-section aria-label="Lead deal">' + deal_card(site, page, lead, "lead", lead=True) + "</section>")
-    if soon:
-        out.append('<section class="ending-soon" data-search-section aria-labelledby="soon-h"><h2 id="soon-h">Ending soon</h2>'
-                   + "".join(deal_card(site, page, d, "compact") for d in soon) + "</section>")
-    if rest_featured:
-        out.append('<section class="top-picks" data-search-section aria-labelledby="picks-h"><h2 id="picks-h">Top picks</h2>'
-                   + "".join(deal_card(site, page, d, "feature") for d in rest_featured) + "</section>")
+        out.append('<div class="grid front">')
+        out.append(f'<section class="span-8 front__lead" data-search-section aria-label="Lead deal">{deal_card(site, page, lead, "lead", lead=True, annotate="pick")}</section>')
+        if soon:
+            out.append('<aside class="front__soon" data-search-section aria-labelledby="soon-h"><h2 id="soon-h">Ending soon</h2>'
+                       + "".join(deal_card(site, page, d, "compact") for d in soon) + "</aside>")
+        out.append("</div>")
+    if picks:
+        out.append('<section class="section" data-search-section aria-labelledby="picks-h"><h2 class="section-head" id="picks-h">Top picks</h2>'
+                   '<div class="grid">' + "".join(f'<div class="span-6">{deal_card(site, page, d, "feature")}</div>' for d in picks) + "</div></section>")
     if others:
-        out.append('<section class="all-deals" data-search-section aria-labelledby="all-h"><h2 id="all-h">All live deals</h2>'
-                   + "".join(deal_card(site, page, d) for d in others) + "</section>")
+        out.append('<section class="section" data-search-section aria-labelledby="all-h">'
+                   f'<h2 class="section-head" id="all-h">All live deals <span class="label">{v(str(len(others)) + " more")}</span></h2>'
+                   + deal_stream(site, page, others) + "</section>")
     if not live:
         out.append('<p class="empty">No live deals right now. The next edition lands tomorrow morning.</p>')
-    hubs = "".join(f'<li><a href="{link(page, "events/" + ev["slug"] + "/")}">{t(ev["name"])} {ev["start"][:4]} deals</a></li>'
-                   for ev in site.events.get("events", []))
-    out.append(f'<section class="hubs" aria-labelledby="hubs-h"><h2 id="hubs-h">Sale event guides</h2><ul>{hubs}</ul></section>')
+    out.append(sale_calendar(site, page))
     return "\n".join(out)
+
+
+def sale_calendar(site, page, exclude=None):
+    rows = []
+    for ev in site.events.get("events", []):
+        if ev["slug"] == exclude:
+            continue
+        status = site.event_status(ev)
+        start, end = parse_date(ev["start"]), parse_date(ev["end"])
+        when = f"{fmt_date(start)} – {fmt_date(end)}" + ("" if ev.get("dates_confirmed") else " (expected)")
+        state = {"live": "On now", "upcoming": "Coming up", "past": "Ended"}[status]
+        art = f"assets/art/event-{ev['slug']}.svg"
+        w, h = site.img(art)
+        rows.append(f'<li class="calendar__item calendar__item--{status}"><img src="{link(page, art)}" width="{w}" height="{h}" alt="" loading="lazy">'
+                    f'<div><p class="label">{v(state)}</p><h3><a href="{link(page, "events/" + ev["slug"] + "/")}">{t(ev["name"])} {ev["start"][:4]} deals</a></h3>'
+                    f'<p class="calendar__when">{when}</p></div></li>')
+    return ('<section class="section calendar" aria-labelledby="cal-h"><h2 class="section-head" id="cal-h">Sale calendar</h2>'
+            f'<ul class="calendar__list">{"".join(rows)}</ul></section>')
 
 
 def render_category(slug):
     def render(site, page):
         name = site.category_name(slug)
         deals = [d for d in site.live_deals() if d["category"] == slug]
-        out = [f"<h1>Best {t(name)} deals today</h1>", updated_line(page),
-               f'<p class="count">{v(f"{len(deals)} live deals")}</p>']
+        n = len(deals)
+        dek = (f"{n} live deal{'s' if n != 1 else ''} in {t(name)}, picked and checked by hand this morning."
+               if n else f"Nothing in {t(name)} today. Some days a section stays quiet.")
+        out = [page_head(site, page, f"Best {name} deals today", kicker="Department", dek=v(dek),
+                         art=f"assets/art/cat-{slug}.svg")]
         if deals:
-            out.append('<section class="all-deals">' + "".join(
-                deal_card(site, page, d, "lead" if i == 0 else "standard", lead=(i == 0)) for i, d in enumerate(deals)) + "</section>")
+            out.append(f'<section aria-label="{e(name)} deals">{deals_block(site, page, deals, annotate_first=True)}</section>')
         else:
-            out.append(f'<p class="empty">Nothing in {t(name)} today. We only list deals we would buy ourselves, '
-                       f'so some days a section stays quiet. <a href="{link(page, "")}">See all of today\'s deals</a>.</p>')
+            out.append(f'<div class="empty-state"><p class="empty">We only list deals we would buy ourselves, so some days {t(name)} has nothing worth your time.</p>'
+                       f'<p><a class="button button--quiet" href="{link(page, "")}">See all of today’s deals →</a></p></div>')
         return "\n".join(out)
     return render
 
@@ -745,24 +810,45 @@ def render_event(slug):
         status = site.event_status(ev)
         year = ev["start"][:4]
         start, end = parse_date(ev["start"]), parse_date(ev["end"])
+        when = f"{fmt_date(start)} – {fmt_date(end)}" + ("" if ev.get("dates_confirmed") else ", expected; not yet announced")
+        state = {"live": "On now", "upcoming": "Coming up", "past": "Ended for " + year}[status]
         deals = [d for d in site.live_deals() if d.get("event") == slug]
-        out = [f"<h1>Best {t(ev['name'])} deals {year}</h1>", updated_line(page),
-               f'<p class="dek">{t(ev["intro"])}</p>']
-        when = f"{fmt_date(start)} to {fmt_date(end)}"
-        if not ev.get("dates_confirmed"):
-            when += " (expected; not yet announced)"
-        out.append(f'<p class="event-dates">{t(ev["name"])} {year}: {when}</p>')
+        out = [page_head(site, page, f"Best {ev['name']} deals {year}", kicker=f"Sale event · {v(state)}",
+                         dek=t(ev["intro"]), art=f"assets/art/event-{slug}.svg",
+                         extra=f'<p class="event-dates"><span class="label">Dates</span> {when}</p>')]
         if deals:
-            out.append('<section class="all-deals">' + "".join(
-                deal_card(site, page, d, "lead" if i == 0 else "standard", lead=(i == 0)) for i, d in enumerate(deals)) + "</section>")
+            out.append(f'<section aria-label="{e(ev["name"])} deals">{deals_block(site, page, deals, annotate_first=True)}</section>')
         elif status == "upcoming":
-            out.append(f'<p class="empty">{t(ev["name"])} hasn\'t started yet. We start adding deals here as soon as retailers do. '
-                       f'<a href="{link(page, "")}">Today\'s best deals</a> are on the front page.</p>')
+            out.append(f'<div class="empty-state"><p class="empty">{t(ev["name"])} hasn’t started yet. We add deals here the day retailers do.</p>'
+                       f'<p><a class="button button--quiet" href="{link(page, "")}">See today’s best deals →</a></p></div>')
         else:
-            out.append(f'<p class="empty">No {t(ev["name"])} deals are live right now. '
-                       f'<a href="{link(page, "")}">See today\'s best deals</a>.</p>')
+            out.append(f'<div class="empty-state"><p class="empty">No {t(ev["name"])} deals are live right now.</p>'
+                       f'<p><a class="button button--quiet" href="{link(page, "")}">See today’s best deals →</a></p></div>')
+        out.append(sale_calendar(site, page, exclude=slug))
         return "\n".join(out)
     return render
+
+
+def byline(site, page, slug=None):
+    slug = slug or site.config.get("default_author")
+    author = site.config.get("authors", {}).get(slug)
+    if not author:
+        return ""
+    return f'<p class="byline">By <a href="{link(page, "authors/" + slug + "/")}">{t(author["name"])}</a></p>'
+
+
+def deal_box(site, page, deal):
+    retailer = site.retailer_name(deal)
+    state = site.deal_state(deal)
+    if state != "live":
+        return (f'<div class="deal-box deal-box--ended"><p class="label">The deal</p><p class="deal-box__retailer">{t(retailer)}</p>'
+                f'<p>Ended {fmt_date(parse_date(deal["expires"]))}.</p>'
+                f'<a class="button button--quiet" href="{link(page, "c/" + deal["category"] + "/")}">Live {t(site.category_name(deal["category"]))} deals →</a></div>')
+    tag = f'<span class="tag" style="--tilt:{tilt(deal["id"])}deg"><span>{t(deal["label"])}</span></span>' if deal.get("label") else ""
+    return (f'<div class="deal-box"><p class="label">The deal</p><p class="deal-box__retailer">{t(retailer)}</p>'
+            f'<div class="card__badges">{tag}{timing_html(site, deal)}</div>'
+            f'<a class="button" href="{e(affiliate_url(site.config, deal))}" {out_attrs()}>See deal at {t(retailer)} →</a>'
+            f'<p class="deal-box__note">Prices and stock are set by {t(retailer)} and change often. We may earn a commission.</p></div>')
 
 
 def render_deal(deal):
@@ -770,69 +856,72 @@ def render_deal(deal):
         state = site.deal_state(deal)
         retailer = site.retailer_name(deal)
         cat = deal["category"]
-        out = []
+        main = []
         if state != "live":
-            out.append(f'<div class="ended" role="status"><p><strong>This deal has ended.</strong> It ran until '
-                       f'{fmt_date(parse_date(deal["expires"]))}. Here are live deals worth a look instead.</p></div>')
-        out.append(f'<h1>{t(deal["title"])} deal</h1>')
-        out.append(f'<p class="card__meta"><b>{t(retailer)}</b> · <a href="{link(page, "c/" + cat + "/")}">{t(site.category_name(cat))}</a></p>')
-        author = site.config.get("authors", {}).get(site.config.get("default_author"), {})
-        if author:
-            out.append(f'<p class="byline">By <a href="{link(page, "authors/" + site.config["default_author"] + "/")}">{t(author["name"])}</a></p>')
-        out.append(updated_line(page))
+            main.append(f'<div class="ended" role="status"><p><strong>This deal has ended.</strong> It ran until '
+                        f'{fmt_date(parse_date(deal["expires"]))}. The live deals below are worth a look instead.</p></div>')
+        main.append(page_head(site, page, f"{deal['title']} deal",
+                              kicker=f'{t(retailer)} · <a href="{link(page, "c/" + cat + "/")}">{t(site.category_name(cat))}</a>',
+                              dek=t(deal["blurb"]), extra=byline(site, page)))
+        if state == "live":
+            main.append(f'<p class="deal-cta--inline"><a class="button" href="{e(affiliate_url(site.config, deal))}" {out_attrs()}>See deal at {t(retailer)} →</a></p>')
         art = site.deal_art(deal)
         w, h = site.img(art)
-        out.append(f'<img class="deal__art" src="{link(page, art)}" width="{w}" height="{h}" alt="" fetchpriority="high">')
-        out.append(f'<p class="dek">{t(deal["blurb"])}</p>')
-        out.extend(f"<p>{t(p)}</p>" for p in deal["write_up"])
+        main.append(f'<img class="article__art" src="{link(page, art)}" width="{w}" height="{h}" alt="" loading="lazy">')
+        main.append('<div class="prose">' + "".join(f"<p>{t(p)}</p>" for p in deal["write_up"]) + "</div>")
         if deal.get("who_for") or deal.get("skip_if"):
-            out.append('<dl class="fit">')
+            fit = '<dl class="fit">'
             if deal.get("who_for"):
-                out.append(f'<dt>Who it\'s for</dt><dd>{t(deal["who_for"])}</dd>')
+                fit += f'<dt>Who it’s for</dt><dd>{t(deal["who_for"])}</dd>'
             if deal.get("skip_if"):
-                out.append(f'<dt>Skip it if</dt><dd>{t(deal["skip_if"])}</dd>')
-            out.append("</dl>")
-        if state == "live":
-            out.append(f'<p><a class="button" href="{e(affiliate_url(site.config, deal))}" {out_attrs()}>See deal at {t(retailer)} →</a></p>')
-            out.append(f'<p class="card__timing">{v(timing_text(site, deal))}</p>')
+                fit += f'<dt>Skip it if</dt><dd>{t(deal["skip_if"])}</dd>'
+            main.append(fit + "</dl>")
         more = [f'<li><a href="{link(page, "c/" + cat + "/")}">More {t(site.category_name(cat))} deals</a></li>']
         ev = site.event(deal.get("event")) if deal.get("event") else None
         if ev and site.event_status(ev) == "live":
             more.append(f'<li><a href="{link(page, "events/" + ev["slug"] + "/")}">All {t(ev["name"])} deals</a></li>')
-        out.append(f'<nav class="more" aria-label="More deals"><ul>{"".join(more)}</ul></nav>')
+        more.append(f'<li><a href="{link(page, "how-we-pick/")}">How we pick deals</a></li>')
+        side = deal_box(site, page, deal) + f'<nav class="more" aria-label="More deals"><p class="label">Keep reading</p><ul>{"".join(more)}</ul></nav>'
+        out = [f'<div class="grid article"><article class="span-8 article__main">{"".join(main)}</article>'
+               f'<aside class="span-4 article__side">{side}</aside></div>']
         related = site.related_live(deal)
         if related:
-            out.append('<section class="related" aria-labelledby="rel-h"><h2 id="rel-h">Related deals</h2>'
-                       + "".join(deal_card(site, page, d) for d in related) + "</section>")
+            out.append('<section class="section related" aria-labelledby="rel-h"><h2 class="section-head" id="rel-h">Related deals</h2>'
+                       '<div class="grid">' + "".join(f'<div class="span-4">{deal_card(site, page, d)}</div>' for d in related) + "</div></section>")
         return "\n".join(out)
     return render
 
 
 def render_redirect(deal):
     def render(site, page):
-        target = page.redirect
         return (f'<h1>This deal has ended</h1><p>The {t(deal["title"])} deal ended on {fmt_date(parse_date(deal["expires"]))}. '
-                f'<a href="{link(page, target)}">See today\'s {t(site.category_name(deal["category"]))} deals</a>.</p>')
+                f'<a href="{link(page, page.redirect)}">See today’s {t(site.category_name(deal["category"]))} deals</a>.</p>')
     return render
 
 
 def render_guide(guide):
     def render(site, page):
-        author = site.config["authors"][guide["author"]]
-        img = guide["image"]
-        w, h = site.img(img)
-        out = [f"<h1>{t(guide['title'])}</h1>", f'<p class="dek">{t(guide["dek"])}</p>',
-               f'<p class="byline">By <a href="{link(page, "authors/" + guide["author"] + "/")}">{t(author["name"])}</a></p>',
-               updated_line(page),
-               f'<img class="guide__art" src="{link(page, img)}" width="{w}" height="{h}" alt="{e(guide.get("image_alt", ""))}" fetchpriority="high">']
-        for sec in guide["sections"]:
-            out.append(f"<h2>{t(sec['heading'])}</h2>")
-            out.extend(f"<p>{t(p)}</p>" for p in sec.get("paragraphs", []))
         by_id = {d["id"]: d for d in site.all_known_deals()}
         picks = [by_id[i] for i in guide["deal_ids"] if i in by_id and site.deal_state(by_id[i]) == "live"]
+        main = [page_head(site, page, guide["title"], kicker=t(guide.get("kicker", "Guide")), dek=t(guide["dek"]),
+                          extra=byline(site, page, guide["author"]))]
+        img = guide["image"]
+        w, h = site.img(img)
+        main.append(f'<img class="article__art article__art--wide" src="{link(page, img)}" width="{w}" height="{h}" alt="{e(guide.get("image_alt", ""))}" fetchpriority="high">')
+        body = []
+        for sec in guide["sections"]:
+            body.append(f"<h2>{t(sec['heading'])}</h2>")
+            body.extend(f"<p>{t(p)}</p>" for p in sec.get("paragraphs", []))
+        main.append('<div class="prose prose--guide">' + "".join(body) + "</div>")
+        toc = "".join(f'<li><a href="{link(page, site.deal_link_target(d))}">{t(d.get("short_name") or d["title"])}</a>'
+                      f' <span class="label">{t(site.retailer_name(d))}</span></li>'
+                      for d in picks if site.deal_link_target(d))
+        side = f'<nav class="toc" aria-label="Deals in this guide"><p class="label">In this guide</p><ol>{toc}</ol></nav>' if toc else ""
+        out = [f'<div class="grid article"><article class="span-8 article__main">{"".join(main)}</article>'
+               f'<aside class="span-4 article__side">{side}</aside></div>']
         if picks:
-            out.append('<section class="all-deals" aria-labelledby="g-h"><h2 id="g-h">The deals in this guide</h2>'
-                       + "".join(deal_card(site, page, d) for d in picks) + "</section>")
+            out.append('<section class="section" aria-labelledby="g-h"><h2 class="section-head" id="g-h">The deals in this guide</h2>'
+                       + deal_stream(site, page, picks, std=3, hits=0) + "</section>")
         return "\n".join(out)
     return render
 
@@ -840,22 +929,40 @@ def render_guide(guide):
 def render_author(slug):
     def render(site, page):
         a = site.config["authors"][slug]
-        out = [f"<h1>{t(a['name'])}</h1>", f"<p>{t(a['bio'])}</p>",
-               f'<p><a href="{link(page, "how-we-pick/")}">How we pick and check every deal</a></p>']
+        out = [page_head(site, page, a["name"], kicker="Byline", dek=t(a["bio"]), dateline=False,
+                         extra=f'<p><a href="{link(page, "how-we-pick/")}">How we pick and check every deal</a></p>')]
         mine = [d for d in site.page_deals() if site.deal_state(d) in ("live", "ended")]
         if mine:
-            out.append('<h2>Recent write-ups</h2><ul>' + "".join(
-                f'<li><a href="{link(page, "deals/" + d["id"] + "/")}">{t(d["title"])} deal</a></li>' for d in mine) + "</ul>")
+            out.append('<section class="section" aria-labelledby="w-h"><h2 class="section-head" id="w-h">Recent write-ups</h2>'
+                       '<div class="quick-hits__list">' + "".join(deal_card(site, page, d, "compact") for d in mine) + "</div></section>")
+        guides = [g for g in site.guides if g["author"] == slug]
+        if guides:
+            out.append('<section class="section" aria-labelledby="gd-h"><h2 class="section-head" id="gd-h">Guides</h2><ul class="plain-list">'
+                       + "".join(f'<li><a href="{link(page, "guides/" + g["slug"] + "/")}">{t(g["title"])}</a></li>' for g in guides) + "</ul></section>")
         return "\n".join(out)
     return render
 
 
-def static_body(heading, paragraphs, more=None):
+def static_body(heading, paragraphs, kicker=None, dek=None, more=None, steps=None):
     def render(site, page):
         body = "".join(f"<p>{p}</p>" for p in paragraphs)
+        if steps:
+            body += '<ol class="steps">' + "".join(
+                f'<li>{mark(site, "checkmark", "steps__mark")}<div><h2>{t(h)}</h2><p>{t(p)}</p></div></li>' for h, p in steps) + "</ol>"
         extra = f'<p><a href="{link(page, more[1])}">{t(more[0])}</a></p>' if more else ""
-        return f"<h1>{t(heading)}</h1>{updated_line(page)}{body}{extra}"
+        return (page_head(site, page, heading, kicker=kicker, dek=t(dek) if dek else None)
+                + f'<div class="prose prose--page">{body}{extra}</div>')
     return render
+
+
+def render_404(site, page):
+    live = site.live_deals()[:3]
+    out = [page_head(site, page, "That page is gone", kicker="Page not found", dek=t("The deal may have ended, or the link was mistyped."),
+                     dateline=False, extra=f'<p><a class="button" href="/">See today’s best deals →</a></p>')]
+    if live:
+        out.append('<section class="section" aria-labelledby="nf-h"><h2 class="section-head" id="nf-h">Live right now</h2><div class="grid">'
+                   + "".join(f'<div class="span-4">{deal_card(site, page, d)}</div>' for d in live) + "</div></section>")
+    return "\n".join(out)
 
 
 def static_pages(site):
@@ -869,7 +976,8 @@ def static_pages(site):
             t("We'd rather list fifteen good deals than a hundred so-so ones. A deal makes the cut when the product is well known or well reviewed, the discount is real according to a recent source, and the retailer is one you already shop with."),
             t("You won't see Amazon prices or percent-off figures here. Amazon only allows prices that come straight from its own systems, and a page like this one can't promise a price is still current, so we tell you why a deal is good and let the retailer show you the price."),
             f'{t("Spotted a mistake or a deal that has ended? Tell us at")} {email}.',
-        ], ("How we pick and check every deal", "how-we-pick/")),
+        ], kicker="About", dek="A daily circular of deals worth your time, picked by a person.",
+           more=("How we pick and check every deal", "how-we-pick/")),
         crumbs=[("Home", ""), ("About", None)]))
     pages.append(Page("disclosure/", "disclosure", "Affiliate Disclosure | ViewDeals",
         "How ViewDeals makes money: affiliate commissions from Amazon and other retailers when you buy through our links, and why that never decides what we pick.",
@@ -878,27 +986,30 @@ def static_pages(site):
             t("We may also earn commissions from other retailers, including Walmart, Target and Best Buy, through affiliate networks such as Impact. When you buy through a link on this site, the retailer may pay us a small share of the sale. It costs you nothing extra."),
             t("Commissions never decide what we pick. We choose deals first and check whether a retailer pays us second, and we list deals that earn us nothing when they are the better buy. Links that can earn us money are marked as sponsored in the page code, as search engines ask."),
             f'{t("Questions about this page:")} {email}.',
-        ]), crumbs=[("Home", ""), ("Disclosure", None)]))
+        ], kicker="The fine print", dek="How this site pays for itself, in plain words."),
+        crumbs=[("Home", ""), ("Disclosure", None)]))
     pages.append(Page("privacy/", "privacy", "Privacy Policy | ViewDeals",
         "ViewDeals has no accounts and collects no personal data. Here is what retailers, our host GitHub Pages and our cookieless analytics can see when you visit.",
         static_body("Privacy", [
-            t("ViewDeals has no accounts, no newsletter sign-up and no comments, and we don't collect or sell personal data. The search box works entirely in your browser and sends nothing anywhere."),
+            t("ViewDeals has no accounts, no newsletter sign-up and no comments, and we don't collect or sell personal data. The search box works entirely in your browser and sends nothing anywhere. If you pick the night edition, your browser remembers that choice; it never leaves your device."),
             t("When you click through to a retailer, that retailer may set its own cookies, including affiliate cookies that tell it the visit came from us. Their privacy policies apply once you are on their sites."),
             t("The site is hosted on GitHub Pages, which may log your IP address for security, as GitHub's privacy statement describes. If we turn on Cloudflare Web Analytics, it counts visits without cookies and without tracking you across sites."),
             f'{t("Privacy questions:")} {email}.',
-        ]), crumbs=[("Home", ""), ("Privacy", None)]))
+        ], kicker="The fine print", dek="Short version: we don’t collect anything about you."),
+        crumbs=[("Home", ""), ("Privacy", None)]))
     pages.append(Page("how-we-pick/", "method", "How We Pick and Check Every Deal | ViewDeals",
         "The rules behind every ViewDeals pick: where we look, what a deal must pass before it is listed, how we write it up, and when we take it down.",
         static_body("How we pick and check every deal", [
-            t("Every morning we read the retailers' own deal pages and a short list of reputable roundups, and we only consider offers reported in the last 48 hours."),
-            t("A deal has to pass four checks: it's from an established retailer, a recent source confirms the sale, the product is well known or well reviewed, and it isn't something we already list."),
-            t("Our write-ups say who a product suits, who should skip it, and what to check before you buy, such as the model year, the size or the seller. We write every word ourselves and never copy a retailer's listing."),
-            t("Deals come down when they end. A page for an ended deal stays up with a clear notice and links to live deals, so you never land on a dead end."),
+            t("Every morning we read the retailers' own deal pages and a short list of reputable roundups, and we only consider offers reported in the last 48 hours. Then each deal has to pass four checks."),
+        ], kicker="Method", dek="Fewer, better deals, checked by a person every morning.", steps=[
+            ("An established retailer", "Amazon, Walmart, Target, Best Buy, or a brand's own store. No marketplace sellers we can't vouch for."),
+            ("A real, recent sale", "A source from the last 48 hours confirms the discount, and any price-history claim we repeat names its source."),
+            ("A product worth owning", "Well known or well reviewed. We say who it suits, who should skip it, and what to check before you buy."),
+            ("Not a repeat", "If we already list it, it doesn't go up twice. When a deal ends, it comes down, and its page says so."),
         ]), crumbs=[("Home", ""), ("How we pick", None)]))
     pages.append(Page("404.html", "notfound", "Page Not Found | ViewDeals",
         "That page is gone, and the deal may have ended. Head back to today's edition of ViewDeals for the hand-picked deals that are live right now.",
-        lambda s, p: f'<h1>That page is gone</h1><p>{t("The deal may have ended.")} <a href="/">{t("See today’s best deals")}</a>.</p>',
-        noindex=True, sitemap=None, root_links=True))
+        render_404, noindex=True, sitemap=None, root_links=True))
     return pages
 
 

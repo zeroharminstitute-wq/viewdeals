@@ -1,131 +1,136 @@
 {
   "": {
-    "hash": "bd41e84d8e96d862",
+    "hash": "855c7cf431c04867",
     "updated": "2026-11-25",
     "first_seen": "2026-11-25"
   },
   "404.html": {
-    "hash": "5be0e878cb93aad0",
+    "hash": "36d64e31d8ee6c09",
     "updated": "2026-11-25",
     "first_seen": "2026-11-25"
   },
   "about/": {
-    "hash": "87acd1b5df697a27",
+    "hash": "0e89bf1448f0535a",
     "updated": "2026-11-25",
     "first_seen": "2026-11-25"
   },
   "authors/viewdeals-desk/": {
-    "hash": "7b64cec71c84e97d",
+    "hash": "ca1d648779abfd3a",
     "updated": "2026-11-25",
     "first_seen": "2026-11-25"
   },
   "c/beauty/": {
-    "hash": "a15b06e72e7ab50a",
+    "hash": "5c745995e7b6e568",
     "updated": "2026-11-25",
     "first_seen": "2026-11-25"
   },
   "c/events/": {
-    "hash": "aa1e015c997c886d",
+    "hash": "f0ef5cf2ed524ba9",
     "updated": "2026-11-25",
     "first_seen": "2026-11-25"
   },
   "c/fashion/": {
-    "hash": "68e4894f71e0f74b",
+    "hash": "f83d1f7b4b88bdf7",
     "updated": "2026-11-25",
     "first_seen": "2026-11-25"
   },
   "c/home/": {
-    "hash": "1703ef37612622ca",
+    "hash": "c20727a4047bb6f1",
     "updated": "2026-11-25",
     "first_seen": "2026-11-25"
   },
   "c/outdoors/": {
-    "hash": "b4888bc460aa70d7",
+    "hash": "fee63c2cdacab2a0",
     "updated": "2026-11-25",
     "first_seen": "2026-11-25"
   },
   "c/smart-home/": {
-    "hash": "3c727f449d7a584c",
+    "hash": "80d5a9c3d784d8f1",
     "updated": "2026-11-25",
     "first_seen": "2026-11-25"
   },
   "c/tech/": {
-    "hash": "96682503577bc058",
+    "hash": "3f1ceebbbd75ed90",
     "updated": "2026-11-25",
     "first_seen": "2026-11-25"
   },
   "c/toys/": {
-    "hash": "406ecdc244401e37",
+    "hash": "b1cf0acd93099987",
     "updated": "2026-11-25",
     "first_seen": "2026-11-25"
   },
   "deals/apple-airpods-pro-3/": {
-    "hash": "87bb016438aced7a",
+    "hash": "5460be536f02de39",
     "updated": "2026-11-25",
     "first_seen": "2026-11-25"
   },
   "deals/lego-polaroid-onestep-sx-70/": {
-    "hash": "79a0091bf8346c2c",
+    "hash": "1816c4374bbb4b34",
     "updated": "2026-11-25",
     "first_seen": "2026-11-25"
   },
   "deals/oura-ring-5/": {
-    "hash": "f6ebe8b5b52575e2",
+    "hash": "5b2db5be8ac6f93a",
     "updated": "2026-11-25",
     "first_seen": "2026-11-25"
   },
   "deals/roborock-q7-m5-plus/": {
-    "hash": "3b9ceda739cf00f5",
+    "hash": "c7966ffd08566d14",
     "updated": "2026-11-25",
     "first_seen": "2026-11-25"
   },
   "deals/shark-flexstyle-hd430/": {
-    "hash": "82cc481281097112",
+    "hash": "145c7ef1782cde4f",
     "updated": "2026-11-25",
     "first_seen": "2026-11-25"
   },
   "deals/sony-wh-1000xm5/": {
-    "hash": "4eb93a2261c24809",
+    "hash": "7bab41b9aa66d673",
     "updated": "2026-11-25",
     "first_seen": "2026-11-25"
   },
   "disclosure/": {
-    "hash": "e334899aabaaf1c1",
+    "hash": "024f45ca07b4badb",
     "updated": "2026-11-25",
     "first_seen": "2026-11-25"
   },
   "events/back-to-school/": {
-    "hash": "529a42f57a86a16c",
+    "hash": "60b98f50b29a7b0f",
     "updated": "2026-11-25",
     "first_seen": "2026-11-25"
   },
   "events/black-friday/": {
-    "hash": "3344808aedac62cd",
+    "hash": "7854dabce25e961b",
     "updated": "2026-11-25",
     "first_seen": "2026-11-25"
   },
   "events/cyber-monday/": {
-    "hash": "6ec06734e828a894",
+    "hash": "fa26ad3979e9b8eb",
     "updated": "2026-11-25",
     "first_seen": "2026-11-25"
   },
   "events/holiday-gifts/": {
-    "hash": "d4821333132fb76e",
+    "hash": "7f99a0032da38cda",
     "updated": "2026-11-25",
     "first_seen": "2026-11-25"
   },
   "events/prime-day/": {
-    "hash": "7690ccc36207fcd7",
+    "hash": "03dcae7863e184ea",
+    "updated": "2026-11-25",
+    "first_seen": "2026-11-25"
+  },
+  "guides/black-friday-gifts-worth-giving/": {
+    "hash": "833ff62c66c48043",
     "updated": "2026-11-25",
     "first_seen": "2026-11-25"
   },
   "how-we-pick/": {
-    "hash": "c5209b8e2a35e251",
+    "hash": "377a43f04a20927c",
     "updated": "2026-11-25",
     "first_seen": "2026-11-25"
   },
   "privacy/": {
-    "hash": "4c5c41ee7f4bccfe",
+    "hash": "b93893ccf0775d04",
     "updated": "2026-11-25",
     "first_seen": "2026-11-25"
   },
