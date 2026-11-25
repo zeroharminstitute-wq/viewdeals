@@ -52,6 +52,13 @@ def write_json(path, data):
         f.write(json.dumps(data, indent=2, ensure_ascii=False) + "\n")
 
 
+def write_text(path, text):
+    """Write UTF-8 text with LF line endings on every platform."""
+    with open(path, "w", encoding="utf-8", newline="
+") as f:
+        f.write(text)
+
+
 def parse_date(value):
     try:
         return dt.date.fromisoformat(value)
@@ -1001,13 +1008,13 @@ def write_sitemaps(site, pages, docs):
             img = f"<image:image><image:loc>{e(site.abs_url(p.image))}</image:loc></image:image>" if p.image else ""
             rows.append(f"<url><loc>{e(site.abs_url(p.path))}</loc><lastmod>{p.updated.isoformat()}</lastmod>{img}</url>")
         newest[name] = max((p.updated for p in items), default=site.today)
-        (docs / f"sitemap-{name}.xml").write_text(
-            f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset {ns}>\n' + "\n".join(rows) + "\n</urlset>\n", encoding="utf-8")
+        write_text(docs / f"sitemap-{name}.xml",
+            f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset {ns}>\n' + "\n".join(rows) + "\n</urlset>\n")
     index = "\n".join(f"<sitemap><loc>{e(site.abs_url(f'sitemap-{n}.xml'))}</loc><lastmod>{newest[n].isoformat()}</lastmod></sitemap>"
                       for n in groups)
-    (docs / "sitemap.xml").write_text(
+    write_text(docs / "sitemap.xml",
         '<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
-        + index + "\n</sitemapindex>\n", encoding="utf-8")
+        + index + "\n</sitemapindex>\n")
 
 
 def rfc822(d):
@@ -1030,7 +1037,7 @@ def write_feeds(site, docs):
            f"<title>{e(c['site_name'])}</title><link>{e(c['base_url'])}/</link><description>{e(c['tagline'])}</description>"
            f'<language>en-us</language><atom:link href="{e(site.abs_url("feed.xml"))}" rel="self" type="application/rss+xml"/>'
            f"<lastBuildDate>{rfc822(site.today)}</lastBuildDate>\n" + "\n".join(items) + "\n</channel></rss>\n")
-    (docs / "feed.xml").write_text(rss, encoding="utf-8")
+    write_text(docs / "feed.xml", rss)
     feed = {
         "version": "https://jsonfeed.org/version/1.1",
         "title": c["site_name"], "home_page_url": c["base_url"] + "/", "feed_url": site.abs_url("feed.json"),
@@ -1042,7 +1049,7 @@ def write_feeds(site, docs):
             "date_published": f"{d['added']}T06:00:00Z", "tags": [site.category_name(d["category"])],
         } for d in live],
     }
-    (docs / "feed.json").write_text(json.dumps(feed, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
+    write_text(docs / "feed.json", json.dumps(feed, indent=1, ensure_ascii=False) + "\n")
 
 
 def check_links(docs):
@@ -1081,16 +1088,16 @@ def build(site):
     for page in pages:
         out = docs / page.out_file
         out.parent.mkdir(parents=True, exist_ok=True)
-        out.write_text(render_page(site, page), encoding="utf-8")
+        write_text(out, render_page(site, page))
     write_sitemaps(site, pages, docs)
     write_feeds(site, docs)
-    (docs / "robots.txt").write_text(
-        f"User-agent: *\nDisallow: /styleguide/\n\nSitemap: {site.abs_url('sitemap.xml')}\n", encoding="utf-8")
-    (docs / "CNAME").write_text(site.config["domain"] + "\n", encoding="utf-8")
-    (docs / ".nojekyll").write_text("", encoding="utf-8")
+    write_text(docs / "robots.txt",
+        f"User-agent: *\nDisallow: /styleguide/\n\nSitemap: {site.abs_url('sitemap.xml')}\n")
+    write_text(docs / "CNAME", site.config["domain"] + "\n")
+    write_text(docs / ".nojekyll", "")
     key = site.config.get("indexnow_key")
     if key:
-        (docs / f"{key}.txt").write_text(key, encoding="utf-8")
+        write_text(docs / f"{key}.txt", key)
     live_paths = {p.path for p in pages}
     site.state = {k: val for k, val in site.state.items() if k in live_paths}
     write_json(site.root / "data" / "page-state.json", dict(sorted(site.state.items())))
