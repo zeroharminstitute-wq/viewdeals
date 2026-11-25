@@ -516,7 +516,21 @@ def out_attrs():
     return 'target="_blank" rel="sponsored nofollow noopener"'
 
 
-def deal_card(site, page, deal, variant="standard", lead=False):
+def mark(site, name, cls=""):
+    """Inline an annotation mark SVG so it can draw itself on scroll."""
+    svg = (site.root / "assets" / "art" / "marks" / f"{name}.svg").read_text(encoding="utf-8")
+    svg = re.sub(r"<!--.*?-->", "", svg).strip()
+    return svg.replace('class="mark ', f'class="mark {cls} ', 1) if cls else svg
+
+
+def timing_html(site, deal):
+    text = timing_text(site, deal)
+    urgent = " card__timing--urgent" if text in ("Last day", "Ends tomorrow") else ""
+    return f'<span class="card__timing{urgent}">{v(text)}</span>'
+
+
+def deal_card(site, page, deal, variant="standard", lead=False, annotate=None):
+    """One deal in one of four variants: lead, feature, standard, compact."""
     retailer = site.retailer_name(deal)
     category = site.category_name(deal["category"])
     out = e(affiliate_url(site.config, deal))
@@ -524,28 +538,38 @@ def deal_card(site, page, deal, variant="standard", lead=False):
     title_href = link(page, internal) if internal else out
     title_attrs = "" if internal else " " + out_attrs()
     search = " ".join([deal["title"], deal["blurb"], retailer, category]).lower()
-    classes = f"card card--{variant}" + (" card--featured" if deal.get("featured") else "")
-    parts = [f'<article class="{classes}" data-search="{e(search)}" style="--tilt:{tilt(deal["id"])}deg">']
+    classes = f"card card--{variant}" + (" card--featured" if deal.get("featured") and variant != "compact" else "")
+    parts = [f'<article class="{classes}" data-search="{e(search)}">']
     if variant != "compact":
         art = site.deal_art(deal)
         w, h = site.img(art)
         loading = 'fetchpriority="high"' if lead else 'loading="lazy"'
-        parts.append(f'<img class="card__art" src="{link(page, art)}" width="{w}" height="{h}" alt="" {loading} decoding="async">')
-    parts.append(f'<p class="card__meta"><b>{t(retailer)}</b> · {t(category)}</p>')
-    tag = "h3" if not lead else "h2"
+        img = f'<img class="card__art" src="{link(page, art)}" width="{w}" height="{h}" alt="" {loading} decoding="async">'
+        if annotate == "pick":
+            img = f'<div class="card__artwrap">{img}{mark(site, "editors-pick", "annot annot--pick")}</div>'
+        parts.append(img)
+    parts.append('<div class="card__body">')
+    parts.append(f'<p class="card__meta label"><b>{t(retailer)}</b> · {t(category)}</p>')
+    tag = "h2" if variant == "lead" else "h3"
     parts.append(f'<{tag} class="card__title"><a href="{title_href}"{title_attrs}>{t(deal["title"])}</a></{tag}>')
     if variant != "compact":
         parts.append(f'<p class="card__blurb">{t(deal["blurb"])}</p>')
-    badges = []
-    if deal["added"] == site.today.isoformat():
-        badges.append(v('<span class="stamp">New today</span>'))
-    if deal.get("label"):
-        badges.append(f'<span class="tag">{t(deal["label"])}</span>')
-    parts.append(f'<div class="card__badges">{"".join(badges)}<span class="card__timing">{v(timing_text(site, deal))}</span></div>')
-    if internal and variant != "compact":
-        parts.append(f'<p class="card__more"><a href="{link(page, internal)}">Read our take on the {t(deal.get("short_name") or deal["title"])} deal</a></p>')
-    parts.append(f'<a class="button" href="{out}" {out_attrs()}>See deal at {t(retailer)} →</a>')
-    parts.append("</article>")
+    if variant == "lead" and deal.get("who_for"):
+        parts.append(f'<p class="card__note"><span class="label">Editor’s note</span>{t("Best for " + deal["who_for"][0].lower() + deal["who_for"][1:])}</p>')
+    if variant == "compact":
+        parts.append(timing_html(site, deal))
+    else:
+        badges = []
+        if deal["added"] == site.today.isoformat():
+            badges.append(v('<span class="stamp">New today</span>'))
+        if deal.get("label"):
+            badges.append(f'<span class="tag" style="--tilt:{tilt(deal["id"])}deg"><span>{t(deal["label"])}</span></span>')
+        badges.append(timing_html(site, deal))
+        parts.append(f'<div class="card__badges">{"".join(badges)}</div>')
+        if internal:
+            parts.append(f'<p class="card__more"><a href="{link(page, internal)}">Read our take on the {t(deal.get("short_name") or deal["title"])} deal</a></p>')
+        parts.append(f'<a class="button" href="{out}" {out_attrs()}>See deal at {t(retailer)} →</a>')
+    parts.append("</div></article>")
     return "\n".join(parts)
 
 
@@ -568,9 +592,13 @@ def updated_line(page, label="Updated"):
     return f'<p class="dateline">{pub}{label} {UPDATED_TOKEN}</p>'
 
 
+HEAD_SCRIPT = ("<script>document.documentElement.classList.add('js');"
+               "try{var t=localStorage.getItem('vd-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>")
+
+
 def layout(site, page, main):
     c = site.config
-    canonical = site.abs_url(page.path if page.path != "404.html" else "404.html")
+    canonical = site.abs_url(page.path)
     if page.redirect:
         canonical = site.abs_url(page.redirect)
     robots = '<meta name="robots" content="noindex">' if page.noindex else ""
@@ -582,6 +610,7 @@ def layout(site, page, main):
     refresh = ""
     if page.redirect:
         refresh = f'<meta http-equiv="refresh" content="0; url={link(page, page.redirect)}">'
+    p = page.prefix
     chips = "".join(
         f'<li><a href="{link(page, f"c/{slug}/")}"'
         + (' aria-current="page"' if page.path == f"c/{slug}/" else "")
@@ -590,8 +619,9 @@ def layout(site, page, main):
     events = "".join(
         f'<li><a href="{link(page, "events/" + ev["slug"] + "/")}">{t(ev["name"])} deals</a></li>'
         for ev in site.events.get("events", []))
-    edition = v(f'No. {site.edition_number()} · {fmt_long(site.today)} · {len(site.live_deals())} deals today')
-    p = page.prefix
+    count = len(site.live_deals())
+    edition = v(f'No. {site.edition_number()} · {fmt_long(site.today)} · {count} deal{"s" if count != 1 else ""} today')
+    body_class = f"page--{page.kind} " + ("page--home" if page.kind == "home" else "page--inner")
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -601,6 +631,8 @@ def layout(site, page, main):
 <meta name="description" content="{e(smart(page.description))}">
 <link rel="canonical" href="{e(canonical)}">
 {robots}{refresh}{verification}
+<meta name="theme-color" content="#F4EFE6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#141210" media="(prefers-color-scheme: dark)">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="{e(c['site_name'])}">
 <meta property="og:title" content="{e(smart(page.title))}">
@@ -609,23 +641,26 @@ def layout(site, page, main):
 <link rel="icon" href="{p}assets/favicon.svg" type="image/svg+xml">
 <link rel="alternate" type="application/rss+xml" title="{e(c['site_name'])} deals" href="{p}feed.xml">
 <link rel="alternate" type="application/feed+json" title="{e(c['site_name'])} deals" href="{p}feed.json">
+<link rel="preload" href="{p}assets/fonts/newsreader-roman.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="{p}assets/style.css">
+{HEAD_SCRIPT}
 <script src="{p}assets/app.js" defer></script>
 </head>
-<body class="page--{page.kind}">
+<body class="{body_class}">
 <a class="skip" href="#main">Skip to the deals</a>
-<header class="masthead">
+<header class="masthead wrap">
 <p class="masthead__name"><a href="{p}">{t(c['site_name'])}</a></p>
-<p class="masthead__tagline">{t(c['tagline'])}</p>
-<p class="masthead__edition">{edition}</p>
-<nav class="departments" aria-label="Departments"><ul>{chips}</ul></nav>
+<hr class="masthead__rule">
+<div class="masthead__row"><p class="masthead__edition label">{edition}</p><p class="masthead__tagline">{t(c['tagline'])}</p></div>
 </header>
-<aside class="disclosure-bar" aria-label="Affiliate disclosure"><p>{t(c['disclosure_short'])} <a href="{p}disclosure/">How we make money</a></p></aside>
-<main id="main">
+<nav class="deptbar" aria-label="Departments"><div class="wrap deptbar__inner"><a class="deptbar__logo" href="{p}">{t(c['site_name'])}</a><ul>{chips}</ul></div></nav>
+<aside class="disclosure-bar" aria-label="Affiliate disclosure"><div class="wrap"><p>{t(c['disclosure_short'])} <a href="{p}disclosure/">How we make money</a></p></div></aside>
+<main id="main" class="wrap">
 {breadcrumbs(page)}
 {main}
 </main>
-<footer class="footer">
+<footer class="footer wrap">
+<div class="footer__cols">
 <nav aria-label="Sale events"><h2>Sale events</h2><ul>{events}</ul></nav>
 <nav aria-label="About this site"><h2>About</h2><ul>
 <li><a href="{p}about/">About ViewDeals</a></li>
@@ -634,9 +669,13 @@ def layout(site, page, main):
 <li><a href="{p}privacy/">Privacy</a></li>
 <li><a href="{p}feed.xml">RSS feed</a></li>
 </ul></nav>
-<p>Prices and availability change often and are set by each retailer. Check the retailer's page before you buy.</p>
+<div><h2>Edition</h2><p>Read the day edition or the night edition.</p><button class="theme-toggle" type="button" data-theme-toggle>Switch to night edition</button></div>
+</div>
+<div class="footer__fine">
+<p>Prices and availability change often and are set by each retailer. Check the retailer’s page before you buy.</p>
 <p>As an Amazon Associate, ViewDeals earns from qualifying purchases. Amazon and the Amazon logo are trademarks of Amazon.com, Inc. or its affiliates.</p>
 <p>Questions or corrections: <a href="mailto:{e(c['contact_email'])}">{t(c['contact_email'])}</a></p>
+</div>
 </footer>
 </body>
 </html>
@@ -863,6 +902,105 @@ def static_pages(site):
     return pages
 
 
+def render_styleguide(site, page):
+    """Style tile: every token and component, in day and night editions. noindex."""
+    live = site.live_deals()
+    by_id = {d["id"]: d for d in live}
+    featured = [d for d in live if d.get("featured")]
+    lead = featured[0] if featured else live[0]
+    features = (featured[1:3] + [d for d in live if not d.get("featured")])[:2]
+    rest = [d for d in live if d not in [lead] + features]
+    soon = sorted(live, key=lambda d: d["expires"])[:5]
+    plain = next((d for d in rest if not d.get("featured")), rest[0])
+    marks = ["circle", "underline", "arrow", "starburst", "bracket", "checkmark", "editors-pick", "last-chance"]
+
+    def swatch(name, var, note):
+        return (f'<li class="sg-swatch"><span class="sg-chip" style="background:var({var})"></span>'
+                f'<span><b>{name}</b><br><span class="sg-note">{note}</span></span></li>')
+
+    swatches = "".join([
+        swatch("Paper", "--paper", "#F4EFE6 · night #141210"),
+        swatch("Ink", "--ink", "#161412 · night #EEE7DA"),
+        swatch("Tag red", "--spot1", "#D7261E · night #FF5A4E"),
+        swatch("Highlighter", "--spot2", "#FFD23F · night #E8C23A 85%"),
+        swatch("Featured wash", "--tint", "highlighter on paper"),
+        swatch("Rule", "--rule", "ink at 15% · night 18%"),
+    ])
+
+    def components(theme):
+        tags = "".join(f'<span class="tag" style="--tilt:{a}deg"><span>{t(x)}</span></span>'
+                       for x, a in (("Gift idea", -1.6), ("Doorbuster", 1.2), ("Ends Nov 30", -0.4), ("Editor's pick", 2)))
+        return f"""<div class="sg-panel" data-theme="{theme}">
+<p class="label sg-panel__name">{'Day edition' if theme == 'light' else 'Night edition'}</p>
+<ul class="sg-swatches">{swatches}</ul>
+<div class="sg-row">{tags}<span class="stamp">New today</span></div>
+<p class="dek">Fine, it’s another air fryer. It’s also <span class="hl">the one reviewers keep recommending</span>.</p>
+<div class="sg-row"><a class="button" href="#sg-cards">See deal at Amazon →</a><a class="button button--quiet" href="#sg-cards">Read our take</a></div>
+<div class="sg-grid2">{deal_card(site, page, plain)}{deal_card(site, page, by_id.get(soon[0]["id"], soon[0]), "compact")}{deal_card(site, page, soon[1], "compact")}</div>
+</div>"""
+
+    type_rows = [
+        ('Masthead · 64–96px · Newsreader 700, optical size 72', f'<span class="masthead__name">ViewDeals</span>'),
+        ('Lead headline · 40–56px · Newsreader 600', '<span class="card--lead"><span class="card__title" style="display:block">AirPods Pro 3 are the earbuds to beat this week</span></span>'),
+        ('Section head · 28px', '<span class="section-head" style="border:0;padding:0;margin:0">Ending soon</span>'),
+        ('Card title · 24px', '<span class="card__title" style="display:block;font-family:var(--font-display);font-weight:600">Roborock Q7 M5+ Robot Vacuum and Mop</span>'),
+        ('Dek · 21px Newsreader', '<span class="dek" style="display:block">The straight, roomy Levi’s that has outlasted most fashion trends.</span>'),
+        ('Body · 17px / 1.55 · Hanken Grotesk', '<span style="display:block;max-width:68ch">The upgrades over the AirPods Pro 2 are real rather than cosmetic. Apple says the noise cancellation removes up to twice as much noise, and the buds now read your heart rate during workouts.</span>'),
+        ('Label · 13px serif capitals, tabular figures', '<span class="label">No. 214 · Wednesday, November 25, 2026 · 17 deals today</span>'),
+    ]
+    type_html = "".join(f'<div class="sg-type"><p class="label sg-type__spec">{t(spec)}</p>{sample}</div>' for spec, sample in type_rows)
+    mark_html = "".join(f'<figure class="sg-mark">{mark(site, m)}<figcaption class="label">{m.replace("-", " ")}</figcaption></figure>' for m in marks)
+
+    stream = rest[:6]
+    hits = rest[6:12]
+    stream_html = "".join(f'<div class="span-4">{deal_card(site, page, d)}</div>' for d in stream)
+    hits_html = ""
+    if hits:
+        hits_html = (f'<section class="quick-hits" aria-labelledby="qh-h"><h2 id="qh-h">Quick hits</h2>'
+                     f'<div class="quick-hits__list">{"".join(deal_card(site, page, d, "compact") for d in hits)}</div></section>')
+
+    return f"""<style>
+.sg-intro{{max-width:68ch}}
+.sg-section{{margin-block:var(--s8)}}
+.sg-type{{padding-block:var(--s4);border-top:1px solid var(--rule)}}
+.sg-type__spec{{color:var(--muted);margin-bottom:var(--s2)}}
+.sg-panels{{display:grid;gap:var(--s5)}}
+@media (min-width:1000px){{.sg-panels{{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}}}
+.sg-panel{{padding:var(--s5);border:1px solid var(--rule);border-radius:var(--radius)}}
+.sg-panel__name{{margin-bottom:var(--s4)}}
+.sg-swatches{{list-style:none;padding:0;margin:0 0 var(--s5);display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:var(--s4)}}
+.sg-swatch{{display:flex;gap:var(--s3);align-items:center;font-size:15px}}
+.sg-note{{color:var(--muted);font-size:14px;font-variant-numeric:tabular-nums}}
+.sg-chip{{width:44px;height:44px;flex:none;border:1px solid var(--rule);border-radius:var(--radius)}}
+.sg-row{{display:flex;flex-wrap:wrap;gap:var(--s4);align-items:center;margin-bottom:var(--s5)}}
+.sg-grid2{{display:grid;gap:var(--s4)}}
+.sg-marks{{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:var(--s5)}}
+.sg-mark{{margin:0;display:grid;gap:var(--s2);align-content:end;min-height:120px}}
+.sg-mark .mark{{max-height:96px;width:auto}}
+</style>
+<div class="page-head"><p class="label">Internal · not indexed</p><h1>Style guide: the Daily Circular</h1>
+<p class="dek sg-intro">Two spot colors on newsprint, an editorial serif and a crisp grotesque. Every component the site uses, in the day and night editions. Art marked “placeholder” is stand-in work until the commissioned set arrives.</p></div>
+
+<section class="sg-section" aria-labelledby="sg-type"><h2 class="section-head" id="sg-type">Type scale</h2>{type_html}</section>
+
+<section class="sg-section" aria-labelledby="sg-ed"><h2 class="section-head" id="sg-ed">Color, tags, stamps and highlighter</h2>
+<div class="sg-panels">{components("light")}{components("dark")}</div></section>
+
+<section class="sg-section" aria-labelledby="sg-cards"><h2 class="section-head" id="sg-cards">Front page: lead, ending soon, features, standard and quick hits <span class="label">12-column grid</span></h2>
+<div class="grid front"><div class="span-8">{deal_card(site, page, lead, "lead", lead=True, annotate="pick")}</div>
+<aside class="front__soon" aria-labelledby="soon-h"><h2 id="soon-h">Ending soon</h2>{"".join(deal_card(site, page, d, "compact") for d in soon)}</aside></div>
+<div class="grid section">{"".join(f'<div class="span-6">{deal_card(site, page, d, "feature")}</div>' for d in features)}</div>
+<div class="grid section">{stream_html}<div style="grid-column:1/-1">{hits_html}</div></div>
+</section>
+
+<section class="sg-section" aria-labelledby="sg-marks"><h2 class="section-head" id="sg-marks">Annotation marks <span class="label">draw on scroll</span></h2>
+<div class="sg-marks">{mark_html}</div></section>
+
+<section class="sg-section" aria-labelledby="sg-motion"><h2 class="section-head" id="sg-motion">Motion</h2>
+<p>Three touches only, all switched off for readers who ask for reduced motion: tags swing about three degrees on hover, the “New today” stamp presses in once when it first scrolls into view, and annotation marks draw themselves in. No parallax, carousels or autoplay.</p></section>
+"""
+
+
 # --------------------------------------------------------------------------
 # Page plan
 # --------------------------------------------------------------------------
@@ -927,6 +1065,10 @@ def plan_pages(site):
                           fit_description([a["bio"]]), render_author(slug),
                           crumbs=[("Home", ""), (a["name"], None)]))
     pages.extend(static_pages(site))
+    if site.live_deals():
+        pages.append(Page("styleguide/", "styleguide", "Style Guide: The Daily Circular | ViewDeals",
+                          "Internal style tile for ViewDeals: type scale, palette, deal card variants, tags, stamps, highlighter and annotation marks in both editions.",
+                          render_styleguide, noindex=True, sitemap=None, crumbs=[("Home", ""), ("Style guide", None)]))
     return pages
 
 

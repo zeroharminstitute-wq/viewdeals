@@ -1,9 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
-<!-- PLACEHOLDER ART: replace with the commissioned illustration -->
+<!-- PLACEHOLDER SHARE IMAGE: replace with the commissioned design -->
+<defs><filter id="g" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="1.4" numOctaves="1" seed="9" result="n"/><feColorMatrix in="n" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -2.4 2.25" result="m"/><feComposite in="SourceGraphic" in2="m" operator="in"/></filter></defs>
 <rect width="1200" height="630" fill="#F4EFE6"/>
-<rect x="8" y="8" width="1184" height="614" fill="none" stroke="#161412" stroke-width="2" stroke-dasharray="6 6"/>
-<circle cx="864" cy="265" r="139" fill="#D7261E" opacity=".85"/>
-<circle cx="870" cy="269" r="139" fill="none" stroke="#161412" stroke-width="3"/>
-<text x="96" y="315" font-family="Georgia,serif" font-size="82" fill="#161412">Black Friday</text>
-<text x="96" y="391" font-family="Arial,sans-serif" font-size="35" fill="#161412" letter-spacing="1">PLACEHOLDER · share image</text>
+<rect x="40" y="40" width="1120" height="550" fill="none" stroke="#161412" stroke-width="3"/>
+<text x="88" y="150" font-family="Georgia,serif" font-size="44" font-weight="700" fill="#161412">ViewDeals</text>
+<path d="M88 172 h420" stroke="#161412" stroke-width="3"/>
+<text x="88" y="300" font-family="Georgia,serif" font-size="76" font-weight="700" fill="#161412">Black Friday</text>
+<text x="88" y="370" font-family="Georgia,serif" font-size="34" font-style="italic" fill="#D7261E">Hand-picked deals, checked daily</text>
+<g transform="translate(640 120) scale(1.15)"><g filter="url(#g)"><g fill="#D7261E" transform="translate(5 4)"><path d="M150 130 h180 l14 132 h-208z"/></g><g fill="none" stroke="#161412" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path d="M146 126 h188 l16 140 h-220z"/><path d="M196 126 v-24 q0 -34 44 -34 q44 0 44 34 v24"/><path d="M188 190 l104 0 M200 220 l80 0"/></g></g></g>
+<text x="1140" y="575" text-anchor="end" font-family="Arial,sans-serif" font-size="16" fill="#161412" opacity=".45">placeholder</text>
 </svg>
