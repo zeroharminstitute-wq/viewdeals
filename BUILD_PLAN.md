@@ -287,7 +287,7 @@ With no Amazon product photos allowed, illustration carries the visual weight, s
   - it gets the house two-ink treatment (ink plus tag red, grain, slight misregistration), made by `scripts/dev/treat_photos.py`;
   - it is credited in `data/photos.json` (photographer, source, link), shown in a caption on page headers and articles and listed on the About page.
   The illustrations stay as the fallback for anything without a photo.
-- **Product photos on deals** follow the retailer rule below: a deal shows its product photo only when its retailer's `product_images` setting in `site.config.json` allows it, and the build refuses anything else. Otherwise the deal uses its department or event art.
+- **Product photos on deals (owner, 2026-11-25): exact item or nothing.** A deal shows a picture only when it is the exact product being sold, from a source its retailer's affiliate program allows (`product_images` in `site.config.json`; the build refuses anything else). Without one, the deal card and deal page have no picture at all: never a department photo, illustration or look-alike, because readers take any picture on a deal to be the item.
 - **Formats.** SVG (optimized, under 30 KB each) or AVIF/WebP at 1x and 2x with explicit width and height, all in `assets/art/`.
 - **Retailer product images** are allowed only where that retailer's affiliate program provides them for affiliates. For Amazon, that means only after Product Advertising API access, served from Amazon's own servers.
 

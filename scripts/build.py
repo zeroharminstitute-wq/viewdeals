@@ -572,14 +572,16 @@ class Site:
         return f"assets/art/cat-{deal['category']}.svg"
 
     def deal_art(self, deal):
-        """Product photo when the retailer's program allows it, else department or event art."""
+        """The exact product's photo, when its retailer's program allows it; otherwise None.
+
+        A deal never shows a stand-in picture (a department photo or drawing), because
+        readers take any picture on a deal to be the item being sold.
+        """
         if self.product_image_ok(deal):
             im = deal["image"]
             return {"src": im["url"], "src2x": None, "w": im["width"], "h": im["height"],
                     "alt": im["alt"], "remote": True, "credit": None, "product": True}
-        if deal["category"] == "events" and deal.get("event"):
-            return self.art(f"event-{deal['event']}")
-        return self.art(f"cat-{deal['category']}")
+        return None
 
     def abs_url(self, path):
         return self.config["base_url"].rstrip("/") + "/" + path
@@ -653,14 +655,17 @@ def deal_card(site, page, deal, variant="standard", lead=False, annotate=None):
     title_href = link(page, internal) if internal else out
     title_attrs = "" if internal else " " + out_attrs()
     search = " ".join([deal["title"], deal["blurb"], retailer, category]).lower()
-    classes = f"card card--{variant}" + (" card--featured" if deal.get("featured") and variant != "compact" else "")
+    art = site.deal_art(deal) if variant != "compact" else None
+    classes = (f"card card--{variant}" + (" card--featured" if deal.get("featured") and variant != "compact" else "")
+               + ("" if art or variant == "compact" else " card--noart"))
     parts = [f'<article class="{classes}" data-search="{e(search)}">']
-    if variant != "compact":
-        art = site.deal_art(deal)
-        img = art_html(page, art, "card__art", lead=lead, decorative=not art.get("product"))
+    if art:
+        img = art_html(page, art, "card__art", lead=lead)
         if annotate == "pick":
             img = f'<div class="card__artwrap">{img}{mark(site, "editors-pick", "annot annot--pick")}</div>'
         parts.append(img)
+    elif annotate == "pick" and variant != "compact":
+        parts.append(mark(site, "editors-pick", "annot annot--pick"))
     parts.append('<div class="card__body">')
     parts.append(f'<p class="card__meta label"><b>{t(retailer)}</b> · {t(category)}</p>')
     tag = "h2" if variant == "lead" else "h3"
@@ -978,7 +983,8 @@ def render_deal(deal):
         if state == "live":
             main.append(f'<p class="deal-cta--inline"><a class="button" href="{e(affiliate_url(site.config, deal))}" {out_attrs()}>See deal at {t(retailer)} →</a></p>')
         art = site.deal_art(deal)
-        main.append(art_html(page, art, "article__art", decorative=not art.get("product"), caption=True))
+        if art:
+            main.append(art_html(page, art, "article__art"))
         main.append('<div class="prose">' + "".join(f"<p>{t(p)}</p>" for p in deal["write_up"]) + "</div>")
         if deal.get("who_for") or deal.get("skip_if"):
             fit = '<dl class="fit">'

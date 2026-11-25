@@ -359,3 +359,11 @@ main { padding-block: var(--s6) var(--s8); }
 .page-head__art-fig .page-head__art { max-width: none; }
 .article__art-fig { margin-bottom: var(--s6); }
 .article__art-fig .article__art { margin-bottom: 0; }
+
+/* Deals without an approved product photo: no stand-in picture, the type carries the card */
+.card--noart.card--feature { display: flex; }
+.card--noart.card--standard { padding-top: var(--s5); border-top-width: 3px; }
+.card--noart.card--featured { padding-top: var(--s6); }
+.card--noart .annot--pick { top: -30px; right: 8px; }
+.card--noart.card--lead .card__title { font-size: clamp(44px, 5.4vw, 72px); }
+.card--noart.card--lead { padding-top: var(--s7); }
