@@ -432,6 +432,7 @@ class Page:
         self.published = kw.get("published")
         self.image = kw.get("image")
         self.root_links = kw.get("root_links", False)
+        self.entity = kw.get("entity")    # the deal / guide / event dict, category or author slug
         self.updated = None
 
     @property
@@ -565,6 +566,11 @@ class Site:
     def product_image_ok(self, deal):
         im = deal.get("image")
         return bool(im) and not product_image_errors(self.config, deal)
+
+    def share(self, key):
+        """PNG share card from scripts/dev/make_share_images.py, or None."""
+        path = f"assets/share/{key}.png"
+        return path if (self.root / path).is_file() else None
 
     def deal_share_image(self, deal):
         if deal["category"] == "events" and deal.get("event"):
@@ -714,6 +720,162 @@ HEAD_SCRIPT = ("<script>document.documentElement.classList.add('js');"
                "try{var t=localStorage.getItem('vd-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>")
 
 
+# --------------------------------------------------------------------------
+# CSS: minify, and inline only what each page type needs above the fold
+# --------------------------------------------------------------------------
+
+CRITICAL_MAX = 14 * 1024
+_CSS_TOKEN = re.compile(r"""("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|url\([^)]*\))""")
+
+
+def css_minify(css):
+    css = re.sub(r"/\*.*?\*/", "", css, flags=re.S)
+    out = []
+    for i, part in enumerate(_CSS_TOKEN.split(css)):
+        if i % 2:                       # strings and url(...) stay exactly as written
+            out.append(part)
+            continue
+        part = re.sub(r"\s+", " ", part)
+        part = re.sub(r"\s*([{};,>])\s*", r"\1", part)
+        part = re.sub(r":\s+", ":", part)
+        part = part.replace(";}", "}")
+        out.append(part)
+    return "".join(out).strip()
+
+
+def css_sections(css):
+    """Split style.css at its section comments. A header may say [defer] (never inlined)
+    or [only: kind,kind] (inlined only on those page kinds)."""
+    sections, cur = [], {"kinds": None, "defer": False, "text": []}
+    for line in css.splitlines(keepends=True):
+        m = re.match(r"/\*[^\n]*\*/\s*$", line)
+        if m and line.startswith("/*"):
+            sections.append(cur)
+            only = re.search(r"\[only:\s*([a-z,\s-]+)\]", line)
+            cur = {"kinds": {k.strip() for k in only.group(1).split(",")} if only else None,
+                   "defer": "[defer]" in line, "text": [line]}
+        else:
+            cur["text"].append(line)
+    sections.append(cur)
+    return sections
+
+
+def critical_css(site, page):
+    if not hasattr(site, "_css_sections"):
+        site._css_sections = css_sections((site.root / "assets" / "style.css").read_text(encoding="utf-8"))
+        site._critical = {}
+    kind = page.kind
+    if kind not in site._critical:
+        css = "".join("".join(sec["text"]) for sec in site._css_sections
+                      if not sec["defer"] and (sec["kinds"] is None or kind in sec["kinds"]))
+        site._critical[kind] = css_minify(css)
+    css = site._critical[kind]
+    # Inlined CSS lives in the page, so asset urls need the page's path to assets/.
+    return re.sub(r"url\(((?:fonts|art|photos)/[^)]+)\)", lambda m: f"url({page.prefix}assets/{m.group(1)})", css)
+
+
+# --------------------------------------------------------------------------
+# Social tags and structured data
+# --------------------------------------------------------------------------
+
+def social_tags(site, page):
+    c = site.config
+    article = page.kind in ("guide", "deal")
+    tags = [f'<meta property="og:type" content="{"article" if article else "website"}">']
+    if page.image:
+        w, h = site.img(page.image)
+        alt = f"{c['site_name']}: {page.title.split(' | ')[0]}"
+        tags += [f'<meta property="og:image" content="{e(site.abs_url(page.image))}">',
+                 f'<meta property="og:image:width" content="{w}">',
+                 f'<meta property="og:image:height" content="{h}">',
+                 f'<meta property="og:image:alt" content="{e(smart(alt))}">',
+                 '<meta name="twitter:card" content="summary_large_image">']
+    if article and page.published:
+        tags.append(f'<meta property="article:published_time" content="{page.published.isoformat()}">')
+    if article and page.updated:
+        tags.append(f'<meta property="article:modified_time" content="{page.updated.isoformat()}">')
+    return "".join(tags)
+
+
+def jsonld(site, page):
+    """The JSON-LD graph for a page (spec: SEO > Structured data)."""
+    c = site.config
+    base = c["base_url"].rstrip("/") + "/"
+    url = site.abs_url(page.path)
+    org_id, site_id = base + "#organization", base + "#website"
+    org = {"@type": "Organization", "@id": org_id, "name": c["site_name"], "url": base}
+    if c.get("logo"):
+        w, h = site.img(c["logo"])
+        org["logo"] = {"@type": "ImageObject", "url": site.abs_url(c["logo"]), "width": w, "height": h}
+    if c.get("social_profiles"):
+        org["sameAs"] = c["social_profiles"]
+    graph = [org, {
+        "@type": "WebSite", "@id": site_id, "url": base, "name": c["site_name"],
+        "description": c["description"], "publisher": {"@id": org_id}, "inLanguage": "en-US",
+        "potentialAction": {"@type": "SearchAction",
+                            "target": {"@type": "EntryPoint", "urlTemplate": base + "?q={search_term_string}"},
+                            "query-input": "required name=search_term_string"}}]
+
+    if page.crumbs:
+        items = []
+        for i, (label, path) in enumerate(page.crumbs, 1):
+            item = {"@type": "ListItem", "position": i, "name": label}
+            item["item"] = site.abs_url(path) if path is not None else url
+            items.append(item)
+        graph.append({"@type": "BreadcrumbList", "@id": url + "#breadcrumb", "itemListElement": items})
+
+    def item_list(deals, name):
+        urls = [site.abs_url(f"deals/{d['id']}/") for d in deals if site.has_page(d)]
+        if urls:
+            graph.append({"@type": "ItemList", "@id": url + "#deals", "name": name, "numberOfItems": len(urls),
+                          "itemListElement": [{"@type": "ListItem", "position": i, "url": u}
+                                              for i, u in enumerate(urls, 1)]})
+
+    live = site.live_deals()
+    ent = page.entity
+    if page.kind == "home":
+        item_list(live, "Today's best deals")
+    elif page.kind == "department":
+        item_list([d for d in live if d["category"] == ent], f"Best {site.category_name(ent)} deals today")
+    elif page.kind == "event":
+        item_list([d for d in live if d.get("event") == ent["slug"]], f"Best {ent['name']} deals")
+
+    def person(slug):
+        a = c["authors"][slug]
+        return {"@type": a.get("schema_type", "Person"), "name": a["name"], "url": site.abs_url(f"authors/{slug}/")}
+
+    if page.kind == "guide":
+        g = ent
+        art = site.art(f"guide-{g['slug']}")
+        image = site.abs_url(art["src2x"] or art["src"]) if art else site.abs_url(g["image"])
+        graph.append({"@type": "Article", "@id": url + "#article", "headline": smart(g["title"])[:110],
+                      "description": smart(page.description), "image": [image, site.abs_url(page.image)] if page.image else [image],
+                      "author": person(g["author"]), "publisher": {"@id": org_id},
+                      "datePublished": g["published"], "dateModified": page.updated.isoformat(),
+                      "mainEntityOfPage": url, "isPartOf": {"@id": site_id}})
+    elif page.kind == "author":
+        graph.append({"@type": "ProfilePage", "@id": url, "url": url, "name": page.title,
+                      "isPartOf": {"@id": site_id},
+                      "mainEntity": dict(person(ent), description=smart(c["authors"][ent]["bio"]))})
+    elif page.kind == "deal":
+        d = ent
+        # No Product/Offer: no price is shown (spec), and a Product without offers is invalid.
+        graph.append({"@type": "WebPage", "@id": url, "url": url, "name": smart(page.title),
+                      "description": smart(page.description), "isPartOf": {"@id": site_id},
+                      "breadcrumb": {"@id": url + "#breadcrumb"},
+                      "datePublished": d["added"], "dateModified": page.updated.isoformat(),
+                      "author": person(d.get("author") or c.get("default_author", "viewdeals-desk")),
+                      "about": {"@type": "Thing", "name": smart(d["title"])}})
+    return {"@context": "https://schema.org", "@graph": graph}
+
+
+def jsonld_tag(site, page):
+    if page.kind == "redirect":
+        return ""
+    data = json.dumps(jsonld(site, page), ensure_ascii=False, separators=(",", ":"))
+    return '<script type="application/ld+json">' + data.replace("</", "<\\/") + "</script>"
+
+
 def layout(site, page, main):
     c = site.config
     canonical = site.abs_url(page.path)
@@ -751,16 +913,19 @@ def layout(site, page, main):
 {robots}{refresh}{verification}
 <meta name="theme-color" content="#F4EFE6" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#141210" media="(prefers-color-scheme: dark)">
-<meta property="og:type" content="website">
 <meta property="og:site_name" content="{e(c['site_name'])}">
 <meta property="og:title" content="{e(smart(page.title))}">
 <meta property="og:description" content="{e(smart(page.description))}">
 <meta property="og:url" content="{e(canonical)}">
+{social_tags(site, page)}
 <link rel="icon" href="{p}assets/favicon.svg" type="image/svg+xml">
 <link rel="alternate" type="application/rss+xml" title="{e(c['site_name'])} deals" href="{p}feed.xml">
 <link rel="alternate" type="application/feed+json" title="{e(c['site_name'])} deals" href="{p}feed.json">
 <link rel="preload" href="{p}assets/fonts/newsreader-roman.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="{p}assets/style.css">
+<style>{critical_css(site, page)}</style>
+<link rel="stylesheet" href="{p}assets/style.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="{p}assets/style.css"></noscript>
+{jsonld_tag(site, page)}
 {HEAD_SCRIPT}
 <script src="{p}assets/app.js" defer></script>
 </head>
@@ -913,7 +1078,8 @@ def render_category(slug):
         out = [page_head(site, page, f"Best {name} deals today", kicker="Department", dek=v(dek),
                          art=site.art(f"cat-{slug}"))]
         if deals:
-            out.append(f'<section aria-label="{e(name)} deals">{deals_block(site, page, deals, annotate_first=True)}</section>')
+            out.append(f'<section aria-labelledby="deals-h"><h2 class="visually-hidden" id="deals-h">Live {e(name)} deals</h2>'
+                       f'{deals_block(site, page, deals, annotate_first=True)}</section>')
         else:
             out.append(f'<div class="empty-state"><p class="empty">We only list deals we would buy ourselves, so some days {t(name)} has nothing worth your time.</p>'
                        f'<p><a class="button button--quiet" href="{link(page, "")}">See all of today’s deals →</a></p></div>')
@@ -934,7 +1100,8 @@ def render_event(slug):
                          dek=t(ev["intro"]), art=site.art(f"event-{slug}"),
                          extra=f'<p class="event-dates"><span class="label">Dates</span> {when}</p>')]
         if deals:
-            out.append(f'<section aria-label="{e(ev["name"])} deals">{deals_block(site, page, deals, annotate_first=True)}</section>')
+            out.append(f'<section aria-labelledby="deals-h"><h2 class="visually-hidden" id="deals-h">Live {e(ev["name"])} deals</h2>'
+                       f'{deals_block(site, page, deals, annotate_first=True)}</section>')
         elif status == "upcoming":
             out.append(f'<div class="empty-state"><p class="empty">{t(ev["name"])} hasn’t started yet. We add deals here the day retailers do.</p>'
                        f'<p><a class="button button--quiet" href="{link(page, "")}">See today’s best deals →</a></p></div>')
@@ -1016,12 +1183,20 @@ def render_redirect(deal):
     return render
 
 
+def pin_link(site, page, guide):
+    """A plain "Save to Pinterest" link (no Pinterest script, so no third-party request)."""
+    media = page.image or guide["image"]
+    q = urlencode({"url": site.abs_url(page.path), "media": site.abs_url(media), "description": smart(guide["title"])})
+    return (f'<p class="pin"><a href="https://www.pinterest.com/pin/create/button/?{e(q)}" '
+            f'target="_blank" rel="noopener">Save this guide to Pinterest</a></p>')
+
+
 def render_guide(guide):
     def render(site, page):
         by_id = {d["id"]: d for d in site.all_known_deals()}
         picks = [by_id[i] for i in guide["deal_ids"] if i in by_id and site.deal_state(by_id[i]) == "live"]
         main = [page_head(site, page, guide["title"], kicker=t(guide.get("kicker", "Guide")), dek=t(guide["dek"]),
-                          extra=byline(site, page, guide["author"]))]
+                          extra=byline(site, page, guide["author"]) + pin_link(site, page, guide))]
         art = site.art(f"guide-{guide['slug']}")
         if not art:
             w, h = site.img(guide["image"])
@@ -1267,7 +1442,7 @@ def deal_title(deal):
 def plan_pages(site):
     c = site.config
     pages = [Page("", "home", f"{c['site_name']}: Hand-Picked Deals, Refreshed Every Day", c["description"],
-                  render_home, image="assets/art/share-home.svg")]
+                  render_home, image=site.share("home") or "assets/art/share-home.svg")]
     live = site.live_deals()
     for slug, name in c["categories"].items():
         count = sum(1 for d in live if d["category"] == slug)
@@ -1275,12 +1450,13 @@ def plan_pages(site):
                           fit_description([f"The best {name.lower()} deals live today, picked and checked by hand.",
                                            f"Deals from Amazon, Walmart, Target and Best Buy, refreshed every morning."]),
                           render_category(slug), noindex=(count == 0),
-                          crumbs=[("Home", ""), (name, None)], image=f"assets/art/cat-{slug}.svg"))
+                          crumbs=[("Home", ""), (name, None)], entity=slug,
+                          image=site.share(f"cat-{slug}") or f"assets/art/cat-{slug}.svg"))
     for ev in site.events.get("events", []):
         pages.append(Page(f"events/{ev['slug']}/", "event", event_title(ev),
                           ev.get("meta_description") or fit_description([ev["intro"]]),
                           render_event(ev["slug"]), crumbs=[("Home", ""), (f"{ev['name']} deals", None)],
-                          image=ev.get("image")))
+                          entity=ev, image=site.share(f"event-{ev['slug']}") or ev.get("image")))
     for deal in site.page_deals():
         state = site.deal_state(deal)
         path = f"deals/{deal['id']}/"
@@ -1295,18 +1471,22 @@ def plan_pages(site):
                               [f"{deal['title']} at {site.retailer_name(deal)}.", deal["blurb"], deal.get("who_for")]),
                           render_deal(deal), noindex=(state == "stale"),
                           sitemap=None if state == "stale" else "deals", crumbs=crumbs,
-                          published=parse_date(deal["added"]), image=site.deal_share_image(deal)))
+                          published=parse_date(deal["added"]), entity=deal,
+                          image=site.share("deal") or site.deal_share_image(deal)))
     for g in site.guides:
         title = g["title"] if g["title"].endswith("| ViewDeals") else f"{g['title']} | ViewDeals"
         pages.append(Page(f"guides/{g['slug']}/", "guide", title,
                           g.get("meta_description") or fit_description([g["dek"]]),
                           render_guide(g), sitemap="guides", crumbs=[("Home", ""), (g["title"], None)],
-                          published=parse_date(g["published"]), image=g["image"]))
+                          published=parse_date(g["published"]), entity=g,
+                          image=site.share(f"guide-{g['slug']}") or g["image"]))
     for slug, a in c.get("authors", {}).items():
         pages.append(Page(f"authors/{slug}/", "author", f"{a['name']}, Deals Editor | ViewDeals",
-                          fit_description([a["bio"]]), render_author(slug),
-                          crumbs=[("Home", ""), (a["name"], None)]))
-    pages.extend(static_pages(site))
+                          fit_description([a["bio"]]), render_author(slug), entity=slug,
+                          crumbs=[("Home", ""), (a["name"], None)], image=site.share("home")))
+    for sp in static_pages(site):
+        sp.image = sp.image or site.share("home")
+        pages.append(sp)
     if site.live_deals():
         pages.append(Page("styleguide/", "styleguide", "Style Guide: The Daily Circular | ViewDeals",
                           "Internal style tile for ViewDeals: type scale, palette, deal card variants, tags, stamps, highlighter and annotation marks in both editions.",
@@ -1458,6 +1638,34 @@ def check_links(docs):
     return errors
 
 
+def check_heads(docs):
+    """SEO checks on the written pages: JSON-LD parses, inline CSS fits the first
+    round trip, inline CSS urls resolve, and every indexable page has a share image."""
+    import gzip
+    errors = []
+    for f in docs.rglob("*.html"):
+        text = f.read_text(encoding="utf-8")
+        where = f.relative_to(docs).as_posix()
+        for block in re.findall(r'<script type="application/ld\+json">(.*?)</script>', text, re.S):
+            try:
+                json.loads(block)
+            except ValueError as exc:
+                errors.append(f"{where}: JSON-LD does not parse ({exc})")
+        style = re.search(r"<style>(.*?)</style>", text, re.S)
+        if style:
+            gz = len(gzip.compress(style.group(1).encode("utf-8")))
+            if gz > CRITICAL_MAX:
+                errors.append(f"{where}: inline CSS is {gz} bytes compressed (max {CRITICAL_MAX})")
+            for ref in re.findall(r"url\(([^)\"']*assets/[^)\"']+)\)", style.group(1)):
+                target = (docs / ref.lstrip("/")) if ref.startswith("/") else (f.parent / ref)
+                if not target.resolve().exists():
+                    errors.append(f"{where}: inline CSS url not found: {ref}")
+        if 'name="robots" content="noindex"' not in text and 'http-equiv="refresh"' not in text \
+                and 'property="og:image"' not in text:
+            errors.append(f"{where}: no og:image share card")
+    return errors
+
+
 def build(site):
     docs = site.root / "docs"
     pages = plan_pages(site)
@@ -1468,6 +1676,7 @@ def build(site):
         shutil.rmtree(docs)
     docs.mkdir()
     shutil.copytree(site.root / "assets", docs / "assets", ignore=shutil.ignore_patterns(".gitkeep"))
+    write_text(docs / "assets" / "style.css", css_minify((site.root / "assets" / "style.css").read_text(encoding="utf-8")) + "\n")
     for page in pages:
         out = docs / page.out_file
         out.parent.mkdir(parents=True, exist_ok=True)
@@ -1484,7 +1693,7 @@ def build(site):
     live_paths = {p.path for p in pages}
     site.state = {k: val for k, val in site.state.items() if k in live_paths}
     write_json(site.root / "data" / "page-state.json", dict(sorted(site.state.items())))
-    errors = check_links(docs)
+    errors = check_links(docs) + check_heads(docs)
     if errors:
         return errors
     print(f"Built {len(pages)} pages into docs/ for {site.today.isoformat()} "

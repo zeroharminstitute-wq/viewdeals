@@ -52,7 +52,8 @@
       "name": "ViewDeals Desk",
       "bio": "The ViewDeals Desk picks, checks and writes up every deal on the site. Read how we choose deals on our How we pick page.",
       "url": "/how-we-pick/",
-      "image": ""
+      "image": "",
+      "schema_type": "Organization"
     }
   },
   "default_author": "viewdeals-desk",
@@ -64,5 +65,6 @@
   "indexnow_key": "",
   "analytics": {
     "cloudflare_token": ""
-  }
+  },
+  "logo": "assets/logo-512.png"
 }
