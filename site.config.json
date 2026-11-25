@@ -1,0 +1,61 @@
+{
+  "site_name": "ViewDeals",
+  "domain": "viewdeals.com",
+  "base_url": "https://viewdeals.com",
+  "tagline": "Hand-picked deals, refreshed every day.",
+  "description": "Hand-picked deals from Amazon, Walmart, Target and Best Buy, checked by a person and refreshed every morning. No hype, no fake countdowns, just the good ones.",
+  "contact_email": "hello@viewdeals.com",
+  "timezone": "America/New_York",
+  "launch_date": "2026-11-25",
+  "disclosure_short": "We may earn a commission when you buy through links on this site. As an Amazon Associate, ViewDeals earns from qualifying purchases.",
+  "retailers": {
+    "amazon": {
+      "name": "Amazon",
+      "query_params": {"tag": ""}
+    },
+    "walmart": {
+      "name": "Walmart",
+      "link_template": ""
+    },
+    "target": {
+      "name": "Target",
+      "link_template": ""
+    },
+    "bestbuy": {
+      "name": "Best Buy",
+      "link_template": ""
+    },
+    "other": {
+      "name": "Other",
+      "link_template": ""
+    }
+  },
+  "categories": {
+    "tech": "Tech",
+    "home": "Home",
+    "smart-home": "Smart Home",
+    "beauty": "Beauty",
+    "toys": "Toys",
+    "outdoors": "Outdoors",
+    "fashion": "Fashion",
+    "events": "Events"
+  },
+  "authors": {
+    "viewdeals-desk": {
+      "name": "ViewDeals Desk",
+      "bio": "The ViewDeals Desk picks, checks and writes up every deal on the site. Read how we choose deals on our How we pick page.",
+      "url": "/how-we-pick/",
+      "image": ""
+    }
+  },
+  "default_author": "viewdeals-desk",
+  "social_profiles": [],
+  "verification": {
+    "google": "",
+    "bing": ""
+  },
+  "indexnow_key": "",
+  "analytics": {
+    "cloudflare_token": ""
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "year": 2026,
+  "events": [
+    {
+      "slug": "black-friday",
+      "name": "Black Friday",
+      "start": "2026-11-20",
+      "end": "2026-11-29",
+      "dates_confirmed": true,
+      "intro": "Black Friday is on November 27 this year, but most of the real discounts started the week before. We check every deal here by hand each morning and pull the ones that end or sell out, so what you see is what is actually still on.",
+      "image": "assets/art/share-black-friday.svg"
+    },
+    {
+      "slug": "cyber-monday",
+      "name": "Cyber Monday",
+      "start": "2026-11-30",
+      "end": "2026-12-01",
+      "dates_confirmed": true,
+      "intro": "Cyber Monday lands on November 30. Expect a lot of Black Friday prices to carry over, plus a second wave on tech and smart-home gear. We separate the genuinely new drops from the repeats.",
+      "image": "assets/art/share-cyber-monday.svg"
+    },
+    {
+      "slug": "prime-day",
+      "name": "Prime Day",
+      "start": "2026-07-14",
+      "end": "2026-07-17",
+      "dates_confirmed": false,
+      "intro": "Amazon's members-only summer sale. Amazon usually announces the dates in June; until then these dates are our estimate and will be corrected when the announcement lands.",
+      "image": "assets/art/share-prime-day.svg"
+    },
+    {
+      "slug": "back-to-school",
+      "name": "Back to School",
+      "start": "2026-07-15",
+      "end": "2026-09-07",
+      "dates_confirmed": false,
+      "intro": "Laptops, backpacks, dorm basics and the things kids actually use past September. Sales run from mid-July through Labor Day.",
+      "image": "assets/art/share-back-to-school.svg"
+    },
+    {
+      "slug": "holiday-gifts",
+      "name": "Holiday Gifts",
+      "start": "2026-11-01",
+      "end": "2026-12-24",
+      "dates_confirmed": true,
+      "intro": "Gifts worth giving, on sale now, with a note on who each one suits. We add shipping cut-off dates for each retailer as they are announced.",
+      "image": "assets/art/share-holiday-gifts.svg"
+    }
+  ]
+}
