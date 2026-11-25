@@ -10,3 +10,4 @@ node_modules/
 lighthouse-reports/
 screenshots/
 *.tmp
+photos-src/

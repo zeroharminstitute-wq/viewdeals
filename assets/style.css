@@ -349,3 +349,13 @@ main { padding-block: var(--s6) var(--s8); }
 .steps__mark { width: 40px; height: auto; margin-top: var(--s1); }
 .steps h2 { font-size: 24px; margin: 0 0 var(--s2); }
 .steps p { margin: 0; }
+
+/* Treated photographs and their credits */
+.art-fig { margin: 0; }
+.art-fig img { display: block; }
+.credit { margin-top: var(--s2); font: 400 12px/1.4 var(--font-text); color: var(--muted); }
+.credit a { color: inherit; }
+.page-head__art-fig { width: 100%; max-width: 360px; }
+.page-head__art-fig .page-head__art { max-width: none; }
+.article__art-fig { margin-bottom: var(--s6); }
+.article__art-fig .article__art { margin-bottom: 0; }

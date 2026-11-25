@@ -11,23 +11,30 @@
   "retailers": {
     "amazon": {
       "name": "Amazon",
-      "query_params": {"tag": ""}
+      "query_params": {
+        "tag": "viewdeals01-20"
+      },
+      "product_images": "none"
     },
     "walmart": {
       "name": "Walmart",
-      "link_template": ""
+      "link_template": "",
+      "product_images": "none"
     },
     "target": {
       "name": "Target",
-      "link_template": ""
+      "link_template": "",
+      "product_images": "none"
     },
     "bestbuy": {
       "name": "Best Buy",
-      "link_template": ""
+      "link_template": "",
+      "product_images": "none"
     },
     "other": {
       "name": "Other",
-      "link_template": ""
+      "link_template": "",
+      "product_images": "none"
     }
   },
   "categories": {

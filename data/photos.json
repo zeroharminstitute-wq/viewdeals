@@ -1,0 +1,130 @@
+{
+  "photos": {
+    "cat-beauty": {
+      "file": "assets/photos/cat-beauty.webp",
+      "file_2x": "assets/photos/cat-beauty@2x.webp",
+      "alt": "Jars of skin cream and a serum bottle on marble with eucalyptus",
+      "credit": "Henry Davidson",
+      "source": "Unsplash",
+      "source_url": "https://unsplash.com/photos/E30Dik5cHO8",
+      "license": "Unsplash License"
+    },
+    "cat-events": {
+      "file": "assets/photos/cat-events.webp",
+      "file_2x": "assets/photos/cat-events@2x.webp",
+      "alt": "A hand holding up four paper shopping bags",
+      "credit": "Iuliia Pilipeichenko",
+      "source": "Unsplash",
+      "source_url": "https://unsplash.com/photos/uaWMyAIpF2g",
+      "license": "Unsplash License"
+    },
+    "cat-fashion": {
+      "file": "assets/photos/cat-fashion.webp",
+      "file_2x": "assets/photos/cat-fashion@2x.webp",
+      "alt": "A long rail of shirts and jackets hanging in a row",
+      "credit": "Fujiphilm",
+      "source": "Unsplash",
+      "source_url": "https://unsplash.com/photos/ojZ4wJNUM5w",
+      "license": "Unsplash License"
+    },
+    "cat-home": {
+      "file": "assets/photos/cat-home.webp",
+      "file_2x": "assets/photos/cat-home@2x.webp",
+      "alt": "A kitchen counter with a sink, a coffee maker and stacked dishes",
+      "credit": "Franco Debartolo",
+      "source": "Unsplash",
+      "source_url": "https://unsplash.com/photos/bmmXSqxv53U",
+      "license": "Unsplash License"
+    },
+    "cat-outdoors": {
+      "file": "assets/photos/cat-outdoors.webp",
+      "file_2x": "assets/photos/cat-outdoors@2x.webp",
+      "alt": "An orange tent pitched on a grassy hill below mountains",
+      "credit": "Jesse Gardner",
+      "source": "Unsplash",
+      "source_url": "https://unsplash.com/photos/wTVr4HR4SBI",
+      "license": "Unsplash License"
+    },
+    "cat-smart-home": {
+      "file": "assets/photos/cat-smart-home.webp",
+      "file_2x": "assets/photos/cat-smart-home@2x.webp",
+      "alt": "A small smart speaker on a wooden shelf beside a TV, books and a plant",
+      "credit": "Jonas Leupe",
+      "source": "Unsplash",
+      "source_url": "https://unsplash.com/photos/xAuQY9Vof24",
+      "license": "Unsplash License"
+    },
+    "cat-tech": {
+      "file": "assets/photos/cat-tech.webp",
+      "file_2x": "assets/photos/cat-tech@2x.webp",
+      "alt": "Over-ear headphones on a white desk between a keyboard and a mouse",
+      "credit": "Tomasz Gawłowski",
+      "source": "Unsplash",
+      "source_url": "https://unsplash.com/photos/YDZPdqv3FcA",
+      "license": "Unsplash License"
+    },
+    "cat-toys": {
+      "file": "assets/photos/cat-toys.webp",
+      "file_2x": "assets/photos/cat-toys@2x.webp",
+      "alt": "A child's hand building with colorful wooden blocks",
+      "credit": "Michał Bożek",
+      "source": "Unsplash",
+      "source_url": "https://unsplash.com/photos/RcxR1aLw8X0",
+      "license": "Unsplash License"
+    },
+    "event-back-to-school": {
+      "file": "assets/photos/event-back-to-school.webp",
+      "file_2x": "assets/photos/event-back-to-school@2x.webp",
+      "alt": "Buckets of colored pencils, markers and scissors",
+      "credit": "Laura Rivera",
+      "source": "Unsplash",
+      "source_url": "https://unsplash.com/photos/ArH3dtoDQc0",
+      "license": "Unsplash License"
+    },
+    "event-black-friday": {
+      "file": "assets/photos/event-black-friday.webp",
+      "file_2x": "assets/photos/event-black-friday@2x.webp",
+      "alt": "A crowd of paper shopping bags stuffed with tissue paper",
+      "credit": "freestocks",
+      "source": "Unsplash",
+      "source_url": "https://unsplash.com/photos/spP6LqxN0-g",
+      "license": "Unsplash License"
+    },
+    "event-cyber-monday": {
+      "file": "assets/photos/event-cyber-monday.webp",
+      "file_2x": "assets/photos/event-cyber-monday@2x.webp",
+      "alt": "Hands holding a card over a laptop keyboard while shopping online",
+      "credit": "SumUp",
+      "source": "Unsplash",
+      "source_url": "https://unsplash.com/photos/ShB9pI4mpRg",
+      "license": "Unsplash License"
+    },
+    "event-holiday-gifts": {
+      "file": "assets/photos/event-holiday-gifts.webp",
+      "file_2x": "assets/photos/event-holiday-gifts@2x.webp",
+      "alt": "A pile of wrapped presents tied with ribbon",
+      "credit": "freestocks",
+      "source": "Unsplash",
+      "source_url": "https://unsplash.com/photos/PxM8aeJbzvk",
+      "license": "Unsplash License"
+    },
+    "event-prime-day": {
+      "file": "assets/photos/event-prime-day.webp",
+      "file_2x": "assets/photos/event-prime-day@2x.webp",
+      "alt": "A heap of taped cardboard delivery boxes",
+      "credit": "Rohit Choudhari",
+      "source": "Unsplash",
+      "source_url": "https://unsplash.com/photos/qO2ztAz5g7A",
+      "license": "Unsplash License"
+    },
+    "guide-black-friday-gifts-worth-giving": {
+      "file": "assets/photos/guide-black-friday-gifts-worth-giving.webp",
+      "file_2x": "assets/photos/guide-black-friday-gifts-worth-giving@2x.webp",
+      "alt": "Gifts wrapped in black and kraft paper, tied with twine",
+      "credit": "Nina Mercado",
+      "source": "Unsplash",
+      "source_url": "https://unsplash.com/photos/_qN6tmGjmtg",
+      "license": "Unsplash License"
+    }
+  }
+}

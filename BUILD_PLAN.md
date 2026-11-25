@@ -281,6 +281,13 @@ With no Amazon product photos allowed, illustration carries the visual weight, s
   - 1 set of 8 hand-drawn annotation marks: a circle, underline, arrow, star burst, bracket, checkmark, "editor's pick" script, and "last chance" script
 - **Where it comes from.** The recommended route is to commission one illustrator for the whole set (Dribbble or a risograph studio; budget roughly $400–1,200). The fallback is to generate images with a locked style prompt, hand-pick for consistency, then vectorize and clean them up. Either way, every file is reviewed by a person before it ships.
 - **Never** use emoji, stock icon packs, clip art, 3D blobs, or generic gradient illustrations.
+- **Amendment (owner, 2026-11-25): treated photographs.** Departments, event hubs and guides may use real photographs instead of the illustrations, provided that:
+  - the photo is free-license (Unsplash or Pexels license, never Unsplash+ or other paid tiers) or the owner's own;
+  - it shows no readable brand logos and no identifiable faces;
+  - it gets the house two-ink treatment (ink plus tag red, grain, slight misregistration), made by `scripts/dev/treat_photos.py`;
+  - it is credited in `data/photos.json` (photographer, source, link), shown in a caption on page headers and articles and listed on the About page.
+  The illustrations stay as the fallback for anything without a photo.
+- **Product photos on deals** follow the retailer rule below: a deal shows its product photo only when its retailer's `product_images` setting in `site.config.json` allows it, and the build refuses anything else. Otherwise the deal uses its department or event art.
 - **Formats.** SVG (optimized, under 30 KB each) or AVIF/WebP at 1x and 2x with explicit width and height, all in `assets/art/`.
 - **Retailer product images** are allowed only where that retailer's affiliate program provides them for affiliates. For Amazon, that means only after Product Advertising API access, served from Amazon's own servers.
 

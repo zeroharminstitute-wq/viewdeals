@@ -223,7 +223,63 @@ def image_size(path):
 # Validation
 # --------------------------------------------------------------------------
 
-def validate(config, deals, events=None, archive=None, guides=None, root=None):
+PRODUCT_IMAGE_MODES = ("none", "feed", "api")
+AMAZON_IMAGE_HOSTS = ("m.media-amazon.com", "images-na.ssl-images-amazon.com", "images-eu.ssl-images-amazon.com")
+
+
+def product_image_errors(config, deal):
+    """Rules for a deal's product photo (deal['image']).
+
+    A retailer's product_images setting must allow it: 'feed' means its affiliate
+    program supplies images to affiliates, 'api' means Amazon Product Advertising
+    API access. Images are always hotlinked from the retailer's own servers,
+    never copied into the repo.
+    """
+    im = deal.get("image")
+    if not im:
+        return []
+    did = deal.get("id", "?")
+    rid = deal.get("retailer")
+    mode = config.get("retailers", {}).get(rid, {}).get("product_images", "none")
+    errs = []
+    if mode not in PRODUCT_IMAGE_MODES:
+        errs.append(f"retailer {rid}: product_images must be one of {', '.join(PRODUCT_IMAGE_MODES)}")
+    if mode == "none":
+        errs.append(f"{did}: has a product image, but {rid}'s affiliate program is not set to allow them (product_images is 'none')")
+    if rid == "amazon" and mode != "api":
+        errs.append(f"{did}: Amazon product images need Product Advertising API access (product_images 'api')")
+    if not isinstance(im, dict):
+        return errs + [f"{did}: image must be an object with url, width, height and alt"]
+    url = str(im.get("url", ""))
+    host = urlsplit(url).hostname or ""
+    if not url.startswith("https://"):
+        errs.append(f"{did}: image url must be an https link to the retailer's own server (never a copy in the repo)")
+    elif rid == "amazon" and host not in AMAZON_IMAGE_HOSTS:
+        errs.append(f"{did}: Amazon images must be served from Amazon's image servers, not {host}")
+    if not (isinstance(im.get("width"), int) and isinstance(im.get("height"), int) and im["width"] > 0 and im["height"] > 0):
+        errs.append(f"{did}: image needs integer width and height")
+    if not str(im.get("alt", "")).strip():
+        errs.append(f"{did}: image needs alt text")
+    return errs
+
+
+def photo_errors(photos, root):
+    errs = []
+    for key, ph in (photos or {}).items():
+        if not re.fullmatch(r"(cat|event|guide)-[a-z0-9-]+", key):
+            errs.append(f"photo {key}: key must be cat-<slug>, event-<slug> or guide-<slug>")
+        for field in ("file", "alt", "credit", "source", "source_url", "license"):
+            if not str(ph.get(field, "")).strip():
+                errs.append(f"photo {key}: missing '{field}'")
+        if ph.get("license") not in ("Unsplash License", "Pexels License", "Owner's own"):
+            errs.append(f"photo {key}: license must be Unsplash License, Pexels License or Owner's own")
+        for f in (ph.get("file"), ph.get("file_2x")):
+            if f and root is not None and not image_size(Path(root) / f):
+                errs.append(f"photo {key}: {f} is missing or has no width and height")
+    return errs
+
+
+def validate(config, deals, events=None, archive=None, guides=None, root=None, photos=None):
     """Return a list of error strings for the data files; empty means valid."""
     errors = []
     retailers = config.get("retailers", {})
@@ -301,6 +357,14 @@ def validate(config, deals, events=None, archive=None, guides=None, root=None):
                 errors.append(f"{did}: related id '{rid}' does not exist")
         if deal.get("event") and deal["event"] not in event_slugs:
             errors.append(f"{did}: unknown event '{deal['event']}'")
+        errors.extend(product_image_errors(config, deal))
+
+    for rid, r in retailers.items():
+        if r.get("product_images", "none") not in PRODUCT_IMAGE_MODES:
+            errors.append(f"retailer {rid}: product_images must be one of {', '.join(PRODUCT_IMAGE_MODES)}")
+    if retailers.get("amazon", {}).get("product_images", "none") == "feed":
+        errors.append("retailer amazon: product_images can only be 'none' or 'api' (Amazon has no image feed for affiliates)")
+    errors.extend(photo_errors(photos, root))
 
     for g in guides or []:
         gid = g.get("slug", "?")
@@ -398,6 +462,7 @@ class Site:
         guide_dir = self.root / "data" / "guides"
         self.guides = [load_json(p) for p in sorted(guide_dir.glob("*.json"))] if guide_dir.exists() else []
         self.state = load_json(self.root / "data" / "page-state.json", {})
+        self.photos = load_json(self.root / "data" / "photos.json", {"photos": {}}).get("photos", {})
         self._img_cache = {}
 
     # --- data views --------------------------------------------------------
@@ -480,10 +545,41 @@ class Site:
             self._img_cache[rel_path] = image_size(self.root / rel_path) or (480, 320)
         return self._img_cache[rel_path]
 
-    def deal_art(self, deal):
+    def art(self, key, alt=""):
+        """Art for a slot such as 'cat-tech', 'event-black-friday' or 'guide-<slug>'.
+
+        A treated photo from data/photos.json wins; otherwise the illustration.
+        Returns a dict: src, src2x (or None), w, h, alt, remote, credit (or None).
+        """
+        ph = self.photos.get(key)
+        if ph:
+            w, h = self.img(ph["file"])
+            return {"src": ph["file"], "src2x": ph.get("file_2x"), "w": w, "h": h,
+                    "alt": ph.get("alt", alt), "remote": False, "credit": ph}
+        path = f"assets/art/{key}.svg"
+        if not (self.root / path).is_file():
+            return None
+        w, h = self.img(path)
+        return {"src": path, "src2x": None, "w": w, "h": h, "alt": alt, "remote": False, "credit": None}
+
+    def product_image_ok(self, deal):
+        im = deal.get("image")
+        return bool(im) and not product_image_errors(self.config, deal)
+
+    def deal_share_image(self, deal):
         if deal["category"] == "events" and deal.get("event"):
             return f"assets/art/event-{deal['event']}.svg"
         return f"assets/art/cat-{deal['category']}.svg"
+
+    def deal_art(self, deal):
+        """Product photo when the retailer's program allows it, else department or event art."""
+        if self.product_image_ok(deal):
+            im = deal["image"]
+            return {"src": im["url"], "src2x": None, "w": im["width"], "h": im["height"],
+                    "alt": im["alt"], "remote": True, "credit": None, "product": True}
+        if deal["category"] == "events" and deal.get("event"):
+            return self.art(f"event-{deal['event']}")
+        return self.art(f"cat-{deal['category']}")
 
     def abs_url(self, path):
         return self.config["base_url"].rstrip("/") + "/" + path
@@ -495,6 +591,25 @@ class Site:
 
 def link(page, target):
     return page.prefix + target
+
+
+def art_html(page, art, cls, lead=False, decorative=False, caption=False):
+    """<img> for an art dict from Site.art / Site.deal_art, with 2x srcset and an optional photo credit."""
+    if not art:
+        return ""
+    src = art["src"] if art["remote"] else link(page, art["src"])
+    srcset = f' srcset="{src} 1x, {link(page, art["src2x"])} 2x"' if art.get("src2x") else ""
+    alt = "" if decorative else art.get("alt", "")
+    loading = 'fetchpriority="high"' if lead else 'loading="lazy"'
+    extra = ' referrerpolicy="no-referrer"' if art["remote"] else ""
+    img = (f'<img class="{cls}" src="{e(src)}"{srcset} width="{art["w"]}" height="{art["h"]}" alt="{e(alt)}" '
+           f'{loading} decoding="async"{extra}>')
+    cr = art.get("credit")
+    if caption and cr:
+        who = f'<a href="{e(cr["source_url"])}" rel="nofollow noopener">{t(cr["credit"])}</a>'
+        img = (f'<figure class="art-fig {cls}-fig">{img}'
+               f'<figcaption class="credit">Photo: {who} / {t(cr["source"])}</figcaption></figure>')
+    return img
 
 
 def time_el(d):
@@ -542,9 +657,7 @@ def deal_card(site, page, deal, variant="standard", lead=False, annotate=None):
     parts = [f'<article class="{classes}" data-search="{e(search)}">']
     if variant != "compact":
         art = site.deal_art(deal)
-        w, h = site.img(art)
-        loading = 'fetchpriority="high"' if lead else 'loading="lazy"'
-        img = f'<img class="card__art" src="{link(page, art)}" width="{w}" height="{h}" alt="" {loading} decoding="async">'
+        img = art_html(page, art, "card__art", lead=lead, decorative=not art.get("product"))
         if annotate == "pick":
             img = f'<div class="card__artwrap">{img}{mark(site, "editors-pick", "annot annot--pick")}</div>'
         parts.append(img)
@@ -698,8 +811,8 @@ def page_head(site, page, h1, kicker=None, dek=None, art=None, art_alt="", extra
         parts.append(updated_line(page))
     parts.append(extra + "</div>")
     if art:
-        w, h = site.img(art)
-        parts.append(f'<img class="page-head__art" src="{link(page, art)}" width="{w}" height="{h}" alt="{e(art_alt)}" fetchpriority="high">')
+        parts.append(art_html(page, art, "page-head__art", lead=True, decorative=not art.get("credit") and not art_alt, caption=True)
+                     if isinstance(art, dict) else "")
     parts.append("</header>")
     return "".join(parts)
 
@@ -777,9 +890,8 @@ def sale_calendar(site, page, exclude=None):
         start, end = parse_date(ev["start"]), parse_date(ev["end"])
         when = f"{fmt_date(start)} – {fmt_date(end)}" + ("" if ev.get("dates_confirmed") else " (expected)")
         state = {"live": "On now", "upcoming": "Coming up", "past": "Ended"}[status]
-        art = f"assets/art/event-{ev['slug']}.svg"
-        w, h = site.img(art)
-        rows.append(f'<li class="calendar__item calendar__item--{status}"><img src="{link(page, art)}" width="{w}" height="{h}" alt="" loading="lazy">'
+        art = art_html(page, site.art(f"event-{ev['slug']}"), "calendar__art", decorative=True)
+        rows.append(f'<li class="calendar__item calendar__item--{status}">{art}'
                     f'<div><p class="label">{v(state)}</p><h3><a href="{link(page, "events/" + ev["slug"] + "/")}">{t(ev["name"])} {ev["start"][:4]} deals</a></h3>'
                     f'<p class="calendar__when">{when}</p></div></li>')
     return ('<section class="section calendar" aria-labelledby="cal-h"><h2 class="section-head" id="cal-h">Sale calendar</h2>'
@@ -794,7 +906,7 @@ def render_category(slug):
         dek = (f"{n} live deal{'s' if n != 1 else ''} in {t(name)}, picked and checked by hand this morning."
                if n else f"Nothing in {t(name)} today. Some days a section stays quiet.")
         out = [page_head(site, page, f"Best {name} deals today", kicker="Department", dek=v(dek),
-                         art=f"assets/art/cat-{slug}.svg")]
+                         art=site.art(f"cat-{slug}"))]
         if deals:
             out.append(f'<section aria-label="{e(name)} deals">{deals_block(site, page, deals, annotate_first=True)}</section>')
         else:
@@ -814,7 +926,7 @@ def render_event(slug):
         state = {"live": "On now", "upcoming": "Coming up", "past": "Ended for " + year}[status]
         deals = [d for d in site.live_deals() if d.get("event") == slug]
         out = [page_head(site, page, f"Best {ev['name']} deals {year}", kicker=f"Sale event · {v(state)}",
-                         dek=t(ev["intro"]), art=f"assets/art/event-{slug}.svg",
+                         dek=t(ev["intro"]), art=site.art(f"event-{slug}"),
                          extra=f'<p class="event-dates"><span class="label">Dates</span> {when}</p>')]
         if deals:
             out.append(f'<section aria-label="{e(ev["name"])} deals">{deals_block(site, page, deals, annotate_first=True)}</section>')
@@ -866,8 +978,7 @@ def render_deal(deal):
         if state == "live":
             main.append(f'<p class="deal-cta--inline"><a class="button" href="{e(affiliate_url(site.config, deal))}" {out_attrs()}>See deal at {t(retailer)} →</a></p>')
         art = site.deal_art(deal)
-        w, h = site.img(art)
-        main.append(f'<img class="article__art" src="{link(page, art)}" width="{w}" height="{h}" alt="" loading="lazy">')
+        main.append(art_html(page, art, "article__art", decorative=not art.get("product"), caption=True))
         main.append('<div class="prose">' + "".join(f"<p>{t(p)}</p>" for p in deal["write_up"]) + "</div>")
         if deal.get("who_for") or deal.get("skip_if"):
             fit = '<dl class="fit">'
@@ -905,9 +1016,12 @@ def render_guide(guide):
         picks = [by_id[i] for i in guide["deal_ids"] if i in by_id and site.deal_state(by_id[i]) == "live"]
         main = [page_head(site, page, guide["title"], kicker=t(guide.get("kicker", "Guide")), dek=t(guide["dek"]),
                           extra=byline(site, page, guide["author"]))]
-        img = guide["image"]
-        w, h = site.img(img)
-        main.append(f'<img class="article__art article__art--wide" src="{link(page, img)}" width="{w}" height="{h}" alt="{e(guide.get("image_alt", ""))}" fetchpriority="high">')
+        art = site.art(f"guide-{guide['slug']}")
+        if not art:
+            w, h = site.img(guide["image"])
+            art = {"src": guide["image"], "src2x": None, "w": w, "h": h, "alt": guide.get("image_alt", ""),
+                   "remote": False, "credit": None}
+        main.append(art_html(page, art, "article__art article__art--wide", lead=True, caption=True))
         body = []
         for sec in guide["sections"]:
             body.append(f"<h2>{t(sec['heading'])}</h2>")
@@ -965,6 +1079,17 @@ def render_404(site, page):
     return "\n".join(out)
 
 
+def photo_credits(site):
+    """One paragraph crediting every photographer, grouped by person."""
+    by = {}
+    for ph in site.photos.values():
+        by.setdefault((ph["credit"], ph["source"]), ph["source_url"])
+    names = [f'<a href="{e(url)}" rel="nofollow noopener">{t(name)}</a> ({t(src)})' for (name, src), url in sorted(by.items())]
+    listed = ", ".join(names[:-1]) + " and " + names[-1] if len(names) > 1 else names[0]
+    return (t("Photographs on department, sale and guide pages are by ") + listed +
+            t(", used under the Unsplash License and printed in our two-ink style. Product photos appear only where a retailer's affiliate program supplies them."))
+
+
 def static_pages(site):
     c = site.config
     email = f'<a href="mailto:{e(c["contact_email"])}">{t(c["contact_email"])}</a>'
@@ -976,7 +1101,7 @@ def static_pages(site):
             t("We'd rather list fifteen good deals than a hundred so-so ones. A deal makes the cut when the product is well known or well reviewed, the discount is real according to a recent source, and the retailer is one you already shop with."),
             t("You won't see Amazon prices or percent-off figures here. Amazon only allows prices that come straight from its own systems, and a page like this one can't promise a price is still current, so we tell you why a deal is good and let the retailer show you the price."),
             f'{t("Spotted a mistake or a deal that has ended? Tell us at")} {email}.',
-        ], kicker="About", dek="A daily circular of deals worth your time, picked by a person.",
+        ] + ([photo_credits(site)] if site.photos else []), kicker="About", dek="A daily circular of deals worth your time, picked by a person.",
            more=("How we pick and check every deal", "how-we-pick/")),
         crumbs=[("Home", ""), ("About", None)]))
     pages.append(Page("disclosure/", "disclosure", "Affiliate Disclosure | ViewDeals",
@@ -1164,7 +1289,7 @@ def plan_pages(site):
                               [f"{deal['title']} at {site.retailer_name(deal)}.", deal["blurb"], deal.get("who_for")]),
                           render_deal(deal), noindex=(state == "stale"),
                           sitemap=None if state == "stale" else "deals", crumbs=crumbs,
-                          published=parse_date(deal["added"]), image=site.deal_art(deal)))
+                          published=parse_date(deal["added"]), image=site.deal_share_image(deal)))
     for g in site.guides:
         title = g["title"] if g["title"].endswith("| ViewDeals") else f"{g['title']} | ViewDeals"
         pages.append(Page(f"guides/{g['slug']}/", "guide", title,
@@ -1380,7 +1505,7 @@ def main(argv=None):
     root = Path(args.root)
 
     site = Site(root, today)
-    errors = validate(site.config, site.deals, site.events, site.archive, site.guides, root)
+    errors = validate(site.config, site.deals, site.events, site.archive, site.guides, root, site.photos)
     if not errors:
         errors = validate_pages(site, plan_pages(site))
     if errors:

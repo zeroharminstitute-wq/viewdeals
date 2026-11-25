@@ -1,0 +1,104 @@
+{
+  "_about": "Source list for scripts/dev/treat_photos.py. Each entry is a free-license photo that gets the house two-ink treatment. Crop: focus_x / focus_y (0-1) set where the crop centres. Run: python scripts/dev/treat_photos.py (needs Pillow; dev only).",
+  "photos": {
+    "cat-tech": {
+      "unsplash": "photo-1546435770-a3e426bf472b",
+      "source_url": "https://unsplash.com/photos/YDZPdqv3FcA",
+      "credit": "Tomasz Gawłowski",
+      "alt": "Over-ear headphones on a white desk between a keyboard and a mouse",
+      "focus_x": 0.5, "focus_y": 0.5
+    },
+    "cat-smart-home": {
+      "unsplash": "photo-1562851529-482d8189f5a5",
+      "source_url": "https://unsplash.com/photos/xAuQY9Vof24",
+      "credit": "Jonas Leupe",
+      "alt": "A small smart speaker on a wooden shelf beside a TV, books and a plant",
+      "focus_x": 0.55, "focus_y": 0.5
+    },
+    "cat-home": {
+      "unsplash": "photo-1771287490574-f5de29048a39",
+      "source_url": "https://unsplash.com/photos/bmmXSqxv53U",
+      "credit": "Franco Debartolo",
+      "alt": "A kitchen counter with a sink, a coffee maker and stacked dishes",
+      "focus_x": 0.55, "focus_y": 0.55
+    },
+    "cat-beauty": {
+      "unsplash": "photo-1785581778868-79100f7fe56c",
+      "source_url": "https://unsplash.com/photos/E30Dik5cHO8",
+      "credit": "Henry Davidson",
+      "alt": "Jars of skin cream and a serum bottle on marble with eucalyptus",
+      "focus_x": 0.45, "focus_y": 0.5
+    },
+    "cat-toys": {
+      "unsplash": "photo-1575364289437-fb1479d52732",
+      "source_url": "https://unsplash.com/photos/RcxR1aLw8X0",
+      "credit": "Michał Bożek",
+      "alt": "A child's hand building with colorful wooden blocks",
+      "focus_x": 0.5, "focus_y": 0.5
+    },
+    "cat-outdoors": {
+      "unsplash": "photo-1571863533956-01c88e79957e",
+      "source_url": "https://unsplash.com/photos/wTVr4HR4SBI",
+      "credit": "Jesse Gardner",
+      "alt": "An orange tent pitched on a grassy hill below mountains",
+      "focus_x": 0.6, "focus_y": 0.55
+    },
+    "cat-fashion": {
+      "unsplash": "photo-1540221652346-e5dd6b50f3e7",
+      "source_url": "https://unsplash.com/photos/ojZ4wJNUM5w",
+      "credit": "Fujiphilm",
+      "alt": "A long rail of shirts and jackets hanging in a row",
+      "focus_x": 0.5, "focus_y": 0.55
+    },
+    "cat-events": {
+      "unsplash": "photo-1760565030346-4b947220fe3a",
+      "source_url": "https://unsplash.com/photos/uaWMyAIpF2g",
+      "credit": "Iuliia Pilipeichenko",
+      "alt": "A hand holding up four paper shopping bags",
+      "focus_x": 0.45, "focus_y": 0.5
+    },
+    "event-black-friday": {
+      "unsplash": "photo-1513884923967-4b182ef167ab",
+      "source_url": "https://unsplash.com/photos/spP6LqxN0-g",
+      "credit": "freestocks",
+      "alt": "A crowd of paper shopping bags stuffed with tissue paper",
+      "focus_x": 0.5, "focus_y": 0.5
+    },
+    "event-cyber-monday": {
+      "unsplash": "photo-1733503747506-773e56e4078f",
+      "source_url": "https://unsplash.com/photos/ShB9pI4mpRg",
+      "credit": "SumUp",
+      "alt": "Hands holding a card over a laptop keyboard while shopping online",
+      "focus_x": 0.5, "focus_y": 0.55
+    },
+    "event-prime-day": {
+      "unsplash": "photo-1766040923580-16ad32fae8b4",
+      "source_url": "https://unsplash.com/photos/qO2ztAz5g7A",
+      "credit": "Rohit Choudhari",
+      "alt": "A heap of taped cardboard delivery boxes",
+      "focus_x": 0.5, "focus_y": 0.5
+    },
+    "event-back-to-school": {
+      "unsplash": "photo-1629652487043-fb2825838f8c",
+      "source_url": "https://unsplash.com/photos/ArH3dtoDQc0",
+      "credit": "Laura Rivera",
+      "alt": "Buckets of colored pencils, markers and scissors",
+      "focus_x": 0.5, "focus_y": 0.45
+    },
+    "event-holiday-gifts": {
+      "unsplash": "photo-1513885535751-8b9238bd345a",
+      "source_url": "https://unsplash.com/photos/PxM8aeJbzvk",
+      "credit": "freestocks",
+      "alt": "A pile of wrapped presents tied with ribbon",
+      "focus_x": 0.5, "focus_y": 0.5
+    },
+    "guide-black-friday-gifts-worth-giving": {
+      "unsplash": "photo-1608755727748-dfa2e44f255b",
+      "source_url": "https://unsplash.com/photos/_qN6tmGjmtg",
+      "credit": "Nina Mercado",
+      "alt": "Gifts wrapped in black and kraft paper, tied with twine",
+      "focus_x": 0.5, "focus_y": 0.5,
+      "shape": "wide"
+    }
+  }
+}
