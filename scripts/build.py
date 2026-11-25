@@ -1,35 +1,55 @@
 #!/usr/bin/env python3
 """ViewDeals build script: validate the deals data, then build the static site.
 
-Standard library only. Phase 1 implements validation (--check); the site
-build itself arrives in Phase 2.
+Standard library only (Python 3.9+).
 
-Usage:
-    python3 scripts/build.py --check [--today YYYY-MM-DD]
+    python3 scripts/build.py                     validate, then build docs/ as of today
+    python3 scripts/build.py --check             validate only; write nothing
+    python3 scripts/build.py --prune             archive expired deals, then build
+    python3 scripts/build.py --today YYYY-MM-DD  treat that date as today
 """
 import argparse
 import datetime as dt
+import hashlib
+import html
 import json
 import re
+import shutil
+import struct
 import sys
 from pathlib import Path
-from urllib.parse import urlsplit
+from urllib.parse import parse_qsl, quote, urlencode, urlsplit, urlunsplit
 
-ROOT = Path(__file__).resolve().parent.parent
-CONFIG_PATH = ROOT / "site.config.json"
-DEALS_PATH = ROOT / "data" / "deals.json"
-EVENTS_PATH = ROOT / "data" / "events.json"
+DEFAULT_ROOT = Path(__file__).resolve().parent.parent
 
 REQUIRED = ["id", "title", "retailer", "url", "category", "blurb", "added", "expires"]
 ID_RE = re.compile(r"^[a-z0-9][a-z0-9-]*$")
 PRICE_RE = re.compile(r"[$€£]\s?\d|\d+\s?%|\bpercent\b", re.IGNORECASE)
 BLURB_MAX = 320
 WRITE_UP_MIN_WORDS = 150
+TITLE_MAX = 60
+DESC_MIN, DESC_MAX = 120, 155
+NOINDEX_AFTER_DAYS = 60     # an ended deal page gets noindex after this many days
+REDIRECT_AFTER_DAYS = 365   # ...and becomes a redirect to its department after this many
+ENDING_SOON_DAYS = 3
+UPDATED_TOKEN = "\x00UPDATED\x00"
+VOLATILE_RE = re.compile(r"<!--v-->.*?<!--/v-->", re.S)
 
 
-def load_json(path):
+# --------------------------------------------------------------------------
+# Small helpers
+# --------------------------------------------------------------------------
+
+def load_json(path, default=None):
+    if default is not None and not Path(path).exists():
+        return default
     with open(path, encoding="utf-8") as f:
         return json.load(f)
+
+
+def write_json(path, data):
+    with open(path, "w", encoding="utf-8", newline="\n") as f:
+        f.write(json.dumps(data, indent=2, ensure_ascii=False) + "\n")
 
 
 def parse_date(value):
@@ -45,14 +65,167 @@ def word_count(paragraphs):
     return sum(len(str(p).split()) for p in paragraphs)
 
 
-def validate(config, deals, events=None):
-    """Return a list of error strings; empty means the data is valid."""
+def eastern_today():
+    """Today's date in America/New_York, with a DST fallback when tzdata is missing."""
+    try:
+        from zoneinfo import ZoneInfo
+        return dt.datetime.now(ZoneInfo("America/New_York")).date()
+    except Exception:
+        utc = dt.datetime.now(dt.timezone.utc).replace(tzinfo=None)
+
+        def nth_sunday(month, n):
+            d = dt.datetime(utc.year, month, 1)
+            d += dt.timedelta(days=(6 - d.weekday()) % 7)
+            return d + dt.timedelta(weeks=n - 1)
+
+        dst = nth_sunday(3, 2).replace(hour=7) <= utc < nth_sunday(11, 1).replace(hour=6)
+        return (utc + dt.timedelta(hours=-4 if dst else -5)).date()
+
+
+MONTHS = ["January", "February", "March", "April", "May", "June", "July",
+          "August", "September", "October", "November", "December"]
+DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+
+
+def fmt_date(d):
+    return f"{MONTHS[d.month - 1][:3]} {d.day}, {d.year}"
+
+
+def fmt_long(d):
+    return f"{DAYS[d.weekday()]}, {MONTHS[d.month - 1]} {d.day}, {d.year}"
+
+
+def smart(s):
+    """Curly quotes and real dashes for display text."""
+    s = str(s)
+    s = re.sub(r"(\w)'(\w)", "\\1\u2019\\2", s)
+    s = re.sub(r"(\w)'", "\\1\u2019", s)
+    s = re.sub(r"'(\w)", "\u2018\\1", s)
+    s = re.sub(r'"(?=\w)', "\u201c", s)
+    s = s.replace('"', "\u201d")
+    s = s.replace(" -- ", " \u2014 ").replace("--", "\u2013")
+    return s
+
+
+def e(s):
+    """HTML-escape a raw value (attributes, URLs)."""
+    return html.escape(str(s), quote=True)
+
+
+def t(s):
+    """HTML-escape display text, with typographic quotes."""
+    return html.escape(smart(s), quote=False)
+
+
+def v(fragment):
+    """Mark a fragment as volatile so it is ignored by the content hash."""
+    return f"<!--v-->{fragment}<!--/v-->"
+
+
+def tilt(deal_id):
+    """Fixed rotation between -2 and +2 degrees, derived from the deal id."""
+    h = int(hashlib.sha1(deal_id.encode("utf-8")).hexdigest()[:8], 16)
+    return round((h % 401) / 100 - 2, 2)
+
+
+def fit_description(sentences, filler="Every deal is picked and checked by hand at ViewDeals."):
+    """Join sentences into a 120-155 character meta description."""
+    out = ""
+    for s in [x for x in sentences if x] + [filler, "Refreshed every morning."]:
+        s = " ".join(str(s).split())
+        out = f"{out} {s}".strip() if out else s
+        if len(out) >= DESC_MIN:
+            break
+    if len(out) > DESC_MAX:
+        cut = out[:DESC_MAX - 1]
+        cut = cut[:cut.rfind(" ")].rstrip(",;:.- ")
+        out = cut + "\u2026"
+    return out
+
+
+# --------------------------------------------------------------------------
+# Affiliate links
+# --------------------------------------------------------------------------
+
+def affiliate_url(config, deal):
+    """Return the outbound link for a deal, with the retailer's affiliate settings applied."""
+    retailer = config.get("retailers", {}).get(deal.get("retailer"), {})
+    url = deal["url"]
+    template = retailer.get("link_template") or ""
+    if template:
+        return template.replace("{url}", quote(url, safe=""))
+    params = {k: v for k, v in (retailer.get("query_params") or {}).items() if v}
+    if params:
+        parts = urlsplit(url)
+        query = [(k, val) for k, val in parse_qsl(parts.query, keep_blank_values=True) if k not in params]
+        query += list(params.items())
+        return urlunsplit(parts._replace(query=urlencode(query)))
+    return url
+
+
+# --------------------------------------------------------------------------
+# Images
+# --------------------------------------------------------------------------
+
+def image_size(path):
+    """Return (width, height) for SVG, PNG, WebP or JPEG files, else None."""
+    p = Path(path)
+    if not p.is_file():
+        return None
+    data = p.read_bytes()
+    try:
+        if p.suffix.lower() == ".svg":
+            head = data[:2000].decode("utf-8", "ignore")
+            tag = re.search(r"<svg\b[^>]*>", head, re.S)
+            if not tag:
+                return None
+            w = re.search(r'\bwidth="(\d+(?:\.\d+)?)', tag.group(0))
+            h = re.search(r'\bheight="(\d+(?:\.\d+)?)', tag.group(0))
+            if w and h:
+                return int(float(w.group(1))), int(float(h.group(1)))
+            vb = re.search(r'viewBox="[\d.\-]+ [\d.\-]+ ([\d.]+) ([\d.]+)"', tag.group(0))
+            return (int(float(vb.group(1))), int(float(vb.group(2)))) if vb else None
+        if data[:8] == b"\x89PNG\r\n\x1a\n":
+            return struct.unpack(">II", data[16:24])
+        if data[:4] == b"RIFF" and data[8:12] == b"WEBP":
+            chunk = data[12:16]
+            if chunk == b"VP8X":
+                return 1 + int.from_bytes(data[24:27], "little"), 1 + int.from_bytes(data[27:30], "little")
+            if chunk == b"VP8 ":
+                w, h = struct.unpack("<HH", data[26:30])
+                return w & 0x3FFF, h & 0x3FFF
+            if chunk == b"VP8L":
+                b = int.from_bytes(data[21:25], "little")
+                return (b & 0x3FFF) + 1, ((b >> 14) & 0x3FFF) + 1
+        if data[:2] == b"\xff\xd8":
+            i = 2
+            while i < len(data):
+                if data[i] != 0xFF:
+                    i += 1
+                    continue
+                marker = data[i + 1]
+                if marker in (0xC0, 0xC1, 0xC2):
+                    h, w = struct.unpack(">HH", data[i + 5:i + 9])
+                    return w, h
+                i += 2 + struct.unpack(">H", data[i + 2:i + 4])[0]
+    except (struct.error, IndexError, ValueError):
+        return None
+    return None
+
+
+# --------------------------------------------------------------------------
+# Validation
+# --------------------------------------------------------------------------
+
+def validate(config, deals, events=None, archive=None, guides=None, root=None):
+    """Return a list of error strings for the data files; empty means valid."""
     errors = []
     retailers = config.get("retailers", {})
     categories = config.get("categories", {})
-    event_slugs = {e["slug"] for e in (events or {}).get("events", [])}
+    event_slugs = {ev["slug"] for ev in (events or {}).get("events", [])}
+    archive = archive or []
     seen = set()
-    all_ids = {d.get("id") for d in deals if isinstance(d, dict)}
+    known_ids = {d.get("id") for d in deals if isinstance(d, dict)} | {d.get("id") for d in archive}
 
     for i, deal in enumerate(deals):
         did = deal.get("id") or f"#{i + 1}"
@@ -113,50 +286,866 @@ def validate(config, deals, events=None):
             if words < WRITE_UP_MIN_WORDS:
                 errors.append(f"{did}: write_up has {words} words; needs {WRITE_UP_MIN_WORDS}+ for a page")
             if deal.get("retailer") == "amazon":
-                for p in deal["write_up"] + [deal.get("who_for", ""), deal.get("skip_if", "")]:
-                    if PRICE_RE.search(str(p)):
-                        errors.append(f"{did}: Amazon write-up must not show a price or discount")
-                        break
+                extra = [deal.get("who_for", ""), deal.get("skip_if", ""), deal.get("hook", ""),
+                         deal.get("short_name", ""), deal.get("seo_title", ""), deal.get("meta_description", "")]
+                if any(PRICE_RE.search(str(p)) for p in list(deal["write_up"]) + extra):
+                    errors.append(f"{did}: Amazon write-up must not show a price or discount")
         for rid in deal.get("related", []):
-            if rid not in all_ids:
+            if rid not in known_ids:
                 errors.append(f"{did}: related id '{rid}' does not exist")
         if deal.get("event") and deal["event"] not in event_slugs:
             errors.append(f"{did}: unknown event '{deal['event']}'")
 
+    for g in guides or []:
+        gid = g.get("slug", "?")
+        for field in ("slug", "title", "dek", "author", "published", "updated", "image", "sections", "deal_ids"):
+            if not g.get(field):
+                errors.append(f"guide {gid}: missing required field '{field}'")
+        if g.get("author") and g["author"] not in config.get("authors", {}):
+            errors.append(f"guide {gid}: unknown author '{g['author']}'")
+        for rid in g.get("deal_ids", []):
+            if rid not in known_ids:
+                errors.append(f"guide {gid}: deal_ids entry '{rid}' does not exist")
+
+    if root is not None:
+        images = [ev.get("image") for ev in (events or {}).get("events", [])]
+        images += [g.get("image") for g in guides or []]
+        images += [f"assets/art/cat-{c}.svg" for c in categories]
+        images += [f"assets/art/event-{s}.svg" for s in event_slugs]
+        for img in filter(None, images):
+            if not image_size(Path(root) / img):
+                errors.append(f"image {img}: missing or has no width and height")
     return errors
 
+
+# --------------------------------------------------------------------------
+# Prune
+# --------------------------------------------------------------------------
+
+def prune(root, today):
+    """Move deals whose expires is before today into data/archive.json."""
+    deals_path, archive_path = root / "data" / "deals.json", root / "data" / "archive.json"
+    data = load_json(deals_path)
+    archive = load_json(archive_path, {"deals": []})
+    keep, moved = [], []
+    for deal in data["deals"]:
+        (moved if parse_date(deal["expires"]) < today else keep).append(deal)
+    archived = {d["id"] for d in archive["deals"]}
+    added = 0
+    for deal in moved:
+        if deal["id"] not in archived:
+            archive["deals"].append(deal)
+            archived.add(deal["id"])
+            added += 1
+    data["deals"] = keep
+    write_json(deals_path, data)
+    write_json(archive_path, archive)
+    print(f"Pruned {len(moved)} expired deal(s); {added} new in archive.json.")
+    return moved
+
+
+# --------------------------------------------------------------------------
+# Site model
+# --------------------------------------------------------------------------
+
+class Page:
+    def __init__(self, path, kind, title, description, render, **kw):
+        self.path = path                  # "" for home, "c/tech/", "404.html"
+        self.kind = kind
+        self.title = title
+        self.description = description
+        self.render = render              # function(site, page) -> main HTML
+        self.noindex = kw.get("noindex", False)
+        self.sitemap = kw.get("sitemap", "pages")  # pages | deals | guides | None
+        self.crumbs = kw.get("crumbs")    # list of (label, path or None)
+        self.redirect = kw.get("redirect")  # path to send readers to
+        self.published = kw.get("published")
+        self.image = kw.get("image")
+        self.root_links = kw.get("root_links", False)
+        self.updated = None
+
+    @property
+    def depth(self):
+        return self.path.count("/") if self.path.endswith("/") else 0
+
+    @property
+    def prefix(self):
+        if self.root_links:
+            return "/"
+        return "../" * self.depth if self.depth else "./"
+
+    @property
+    def out_file(self):
+        return self.path + "index.html" if self.path.endswith("/") or not self.path else self.path
+
+
+class Site:
+    def __init__(self, root, today):
+        self.root = Path(root)
+        self.today = today
+        self.config = load_json(self.root / "site.config.json")
+        data = load_json(self.root / "data" / "deals.json")
+        self.updated_data = data.get("updated")
+        self.deals = data.get("deals", [])
+        self.archive = load_json(self.root / "data" / "archive.json", {"deals": []})["deals"]
+        self.events = load_json(self.root / "data" / "events.json", {"events": []})
+        guide_dir = self.root / "data" / "guides"
+        self.guides = [load_json(p) for p in sorted(guide_dir.glob("*.json"))] if guide_dir.exists() else []
+        self.state = load_json(self.root / "data" / "page-state.json", {})
+        self._img_cache = {}
+
+    # --- data views --------------------------------------------------------
+
+    def retailer_name(self, deal):
+        return self.config["retailers"][deal["retailer"]]["name"]
+
+    def category_name(self, slug):
+        return self.config["categories"][slug]
+
+    def live_deals(self):
+        live = [d for d in self.deals if parse_date(d["expires"]) >= self.today]
+        live.sort(key=lambda d: (d["expires"],))
+        live.sort(key=lambda d: d["added"], reverse=True)
+        live.sort(key=lambda d: not d.get("featured"))
+        return live
+
+    def all_known_deals(self):
+        """Live file first, then archive; live wins on duplicate ids."""
+        seen, out = set(), []
+        for d in self.deals + self.archive:
+            if d["id"] not in seen:
+                seen.add(d["id"])
+                out.append(d)
+        return out
+
+    def has_page(self, deal):
+        return word_count(deal.get("write_up")) >= WRITE_UP_MIN_WORDS
+
+    def deal_state(self, deal):
+        """live | ended | stale | gone, from days since expiry."""
+        days = (self.today - parse_date(deal["expires"])).days
+        if days <= 0:
+            return "live"
+        if days > REDIRECT_AFTER_DAYS:
+            return "gone"
+        if days > NOINDEX_AFTER_DAYS:
+            return "stale"
+        return "ended"
+
+    def page_deals(self):
+        """Deals that have a page (live, ended, stale or gone)."""
+        return [d for d in self.all_known_deals() if self.has_page(d)]
+
+    def deal_link_target(self, deal):
+        """Internal page path if the deal has a live page, else None."""
+        if self.has_page(deal) and self.deal_state(deal) != "gone":
+            return f"deals/{deal['id']}/"
+        return None
+
+    def event(self, slug):
+        return next((ev for ev in self.events.get("events", []) if ev["slug"] == slug), None)
+
+    def event_status(self, ev):
+        start, end = parse_date(ev["start"]), parse_date(ev["end"])
+        if self.today < start:
+            return "upcoming"
+        if self.today > end:
+            return "past"
+        return "live"
+
+    def related_live(self, deal, n=3):
+        live = [d for d in self.live_deals() if d["id"] != deal["id"]]
+        by_id = {d["id"]: d for d in live}
+        picks = [by_id[r] for r in deal.get("related", []) if r in by_id]
+        for pool in ([d for d in live if d["category"] == deal["category"]], live):
+            for d in pool:
+                if len(picks) >= n:
+                    break
+                if d not in picks:
+                    picks.append(d)
+        return picks[:n]
+
+    def edition_number(self):
+        launch = parse_date(self.config.get("launch_date")) or self.today
+        return max(1, (self.today - launch).days + 1)
+
+    def img(self, rel_path):
+        if rel_path not in self._img_cache:
+            self._img_cache[rel_path] = image_size(self.root / rel_path) or (480, 320)
+        return self._img_cache[rel_path]
+
+    def deal_art(self, deal):
+        if deal["category"] == "events" and deal.get("event"):
+            return f"assets/art/event-{deal['event']}.svg"
+        return f"assets/art/cat-{deal['category']}.svg"
+
+    def abs_url(self, path):
+        return self.config["base_url"].rstrip("/") + "/" + path
+
+
+# --------------------------------------------------------------------------
+# Shared fragments
+# --------------------------------------------------------------------------
+
+def link(page, target):
+    return page.prefix + target
+
+
+def time_el(d):
+    return f'<time datetime="{d.isoformat()}">{fmt_date(d)}</time>'
+
+
+def timing_text(site, deal):
+    days = (parse_date(deal["expires"]) - site.today).days
+    if days <= 0:
+        return "Last day"
+    if days == 1:
+        return "Ends tomorrow"
+    if days <= 7:
+        return f"Ends in {days} days"
+    return f"Through {fmt_date(parse_date(deal['expires']))}"
+
+
+def out_attrs():
+    return 'target="_blank" rel="sponsored nofollow noopener"'
+
+
+def deal_card(site, page, deal, variant="standard", lead=False):
+    retailer = site.retailer_name(deal)
+    category = site.category_name(deal["category"])
+    out = e(affiliate_url(site.config, deal))
+    internal = site.deal_link_target(deal)
+    title_href = link(page, internal) if internal else out
+    title_attrs = "" if internal else " " + out_attrs()
+    search = " ".join([deal["title"], deal["blurb"], retailer, category]).lower()
+    classes = f"card card--{variant}" + (" card--featured" if deal.get("featured") else "")
+    parts = [f'<article class="{classes}" data-search="{e(search)}" style="--tilt:{tilt(deal["id"])}deg">']
+    if variant != "compact":
+        art = site.deal_art(deal)
+        w, h = site.img(art)
+        loading = 'fetchpriority="high"' if lead else 'loading="lazy"'
+        parts.append(f'<img class="card__art" src="{link(page, art)}" width="{w}" height="{h}" alt="" {loading} decoding="async">')
+    parts.append(f'<p class="card__meta"><b>{t(retailer)}</b> · {t(category)}</p>')
+    tag = "h3" if not lead else "h2"
+    parts.append(f'<{tag} class="card__title"><a href="{title_href}"{title_attrs}>{t(deal["title"])}</a></{tag}>')
+    if variant != "compact":
+        parts.append(f'<p class="card__blurb">{t(deal["blurb"])}</p>')
+    badges = []
+    if deal["added"] == site.today.isoformat():
+        badges.append(v('<span class="stamp">New today</span>'))
+    if deal.get("label"):
+        badges.append(f'<span class="tag">{t(deal["label"])}</span>')
+    parts.append(f'<div class="card__badges">{"".join(badges)}<span class="card__timing">{v(timing_text(site, deal))}</span></div>')
+    if internal and variant != "compact":
+        parts.append(f'<p class="card__more"><a href="{link(page, internal)}">Read our take on the {t(deal.get("short_name") or deal["title"])} deal</a></p>')
+    parts.append(f'<a class="button" href="{out}" {out_attrs()}>See deal at {t(retailer)} →</a>')
+    parts.append("</article>")
+    return "\n".join(parts)
+
+
+def breadcrumbs(page):
+    if not page.crumbs:
+        return ""
+    items = []
+    for label, target in page.crumbs:
+        if target is None:
+            items.append(f'<li aria-current="page">{t(label)}</li>')
+        else:
+            items.append(f'<li><a href="{link(page, target)}">{t(label)}</a></li>')
+    return f'<nav class="crumbs" aria-label="Breadcrumb"><ol>{"".join(items)}</ol></nav>'
+
+
+def updated_line(page, label="Updated"):
+    pub = ""
+    if page.published:
+        pub = f'Published {time_el(page.published)} · '
+    return f'<p class="dateline">{pub}{label} {UPDATED_TOKEN}</p>'
+
+
+def layout(site, page, main):
+    c = site.config
+    canonical = site.abs_url(page.path if page.path != "404.html" else "404.html")
+    if page.redirect:
+        canonical = site.abs_url(page.redirect)
+    robots = '<meta name="robots" content="noindex">' if page.noindex else ""
+    verification = ""
+    if c.get("verification", {}).get("google"):
+        verification += f'<meta name="google-site-verification" content="{e(c["verification"]["google"])}">'
+    if c.get("verification", {}).get("bing"):
+        verification += f'<meta name="msvalidate.01" content="{e(c["verification"]["bing"])}">'
+    refresh = ""
+    if page.redirect:
+        refresh = f'<meta http-equiv="refresh" content="0; url={link(page, page.redirect)}">'
+    chips = "".join(
+        f'<li><a href="{link(page, f"c/{slug}/")}"'
+        + (' aria-current="page"' if page.path == f"c/{slug}/" else "")
+        + f'>{t(name)}</a></li>'
+        for slug, name in c["categories"].items())
+    events = "".join(
+        f'<li><a href="{link(page, "events/" + ev["slug"] + "/")}">{t(ev["name"])} deals</a></li>'
+        for ev in site.events.get("events", []))
+    edition = v(f'No. {site.edition_number()} · {fmt_long(site.today)} · {len(site.live_deals())} deals today')
+    p = page.prefix
+    return f"""<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{t(page.title)}</title>
+<meta name="description" content="{e(smart(page.description))}">
+<link rel="canonical" href="{e(canonical)}">
+{robots}{refresh}{verification}
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="{e(c['site_name'])}">
+<meta property="og:title" content="{e(smart(page.title))}">
+<meta property="og:description" content="{e(smart(page.description))}">
+<meta property="og:url" content="{e(canonical)}">
+<link rel="icon" href="{p}assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate" type="application/rss+xml" title="{e(c['site_name'])} deals" href="{p}feed.xml">
+<link rel="alternate" type="application/feed+json" title="{e(c['site_name'])} deals" href="{p}feed.json">
+<link rel="stylesheet" href="{p}assets/style.css">
+<script src="{p}assets/app.js" defer></script>
+</head>
+<body class="page--{page.kind}">
+<a class="skip" href="#main">Skip to the deals</a>
+<header class="masthead">
+<p class="masthead__name"><a href="{p}">{t(c['site_name'])}</a></p>
+<p class="masthead__tagline">{t(c['tagline'])}</p>
+<p class="masthead__edition">{edition}</p>
+<nav class="departments" aria-label="Departments"><ul>{chips}</ul></nav>
+</header>
+<aside class="disclosure-bar" aria-label="Affiliate disclosure"><p>{t(c['disclosure_short'])} <a href="{p}disclosure/">How we make money</a></p></aside>
+<main id="main">
+{breadcrumbs(page)}
+{main}
+</main>
+<footer class="footer">
+<nav aria-label="Sale events"><h2>Sale events</h2><ul>{events}</ul></nav>
+<nav aria-label="About this site"><h2>About</h2><ul>
+<li><a href="{p}about/">About ViewDeals</a></li>
+<li><a href="{p}how-we-pick/">How we pick deals</a></li>
+<li><a href="{p}disclosure/">Affiliate disclosure</a></li>
+<li><a href="{p}privacy/">Privacy</a></li>
+<li><a href="{p}feed.xml">RSS feed</a></li>
+</ul></nav>
+<p>Prices and availability change often and are set by each retailer. Check the retailer's page before you buy.</p>
+<p>As an Amazon Associate, ViewDeals earns from qualifying purchases. Amazon and the Amazon logo are trademarks of Amazon.com, Inc. or its affiliates.</p>
+<p>Questions or corrections: <a href="mailto:{e(c['contact_email'])}">{t(c['contact_email'])}</a></p>
+</footer>
+</body>
+</html>
+"""
+
+
+# --------------------------------------------------------------------------
+# Page bodies
+# --------------------------------------------------------------------------
+
+def render_home(site, page):
+    live = site.live_deals()
+    featured = [d for d in live if d.get("featured")]
+    lead = featured[0] if featured else (live[0] if live else None)
+    rest_featured = [d for d in featured if d is not lead]
+    others = [d for d in live if not d.get("featured") and d is not lead]
+    soon = sorted([d for d in live if (parse_date(d["expires"]) - site.today).days <= ENDING_SOON_DAYS],
+                  key=lambda d: d["expires"])[:5]
+    out = [
+        "<h1>Today's best deals</h1>",
+        updated_line(page),
+        f'<p class="count">{v(f"{len(live)} live deals")}</p>',
+        '<form class="search" role="search" action="./" method="get">'
+        '<label for="q">Search today\'s deals</label>'
+        '<input id="q" name="q" type="search" autocomplete="off" placeholder="Try “headphones” or “gift”">'
+        '</form>',
+        '<p id="search-empty" class="empty" hidden>No deals match that search.</p>',
+    ]
+    if lead:
+        out.append('<section class="lead" data-search-section aria-label="Lead deal">' + deal_card(site, page, lead, "lead", lead=True) + "</section>")
+    if soon:
+        out.append('<section class="ending-soon" data-search-section aria-labelledby="soon-h"><h2 id="soon-h">Ending soon</h2>'
+                   + "".join(deal_card(site, page, d, "compact") for d in soon) + "</section>")
+    if rest_featured:
+        out.append('<section class="top-picks" data-search-section aria-labelledby="picks-h"><h2 id="picks-h">Top picks</h2>'
+                   + "".join(deal_card(site, page, d, "feature") for d in rest_featured) + "</section>")
+    if others:
+        out.append('<section class="all-deals" data-search-section aria-labelledby="all-h"><h2 id="all-h">All live deals</h2>'
+                   + "".join(deal_card(site, page, d) for d in others) + "</section>")
+    if not live:
+        out.append('<p class="empty">No live deals right now. The next edition lands tomorrow morning.</p>')
+    hubs = "".join(f'<li><a href="{link(page, "events/" + ev["slug"] + "/")}">{t(ev["name"])} {ev["start"][:4]} deals</a></li>'
+                   for ev in site.events.get("events", []))
+    out.append(f'<section class="hubs" aria-labelledby="hubs-h"><h2 id="hubs-h">Sale event guides</h2><ul>{hubs}</ul></section>')
+    return "\n".join(out)
+
+
+def render_category(slug):
+    def render(site, page):
+        name = site.category_name(slug)
+        deals = [d for d in site.live_deals() if d["category"] == slug]
+        out = [f"<h1>Best {t(name)} deals today</h1>", updated_line(page),
+               f'<p class="count">{v(f"{len(deals)} live deals")}</p>']
+        if deals:
+            out.append('<section class="all-deals">' + "".join(
+                deal_card(site, page, d, "lead" if i == 0 else "standard", lead=(i == 0)) for i, d in enumerate(deals)) + "</section>")
+        else:
+            out.append(f'<p class="empty">Nothing in {t(name)} today. We only list deals we would buy ourselves, '
+                       f'so some days a section stays quiet. <a href="{link(page, "")}">See all of today\'s deals</a>.</p>')
+        return "\n".join(out)
+    return render
+
+
+def render_event(slug):
+    def render(site, page):
+        ev = site.event(slug)
+        status = site.event_status(ev)
+        year = ev["start"][:4]
+        start, end = parse_date(ev["start"]), parse_date(ev["end"])
+        deals = [d for d in site.live_deals() if d.get("event") == slug]
+        out = [f"<h1>Best {t(ev['name'])} deals {year}</h1>", updated_line(page),
+               f'<p class="dek">{t(ev["intro"])}</p>']
+        when = f"{fmt_date(start)} to {fmt_date(end)}"
+        if not ev.get("dates_confirmed"):
+            when += " (expected; not yet announced)"
+        out.append(f'<p class="event-dates">{t(ev["name"])} {year}: {when}</p>')
+        if deals:
+            out.append('<section class="all-deals">' + "".join(
+                deal_card(site, page, d, "lead" if i == 0 else "standard", lead=(i == 0)) for i, d in enumerate(deals)) + "</section>")
+        elif status == "upcoming":
+            out.append(f'<p class="empty">{t(ev["name"])} hasn\'t started yet. We start adding deals here as soon as retailers do. '
+                       f'<a href="{link(page, "")}">Today\'s best deals</a> are on the front page.</p>')
+        else:
+            out.append(f'<p class="empty">No {t(ev["name"])} deals are live right now. '
+                       f'<a href="{link(page, "")}">See today\'s best deals</a>.</p>')
+        return "\n".join(out)
+    return render
+
+
+def render_deal(deal):
+    def render(site, page):
+        state = site.deal_state(deal)
+        retailer = site.retailer_name(deal)
+        cat = deal["category"]
+        out = []
+        if state != "live":
+            out.append(f'<div class="ended" role="status"><p><strong>This deal has ended.</strong> It ran until '
+                       f'{fmt_date(parse_date(deal["expires"]))}. Here are live deals worth a look instead.</p></div>')
+        out.append(f'<h1>{t(deal["title"])} deal</h1>')
+        out.append(f'<p class="card__meta"><b>{t(retailer)}</b> · <a href="{link(page, "c/" + cat + "/")}">{t(site.category_name(cat))}</a></p>')
+        author = site.config.get("authors", {}).get(site.config.get("default_author"), {})
+        if author:
+            out.append(f'<p class="byline">By <a href="{link(page, "authors/" + site.config["default_author"] + "/")}">{t(author["name"])}</a></p>')
+        out.append(updated_line(page))
+        art = site.deal_art(deal)
+        w, h = site.img(art)
+        out.append(f'<img class="deal__art" src="{link(page, art)}" width="{w}" height="{h}" alt="" fetchpriority="high">')
+        out.append(f'<p class="dek">{t(deal["blurb"])}</p>')
+        out.extend(f"<p>{t(p)}</p>" for p in deal["write_up"])
+        if deal.get("who_for") or deal.get("skip_if"):
+            out.append('<dl class="fit">')
+            if deal.get("who_for"):
+                out.append(f'<dt>Who it\'s for</dt><dd>{t(deal["who_for"])}</dd>')
+            if deal.get("skip_if"):
+                out.append(f'<dt>Skip it if</dt><dd>{t(deal["skip_if"])}</dd>')
+            out.append("</dl>")
+        if state == "live":
+            out.append(f'<p><a class="button" href="{e(affiliate_url(site.config, deal))}" {out_attrs()}>See deal at {t(retailer)} →</a></p>')
+            out.append(f'<p class="card__timing">{v(timing_text(site, deal))}</p>')
+        more = [f'<li><a href="{link(page, "c/" + cat + "/")}">More {t(site.category_name(cat))} deals</a></li>']
+        ev = site.event(deal.get("event")) if deal.get("event") else None
+        if ev and site.event_status(ev) == "live":
+            more.append(f'<li><a href="{link(page, "events/" + ev["slug"] + "/")}">All {t(ev["name"])} deals</a></li>')
+        out.append(f'<nav class="more" aria-label="More deals"><ul>{"".join(more)}</ul></nav>')
+        related = site.related_live(deal)
+        if related:
+            out.append('<section class="related" aria-labelledby="rel-h"><h2 id="rel-h">Related deals</h2>'
+                       + "".join(deal_card(site, page, d) for d in related) + "</section>")
+        return "\n".join(out)
+    return render
+
+
+def render_redirect(deal):
+    def render(site, page):
+        target = page.redirect
+        return (f'<h1>This deal has ended</h1><p>The {t(deal["title"])} deal ended on {fmt_date(parse_date(deal["expires"]))}. '
+                f'<a href="{link(page, target)}">See today\'s {t(site.category_name(deal["category"]))} deals</a>.</p>')
+    return render
+
+
+def render_guide(guide):
+    def render(site, page):
+        author = site.config["authors"][guide["author"]]
+        img = guide["image"]
+        w, h = site.img(img)
+        out = [f"<h1>{t(guide['title'])}</h1>", f'<p class="dek">{t(guide["dek"])}</p>',
+               f'<p class="byline">By <a href="{link(page, "authors/" + guide["author"] + "/")}">{t(author["name"])}</a></p>',
+               updated_line(page),
+               f'<img class="guide__art" src="{link(page, img)}" width="{w}" height="{h}" alt="{e(guide.get("image_alt", ""))}" fetchpriority="high">']
+        for sec in guide["sections"]:
+            out.append(f"<h2>{t(sec['heading'])}</h2>")
+            out.extend(f"<p>{t(p)}</p>" for p in sec.get("paragraphs", []))
+        by_id = {d["id"]: d for d in site.all_known_deals()}
+        picks = [by_id[i] for i in guide["deal_ids"] if i in by_id and site.deal_state(by_id[i]) == "live"]
+        if picks:
+            out.append('<section class="all-deals" aria-labelledby="g-h"><h2 id="g-h">The deals in this guide</h2>'
+                       + "".join(deal_card(site, page, d) for d in picks) + "</section>")
+        return "\n".join(out)
+    return render
+
+
+def render_author(slug):
+    def render(site, page):
+        a = site.config["authors"][slug]
+        out = [f"<h1>{t(a['name'])}</h1>", f"<p>{t(a['bio'])}</p>",
+               f'<p><a href="{link(page, "how-we-pick/")}">How we pick and check every deal</a></p>']
+        mine = [d for d in site.page_deals() if site.deal_state(d) in ("live", "ended")]
+        if mine:
+            out.append('<h2>Recent write-ups</h2><ul>' + "".join(
+                f'<li><a href="{link(page, "deals/" + d["id"] + "/")}">{t(d["title"])} deal</a></li>' for d in mine) + "</ul>")
+        return "\n".join(out)
+    return render
+
+
+def static_body(heading, paragraphs, more=None):
+    def render(site, page):
+        body = "".join(f"<p>{p}</p>" for p in paragraphs)
+        extra = f'<p><a href="{link(page, more[1])}">{t(more[0])}</a></p>' if more else ""
+        return f"<h1>{t(heading)}</h1>{updated_line(page)}{body}{extra}"
+    return render
+
+
+def static_pages(site):
+    c = site.config
+    email = f'<a href="mailto:{e(c["contact_email"])}">{t(c["contact_email"])}</a>'
+    pages = []
+    pages.append(Page("about/", "about", "About ViewDeals: Who Picks the Deals and Why",
+        "ViewDeals is a small, hand-run deals site. Here is who picks the deals, how they are checked, and why we never show Amazon prices.",
+        static_body("About ViewDeals", [
+            t("ViewDeals is a daily edition of hand-picked deals from Amazon, Walmart, Target and Best Buy. Every morning we read the retailers' own deal pages and the deal roundups we trust, check each offer ourselves, and publish the ones worth your time."),
+            t("We'd rather list fifteen good deals than a hundred so-so ones. A deal makes the cut when the product is well known or well reviewed, the discount is real according to a recent source, and the retailer is one you already shop with."),
+            t("You won't see Amazon prices or percent-off figures here. Amazon only allows prices that come straight from its own systems, and a page like this one can't promise a price is still current, so we tell you why a deal is good and let the retailer show you the price."),
+            f'{t("Spotted a mistake or a deal that has ended? Tell us at")} {email}.',
+        ], ("How we pick and check every deal", "how-we-pick/")),
+        crumbs=[("Home", ""), ("About", None)]))
+    pages.append(Page("disclosure/", "disclosure", "Affiliate Disclosure | ViewDeals",
+        "How ViewDeals makes money: affiliate commissions from Amazon and other retailers when you buy through our links, and why that never decides what we pick.",
+        static_body("Affiliate disclosure", [
+            t("ViewDeals is a participant in the Amazon Services LLC Associates Program, an affiliate advertising program designed to provide a means for sites to earn advertising fees by advertising and linking to Amazon.com. As an Amazon Associate, ViewDeals earns from qualifying purchases."),
+            t("We may also earn commissions from other retailers, including Walmart, Target and Best Buy, through affiliate networks such as Impact. When you buy through a link on this site, the retailer may pay us a small share of the sale. It costs you nothing extra."),
+            t("Commissions never decide what we pick. We choose deals first and check whether a retailer pays us second, and we list deals that earn us nothing when they are the better buy. Links that can earn us money are marked as sponsored in the page code, as search engines ask."),
+            f'{t("Questions about this page:")} {email}.',
+        ]), crumbs=[("Home", ""), ("Disclosure", None)]))
+    pages.append(Page("privacy/", "privacy", "Privacy Policy | ViewDeals",
+        "ViewDeals has no accounts and collects no personal data. Here is what retailers, our host GitHub Pages and our cookieless analytics can see when you visit.",
+        static_body("Privacy", [
+            t("ViewDeals has no accounts, no newsletter sign-up and no comments, and we don't collect or sell personal data. The search box works entirely in your browser and sends nothing anywhere."),
+            t("When you click through to a retailer, that retailer may set its own cookies, including affiliate cookies that tell it the visit came from us. Their privacy policies apply once you are on their sites."),
+            t("The site is hosted on GitHub Pages, which may log your IP address for security, as GitHub's privacy statement describes. If we turn on Cloudflare Web Analytics, it counts visits without cookies and without tracking you across sites."),
+            f'{t("Privacy questions:")} {email}.',
+        ]), crumbs=[("Home", ""), ("Privacy", None)]))
+    pages.append(Page("how-we-pick/", "method", "How We Pick and Check Every Deal | ViewDeals",
+        "The rules behind every ViewDeals pick: where we look, what a deal must pass before it is listed, how we write it up, and when we take it down.",
+        static_body("How we pick and check every deal", [
+            t("Every morning we read the retailers' own deal pages and a short list of reputable roundups, and we only consider offers reported in the last 48 hours."),
+            t("A deal has to pass four checks: it's from an established retailer, a recent source confirms the sale, the product is well known or well reviewed, and it isn't something we already list."),
+            t("Our write-ups say who a product suits, who should skip it, and what to check before you buy, such as the model year, the size or the seller. We write every word ourselves and never copy a retailer's listing."),
+            t("Deals come down when they end. A page for an ended deal stays up with a clear notice and links to live deals, so you never land on a dead end."),
+        ]), crumbs=[("Home", ""), ("How we pick", None)]))
+    pages.append(Page("404.html", "notfound", "Page Not Found | ViewDeals",
+        "That page is gone, and the deal may have ended. Head back to today's edition of ViewDeals for the hand-picked deals that are live right now.",
+        lambda s, p: f'<h1>That page is gone</h1><p>{t("The deal may have ended.")} <a href="/">{t("See today’s best deals")}</a>.</p>',
+        noindex=True, sitemap=None, root_links=True))
+    return pages
+
+
+# --------------------------------------------------------------------------
+# Page plan
+# --------------------------------------------------------------------------
+
+def event_title(ev):
+    name, year = ev.get("title_name", ev["name"]), ev["start"][:4]
+    for tail in (": Hand-Checked Daily", ": Checked Daily", ""):
+        title = f"Best {name} Deals {year}{tail} | ViewDeals"
+        if len(title) <= TITLE_MAX:
+            return title
+    return title
+
+
+def deal_title(deal):
+    if deal.get("seo_title"):
+        return deal["seo_title"]
+    name = deal.get("short_name") or deal["title"]
+    hook = f": {deal['hook']}" if deal.get("hook") else ""
+    return f"{name} Deal{hook} | ViewDeals"
+
+
+def plan_pages(site):
+    c = site.config
+    pages = [Page("", "home", f"{c['site_name']}: Hand-Picked Deals, Refreshed Every Day", c["description"],
+                  render_home, image="assets/art/share-home.svg")]
+    live = site.live_deals()
+    for slug, name in c["categories"].items():
+        count = sum(1 for d in live if d["category"] == slug)
+        pages.append(Page(f"c/{slug}/", "department", f"Best {name} Deals Today | ViewDeals",
+                          fit_description([f"The best {name.lower()} deals live today, picked and checked by hand.",
+                                           f"Deals from Amazon, Walmart, Target and Best Buy, refreshed every morning."]),
+                          render_category(slug), noindex=(count == 0),
+                          crumbs=[("Home", ""), (name, None)], image=f"assets/art/cat-{slug}.svg"))
+    for ev in site.events.get("events", []):
+        pages.append(Page(f"events/{ev['slug']}/", "event", event_title(ev),
+                          ev.get("meta_description") or fit_description([ev["intro"]]),
+                          render_event(ev["slug"]), crumbs=[("Home", ""), (f"{ev['name']} deals", None)],
+                          image=ev.get("image")))
+    for deal in site.page_deals():
+        state = site.deal_state(deal)
+        path = f"deals/{deal['id']}/"
+        dept = f"c/{deal['category']}/"
+        crumbs = [("Home", ""), (site.category_name(deal["category"]), dept), (deal["title"], None)]
+        if state == "gone":
+            pages.append(Page(path, "redirect", deal_title(deal), fit_description([deal["blurb"]]),
+                              render_redirect(deal), noindex=True, sitemap=None, redirect=dept))
+            continue
+        pages.append(Page(path, "deal", deal_title(deal),
+                          deal.get("meta_description") or fit_description(
+                              [f"{deal['title']} at {site.retailer_name(deal)}.", deal["blurb"], deal.get("who_for")]),
+                          render_deal(deal), noindex=(state == "stale"),
+                          sitemap=None if state == "stale" else "deals", crumbs=crumbs,
+                          published=parse_date(deal["added"]), image=site.deal_art(deal)))
+    for g in site.guides:
+        title = g["title"] if g["title"].endswith("| ViewDeals") else f"{g['title']} | ViewDeals"
+        pages.append(Page(f"guides/{g['slug']}/", "guide", title,
+                          g.get("meta_description") or fit_description([g["dek"]]),
+                          render_guide(g), sitemap="guides", crumbs=[("Home", ""), (g["title"], None)],
+                          published=parse_date(g["published"]), image=g["image"]))
+    for slug, a in c.get("authors", {}).items():
+        pages.append(Page(f"authors/{slug}/", "author", f"{a['name']}, Deals Editor | ViewDeals",
+                          fit_description([a["bio"]]), render_author(slug),
+                          crumbs=[("Home", ""), (a["name"], None)]))
+    pages.extend(static_pages(site))
+    return pages
+
+
+def validate_pages(site, pages):
+    errors = []
+    titles, descs = {}, {}
+    for p in pages:
+        if p.kind == "redirect":
+            continue
+        where = "/" + p.path
+        if len(p.title) > TITLE_MAX:
+            errors.append(f"page {where}: title is {len(p.title)} characters (max {TITLE_MAX}): {p.title}")
+        if not DESC_MIN <= len(p.description) <= DESC_MAX:
+            errors.append(f"page {where}: description is {len(p.description)} characters (needs {DESC_MIN}-{DESC_MAX})")
+        if p.title in titles:
+            errors.append(f"page {where}: duplicate title (also on /{titles[p.title]})")
+        if p.description in descs:
+            errors.append(f"page {where}: duplicate description (also on /{descs[p.description]})")
+        titles.setdefault(p.title, p.path)
+        descs.setdefault(p.description, p.path)
+    for g in site.guides:
+        by_id = {d["id"]: d for d in site.all_known_deals()}
+        with_pages = [i for i in g.get("deal_ids", []) if i in by_id and site.has_page(by_id[i])]
+        if len(with_pages) < 5:
+            errors.append(f"guide {g['slug']}: links to {len(with_pages)} deal pages (needs at least 5)")
+    return errors
+
+
+# --------------------------------------------------------------------------
+# Output
+# --------------------------------------------------------------------------
+
+def minify(markup):
+    keep = re.compile(r"(<(pre|script|textarea|style)\b.*?</\2>)", re.S | re.I)
+    pieces, last = [], 0
+    for m in keep.finditer(markup):
+        pieces.append((False, markup[last:m.start()]))
+        pieces.append((True, m.group(1)))
+        last = m.end()
+    pieces.append((False, markup[last:]))
+    out = []
+    for raw, chunk in pieces:
+        if not raw:
+            chunk = re.sub(r"<!--(?!\[if).*?-->", "", chunk, flags=re.S)
+            chunk = re.sub(r">\s*\n\s*<", "><", chunk)
+            chunk = re.sub(r"\s*\n\s*", " ", chunk)
+            chunk = re.sub(r"[ \t]{2,}", " ", chunk)
+        out.append(chunk)
+    return "".join(out).strip() + "\n"
+
+
+def render_page(site, page):
+    main = page.render(site, page)
+    content_hash = hashlib.sha256(VOLATILE_RE.sub("", main).encode("utf-8")).hexdigest()[:16]
+    today = site.today.isoformat()
+    prior = site.state.get(page.path)
+    if prior and prior.get("hash") == content_hash:
+        updated = prior["updated"]
+    else:
+        updated = today
+    first = (prior or {}).get("first_seen") or today
+    site.state[page.path] = {"hash": content_hash, "updated": updated, "first_seen": first}
+    page.updated = parse_date(updated)
+    main = main.replace(UPDATED_TOKEN, time_el(page.updated))
+    return minify(layout(site, page, main))
+
+
+def write_sitemaps(site, pages, docs):
+    groups = {"pages": [], "deals": [], "guides": []}
+    for p in pages:
+        if p.sitemap and not p.noindex:
+            groups[p.sitemap].append(p)
+    ns = 'xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"'
+    newest = {}
+    for name, items in groups.items():
+        rows = []
+        for p in items:
+            img = f"<image:image><image:loc>{e(site.abs_url(p.image))}</image:loc></image:image>" if p.image else ""
+            rows.append(f"<url><loc>{e(site.abs_url(p.path))}</loc><lastmod>{p.updated.isoformat()}</lastmod>{img}</url>")
+        newest[name] = max((p.updated for p in items), default=site.today)
+        (docs / f"sitemap-{name}.xml").write_text(
+            f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset {ns}>\n' + "\n".join(rows) + "\n</urlset>\n", encoding="utf-8")
+    index = "\n".join(f"<sitemap><loc>{e(site.abs_url(f'sitemap-{n}.xml'))}</loc><lastmod>{newest[n].isoformat()}</lastmod></sitemap>"
+                      for n in groups)
+    (docs / "sitemap.xml").write_text(
+        '<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+        + index + "\n</sitemapindex>\n", encoding="utf-8")
+
+
+def rfc822(d):
+    return dt.datetime(d.year, d.month, d.day, 6, 0, tzinfo=dt.timezone.utc).strftime("%a, %d %b %Y %H:%M:%S +0000")
+
+
+def write_feeds(site, docs):
+    c = site.config
+    live = sorted(site.live_deals(), key=lambda d: d["added"], reverse=True)
+    items = []
+    for d in live:
+        page = site.deal_link_target(d)
+        guid = site.abs_url(page) if page else f"viewdeals-{d['id']}"
+        perma = "true" if page else "false"
+        items.append(f"<item><title>{e(smart(d['title']))}</title><link>{e(affiliate_url(c, d))}</link>"
+                     f'<guid isPermaLink="{perma}">{e(guid)}</guid><pubDate>{rfc822(parse_date(d["added"]))}</pubDate>'
+                     f"<category>{e(site.category_name(d['category']))}</category>"
+                     f"<description>{e(smart(d['blurb']))}</description></item>")
+    rss = (f'<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel>'
+           f"<title>{e(c['site_name'])}</title><link>{e(c['base_url'])}/</link><description>{e(c['tagline'])}</description>"
+           f'<language>en-us</language><atom:link href="{e(site.abs_url("feed.xml"))}" rel="self" type="application/rss+xml"/>'
+           f"<lastBuildDate>{rfc822(site.today)}</lastBuildDate>\n" + "\n".join(items) + "\n</channel></rss>\n")
+    (docs / "feed.xml").write_text(rss, encoding="utf-8")
+    feed = {
+        "version": "https://jsonfeed.org/version/1.1",
+        "title": c["site_name"], "home_page_url": c["base_url"] + "/", "feed_url": site.abs_url("feed.json"),
+        "description": c["tagline"], "language": "en-US",
+        "items": [{
+            "id": site.abs_url(site.deal_link_target(d)) if site.deal_link_target(d) else f"viewdeals-{d['id']}",
+            "url": site.abs_url(site.deal_link_target(d)) if site.deal_link_target(d) else affiliate_url(c, d),
+            "external_url": affiliate_url(c, d), "title": smart(d["title"]), "content_text": smart(d["blurb"]),
+            "date_published": f"{d['added']}T06:00:00Z", "tags": [site.category_name(d["category"])],
+        } for d in live],
+    }
+    (docs / "feed.json").write_text(json.dumps(feed, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
+
+
+def check_links(docs):
+    """Return broken internal links found in docs/*.html."""
+    errors = []
+    attr = re.compile(r'(?:href|src)="([^"]+)"')
+    for f in docs.rglob("*.html"):
+        text = f.read_text(encoding="utf-8")
+        refresh = re.findall(r'http-equiv="refresh" content="0; url=([^"]+)"', text)
+        for ref in attr.findall(text) + refresh:
+            ref = html.unescape(ref)
+            if re.match(r"^[a-z][a-z0-9+.-]*:", ref, re.I) or ref.startswith(("#", "//")):
+                continue
+            path = ref.split("#")[0].split("?")[0]
+            if not path:
+                continue
+            target = (docs / path.lstrip("/")) if path.startswith("/") else (f.parent / path)
+            target = target.resolve()
+            if target.is_dir() or path.endswith("/"):
+                target = target / "index.html"
+            if not target.exists():
+                errors.append(f"broken link in {f.relative_to(docs).as_posix()}: {ref}")
+    return errors
+
+
+def build(site):
+    docs = site.root / "docs"
+    pages = plan_pages(site)
+    errors = validate_pages(site, pages)
+    if errors:
+        return errors
+    if docs.exists():
+        shutil.rmtree(docs)
+    docs.mkdir()
+    shutil.copytree(site.root / "assets", docs / "assets", ignore=shutil.ignore_patterns(".gitkeep"))
+    for page in pages:
+        out = docs / page.out_file
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(render_page(site, page), encoding="utf-8")
+    write_sitemaps(site, pages, docs)
+    write_feeds(site, docs)
+    (docs / "robots.txt").write_text(
+        f"User-agent: *\nDisallow: /styleguide/\n\nSitemap: {site.abs_url('sitemap.xml')}\n", encoding="utf-8")
+    (docs / "CNAME").write_text(site.config["domain"] + "\n", encoding="utf-8")
+    (docs / ".nojekyll").write_text("", encoding="utf-8")
+    key = site.config.get("indexnow_key")
+    if key:
+        (docs / f"{key}.txt").write_text(key, encoding="utf-8")
+    live_paths = {p.path for p in pages}
+    site.state = {k: val for k, val in site.state.items() if k in live_paths}
+    write_json(site.root / "data" / "page-state.json", dict(sorted(site.state.items())))
+    errors = check_links(docs)
+    if errors:
+        return errors
+    print(f"Built {len(pages)} pages into docs/ for {site.today.isoformat()} "
+          f"({len(site.live_deals())} live deals, {sum(1 for p in pages if p.kind == 'deal')} deal pages).")
+    return []
+
+
+# --------------------------------------------------------------------------
+# CLI
+# --------------------------------------------------------------------------
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description="Validate and build ViewDeals.")
     ap.add_argument("--check", action="store_true", help="validate only; write nothing")
     ap.add_argument("--prune", action="store_true", help="archive expired deals, then build")
     ap.add_argument("--today", help="treat this YYYY-MM-DD date as today")
+    ap.add_argument("--root", default=str(DEFAULT_ROOT), help=argparse.SUPPRESS)
     args = ap.parse_args(argv)
 
-    if args.today and not parse_date(args.today):
+    today = parse_date(args.today) if args.today else eastern_today()
+    if args.today and not today:
         print(f"ERROR: --today {args.today} is not a YYYY-MM-DD date")
         return 1
+    root = Path(args.root)
 
-    config = load_json(CONFIG_PATH)
-    data = load_json(DEALS_PATH)
-    events = load_json(EVENTS_PATH) if EVENTS_PATH.exists() else {"events": []}
-    deals = data.get("deals", [])
-
-    errors = validate(config, deals, events)
+    site = Site(root, today)
+    errors = validate(site.config, site.deals, site.events, site.archive, site.guides, root)
+    if not errors:
+        errors = validate_pages(site, plan_pages(site))
     if errors:
-        for e in errors:
-            print(f"ERROR: {e}")
+        for err in errors:
+            print(f"ERROR: {err}")
         return 1
 
-    if not config["retailers"].get("amazon", {}).get("query_params", {}).get("tag"):
+    if not site.config["retailers"].get("amazon", {}).get("query_params", {}).get("tag"):
         print("WARNING: Amazon tracking tag is empty; Amazon links will not earn commission.")
 
     if args.check:
-        print(f"OK: {len(deals)} deals are valid.")
+        print(f"OK: {len(site.deals)} deals are valid.")
         return 0
 
-    print("Build not implemented yet (Phase 2).")
-    return 1
+    if args.prune:
+        prune(root, today)
+        site = Site(root, today)
+
+    errors = build(site)
+    if errors:
+        for err in errors:
+            print(f"ERROR: {err}")
+        return 1
+    return 0
 
 
 if __name__ == "__main__":

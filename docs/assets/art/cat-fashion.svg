@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="320" viewBox="0 0 480 320">
+<!-- PLACEHOLDER ART: replace with the commissioned illustration -->
+<rect width="480" height="320" fill="#F4EFE6"/>
+<rect x="8" y="8" width="464" height="304" fill="none" stroke="#161412" stroke-width="2" stroke-dasharray="6 6"/>
+<circle cx="346" cy="134" r="70" fill="#D7261E" opacity=".85"/>
+<circle cx="352" cy="138" r="70" fill="none" stroke="#161412" stroke-width="3"/>
+<text x="38" y="160" font-family="Georgia,serif" font-size="42" fill="#161412">Fashion</text>
+<text x="38" y="198" font-family="Arial,sans-serif" font-size="18" fill="#161412" letter-spacing="1">PLACEHOLDER · category art</text>
+</svg>

@@ -44,7 +44,8 @@
       "end": "2026-12-24",
       "dates_confirmed": true,
       "intro": "Gifts worth giving, on sale now, with a note on who each one suits. We add shipping cut-off dates for each retailer as they are announced.",
-      "image": "assets/art/share-holiday-gifts.svg"
+      "image": "assets/art/share-holiday-gifts.svg",
+      "title_name": "Holiday Gift"
     }
   ]
 }

@@ -1,0 +1,197 @@
+{
+ "version": "https://jsonfeed.org/version/1.1",
+ "title": "ViewDeals",
+ "home_page_url": "https://viewdeals.com/",
+ "feed_url": "https://viewdeals.com/feed.json",
+ "description": "Hand-picked deals, refreshed every day.",
+ "language": "en-US",
+ "items": [
+  {
+   "id": "https://viewdeals.com/deals/sony-wh-1000xm5/",
+   "url": "https://viewdeals.com/deals/sony-wh-1000xm5/",
+   "external_url": "https://www.bestbuy.com/site/sony-wh-1000xm5-wireless-noise-canceling-headphones-black/6505727.p?skuId=6505727",
+   "title": "Sony WH-1000XM5 Noise-Canceling Headphones",
+   "content_text": "Last year’s Sony flagship, now a Doorbuster because the XM6 replaced it. The noise cancelling and comfort are still near the top of the class, so the older model is the smart buy.",
+   "date_published": "2026-11-25T06:00:00Z",
+   "tags": [
+    "Tech"
+   ]
+  },
+  {
+   "id": "https://viewdeals.com/deals/apple-airpods-pro-3/",
+   "url": "https://viewdeals.com/deals/apple-airpods-pro-3/",
+   "external_url": "https://www.amazon.com/dp/B0FQFB8FMG",
+   "title": "Apple AirPods Pro 3",
+   "content_text": "Apple’s current flagship earbuds, with stronger noise cancellation, heart-rate sensing for workouts and Live Translation. NBC Select’s tracking has Amazon’s price at its lowest yet.",
+   "date_published": "2026-11-25T06:00:00Z",
+   "tags": [
+    "Tech"
+   ]
+  },
+  {
+   "id": "https://viewdeals.com/deals/lego-polaroid-onestep-sx-70/",
+   "url": "https://viewdeals.com/deals/lego-polaroid-onestep-sx-70/",
+   "external_url": "https://www.amazon.com/dp/B0CGY4H58V",
+   "title": "LEGO Ideas Polaroid OneStep SX-70 Camera (21345)",
+   "content_text": "A life-size LEGO model of the classic instant camera. Press the red shutter and a little illustrated photo slides out. TODAY cites price tracking calling this its lowest price. A gift for grown-ups, not kids.",
+   "date_published": "2026-11-25T06:00:00Z",
+   "tags": [
+    "Toys"
+   ]
+  },
+  {
+   "id": "https://viewdeals.com/deals/roborock-q7-m5-plus/",
+   "url": "https://viewdeals.com/deals/roborock-q7-m5-plus/",
+   "external_url": "https://www.amazon.com/dp/B0DWX69JVG",
+   "title": "Roborock Q7 M5+ Robot Vacuum and Mop",
+   "content_text": "Fine, it’s another robot vacuum. It’s also a self-emptying one with LiDAR mapping and a tangle-resistant brush, and NBC Select’s tracking has it at its lowest price on Amazon.",
+   "date_published": "2026-11-25T06:00:00Z",
+   "tags": [
+    "Home"
+   ]
+  },
+  {
+   "id": "https://viewdeals.com/deals/oura-ring-5/",
+   "url": "https://viewdeals.com/deals/oura-ring-5/",
+   "external_url": "https://www.bestbuy.com/site/searchpage.jsp?st=oura+ring+5",
+   "title": "Oura Ring 5",
+   "content_text": "The smallest Oura yet: all titanium, with sleep, heart-rate and temperature tracking and close to a week per charge. It needs a paid membership, and you should use the sizing kit first.",
+   "date_published": "2026-11-25T06:00:00Z",
+   "tags": [
+    "Tech"
+   ]
+  },
+  {
+   "id": "viewdeals-google-home-speaker-2026",
+   "url": "https://www.bestbuy.com/product/google-home-speaker-coming-spring-2026-smart-speaker-with-gemini-for-home-voice-assistant-and-360-degree-sound-porcelain/J39TC8J854/sku/6642294",
+   "external_url": "https://www.bestbuy.com/product/google-home-speaker-coming-spring-2026-smart-speaker-with-gemini-for-home-voice-assistant-and-360-degree-sound-porcelain/J39TC8J854/sku/6642294",
+   "title": "Google Home Speaker with Gemini for Home",
+   "content_text": "Google’s new smart speaker runs Gemini, so you can ask for several things at once and it copes. 360-degree sound, and two of them pair with a Google TV Streamer. Each color has its own listing.",
+   "date_published": "2026-11-25T06:00:00Z",
+   "tags": [
+    "Smart Home"
+   ]
+  },
+  {
+   "id": "viewdeals-apple-airpods-4-walmart",
+   "url": "https://www.walmart.com/ip/Apple-AirPods-4/11381374703",
+   "external_url": "https://www.walmart.com/ip/Apple-AirPods-4/11381374703",
+   "title": "Apple AirPods 4",
+   "content_text": "The everyday AirPods, sold and shipped by Walmart itself. Good for calls and podcasts, with a USB-C case. This is the version without noise cancellation, so check the listing if you want that.",
+   "date_published": "2026-11-25T06:00:00Z",
+   "tags": [
+    "Tech"
+   ]
+  },
+  {
+   "id": "viewdeals-ninja-slushi-fs300",
+   "url": "https://www.walmart.com/ip/Ninja-SLUSHi-72-Oz-Frozen-Drink-Machine-with-RapidChill-Technology-3-Presets-Dishwasher-Safe-FS300-Gray/5321127922",
+   "external_url": "https://www.walmart.com/ip/Ninja-SLUSHi-72-Oz-Frozen-Drink-Machine-with-RapidChill-Technology-3-Presets-Dishwasher-Safe-FS300-Gray/5321127922",
+   "title": "Ninja SLUSHi 72 oz Frozen Drink Machine (FS300)",
+   "content_text": "A slushie machine that freezes the drink itself, no ice or blender, and keeps it frosty for hours. Absolutely unnecessary, and the hit of every summer party. The purple option is pre-owned.",
+   "date_published": "2026-11-25T06:00:00Z",
+   "tags": [
+    "Home"
+   ]
+  },
+  {
+   "id": "viewdeals-ue-wonderboom-4",
+   "url": "https://www.walmart.com/ip/Ultimate-Ears-WONDERBOOM-4-Wireless-Bluetooth-Speaker-Pink-984-001878/7379554725",
+   "external_url": "https://www.walmart.com/ip/Ultimate-Ears-WONDERBOOM-4-Wireless-Bluetooth-Speaker-Pink-984-001878/7379554725",
+   "title": "Ultimate Ears WONDERBOOM 4",
+   "content_text": "A small, tough speaker that floats, survives drops and runs about 14 hours. The discount is modest, and this listing ships from Newegg through Walmart’s marketplace.",
+   "date_published": "2026-11-25T06:00:00Z",
+   "tags": [
+    "Outdoors"
+   ]
+  },
+  {
+   "id": "viewdeals-oral-b-io3",
+   "url": "https://www.target.com/p/oral-b-io3-electric-toothbrush-black/-/A-88693684",
+   "external_url": "https://www.target.com/p/oral-b-io3-electric-toothbrush-black/-/A-88693684",
+   "title": "Oral-B iO3 Electric Toothbrush",
+   "content_text": "A pressure sensor that lights up when you scrub too hard, a two-minute timer and a travel case. Budget for iO replacement heads, which are the only kind that fit.",
+   "date_published": "2026-11-25T06:00:00Z",
+   "tags": [
+    "Beauty"
+   ]
+  },
+  {
+   "id": "viewdeals-delonghi-linea-classic",
+   "url": "https://www.target.com/p/delonghi-linea-classic-espresso-machine/-/A-94266951",
+   "external_url": "https://www.target.com/p/delonghi-linea-classic-espresso-machine/-/A-94266951",
+   "title": "De’Longhi Linea Classic Espresso Machine",
+   "content_text": "A straightforward 15-bar espresso machine with a steam wand for milk drinks. No built-in grinder, so bring pre-ground coffee or your own grinder.",
+   "date_published": "2026-11-25T06:00:00Z",
+   "tags": [
+    "Home"
+   ]
+  },
+  {
+   "id": "viewdeals-nothing-headphone-a",
+   "url": "https://www.target.com/p/nothing-headphone-a-wireless-headphones/-/A-1014572322",
+   "external_url": "https://www.target.com/p/nothing-headphone-a-wireless-headphones/-/A-1014572322",
+   "title": "Nothing Headphone (a)",
+   "content_text": "Noise-cancelling headphones with a ridiculous battery rating of up to 135 hours, and a look that is not another black oval. Newer and less proven than the Sony pair below.",
+   "date_published": "2026-11-25T06:00:00Z",
+   "tags": [
+    "Tech"
+   ]
+  },
+  {
+   "id": "viewdeals-apple-airtag-2nd-gen",
+   "url": "https://www.amazon.com/dp/B0GJTFXNRX",
+   "external_url": "https://www.amazon.com/dp/B0GJTFXNRX",
+   "title": "Apple AirTag (2nd generation)",
+   "content_text": "The new AirTag has a louder speaker and longer range, and can share a lost bag’s location with airlines. TODAY cites price tracking calling this its lowest price. Check whether you’re buying the single or the four-pack.",
+   "date_published": "2026-11-25T06:00:00Z",
+   "tags": [
+    "Tech"
+   ]
+  },
+  {
+   "id": "viewdeals-kasa-smart-plug-mini-4-pack",
+   "url": "https://www.amazon.com/dp/B0B14C719T",
+   "external_url": "https://www.amazon.com/dp/B0B14C719T",
+   "title": "Kasa Smart Plug Mini 15A, 4-pack (EP25P4)",
+   "content_text": "The least glamorous smart-home upgrade and the one you’ll use most. Works with Alexa, Google, SmartThings and HomeKit, tracks energy use, and is small enough not to block the second outlet.",
+   "date_published": "2026-11-25T06:00:00Z",
+   "tags": [
+    "Smart Home"
+   ]
+  },
+  {
+   "id": "https://viewdeals.com/deals/shark-flexstyle-hd430/",
+   "url": "https://viewdeals.com/deals/shark-flexstyle-hd430/",
+   "external_url": "https://www.amazon.com/dp/B0B89P16MC",
+   "title": "Shark FlexStyle Air Styling and Drying System",
+   "content_text": "A hair dryer that twists into a styling wand, with auto-wrap curlers that spin both ways. The Airwrap idea at a much friendlier cost. Several bundles exist, so check which one the deal covers.",
+   "date_published": "2026-11-25T06:00:00Z",
+   "tags": [
+    "Beauty"
+   ]
+  },
+  {
+   "id": "viewdeals-levis-505-mens",
+   "url": "https://www.amazon.com/dp/B0018OFKDY",
+   "external_url": "https://www.amazon.com/dp/B0018OFKDY",
+   "title": "Levi’s Men’s 505 Regular Fit Jeans",
+   "content_text": "The straight, roomy Levi’s that has outlasted most fashion trends. Sizes run wide, including Big and Tall, across more than twenty washes, but the deal varies by size and color, so check yours.",
+   "date_published": "2026-11-25T06:00:00Z",
+   "tags": [
+    "Fashion"
+   ]
+  },
+  {
+   "id": "viewdeals-stanley-quencher-40oz",
+   "url": "https://www.amazon.com/dp/B0CP9Z1S51",
+   "external_url": "https://www.amazon.com/dp/B0CP9Z1S51",
+   "title": "Stanley Quencher H2.0 FlowState Tumbler, 40 oz",
+   "content_text": "Yes, that tumbler. Handle, straw, three-way lid and a lot of ice-holding. NBC Select’s tracking puts it at its lowest price on Amazon. The discount may not cover every color.",
+   "date_published": "2026-11-25T06:00:00Z",
+   "tags": [
+    "Outdoors"
+   ]
+  }
+ ]
+}

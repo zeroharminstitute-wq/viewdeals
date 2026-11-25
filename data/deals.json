@@ -4,6 +4,8 @@
     {
       "id": "apple-airpods-pro-3",
       "title": "Apple AirPods Pro 3",
+      "short_name": "AirPods Pro 3",
+      "hook": "Top Apple Earbuds on Sale",
       "retailer": "amazon",
       "url": "https://www.amazon.com/dp/B0FQFB8FMG",
       "category": "tech",
@@ -21,7 +23,11 @@
       ],
       "who_for": "iPhone owners who commute, fly or work somewhere loud.",
       "skip_if": "You use Android, or you only need earbuds for the occasional call.",
-      "related": ["apple-airpods-4-walmart", "sony-wh-1000xm5", "nothing-headphone-a"]
+      "related": [
+        "apple-airpods-4-walmart",
+        "sony-wh-1000xm5",
+        "nothing-headphone-a"
+      ]
     },
     {
       "id": "apple-airtag-2nd-gen",
@@ -52,6 +58,8 @@
     {
       "id": "shark-flexstyle-hd430",
       "title": "Shark FlexStyle Air Styling and Drying System",
+      "short_name": "Shark FlexStyle",
+      "hook": "Airwrap Results for Less",
       "retailer": "amazon",
       "url": "https://www.amazon.com/dp/B0B89P16MC",
       "category": "beauty",
@@ -68,11 +76,17 @@
       ],
       "who_for": "Anyone who blow-dries and styles most days and wants one tool instead of three.",
       "skip_if": "You air-dry and only style for special occasions.",
-      "related": ["oral-b-io3", "apple-airtag-2nd-gen", "oura-ring-5"]
+      "related": [
+        "oral-b-io3",
+        "apple-airtag-2nd-gen",
+        "oura-ring-5"
+      ]
     },
     {
       "id": "lego-polaroid-onestep-sx-70",
       "title": "LEGO Ideas Polaroid OneStep SX-70 Camera (21345)",
+      "short_name": "LEGO Polaroid Camera",
+      "hook": "A Gift for Grown-Ups",
       "retailer": "amazon",
       "url": "https://www.amazon.com/dp/B0CGY4H58V",
       "category": "toys",
@@ -90,7 +104,11 @@
       ],
       "who_for": "Photography fans, design lovers and adults who like a calm evening build.",
       "skip_if": "You're shopping for a child, or for someone who wants a camera that actually shoots.",
-      "related": ["apple-airtag-2nd-gen", "stanley-quencher-40oz", "levis-505-mens"]
+      "related": [
+        "apple-airtag-2nd-gen",
+        "stanley-quencher-40oz",
+        "levis-505-mens"
+      ]
     },
     {
       "id": "levis-505-mens",
@@ -121,6 +139,8 @@
     {
       "id": "roborock-q7-m5-plus",
       "title": "Roborock Q7 M5+ Robot Vacuum and Mop",
+      "short_name": "Roborock Q7 M5+",
+      "hook": "Self-Emptying, Pet-Ready",
       "retailer": "amazon",
       "url": "https://www.amazon.com/dp/B0DWX69JVG",
       "category": "home",
@@ -138,7 +158,11 @@
       ],
       "who_for": "Pet owners and busy households who want floors kept tidy between proper cleans.",
       "skip_if": "Your home is mostly thick rugs or has lots of steps between rooms.",
-      "related": ["ninja-slushi-fs300", "kasa-smart-plug-mini-4-pack", "delonghi-linea-classic"]
+      "related": [
+        "ninja-slushi-fs300",
+        "kasa-smart-plug-mini-4-pack",
+        "delonghi-linea-classic"
+      ]
     },
     {
       "id": "apple-airpods-4-walmart",
@@ -221,6 +245,8 @@
     {
       "id": "sony-wh-1000xm5",
       "title": "Sony WH-1000XM5 Noise-Canceling Headphones",
+      "short_name": "Sony WH-1000XM5",
+      "hook": "Still-Great ANC Doorbuster",
       "retailer": "bestbuy",
       "url": "https://www.bestbuy.com/site/sony-wh-1000xm5-wireless-noise-canceling-headphones-black/6505727.p?skuId=6505727",
       "category": "tech",
@@ -238,11 +264,17 @@
       ],
       "who_for": "Frequent flyers, commuters and open-office workers who want quiet.",
       "skip_if": "You want the very latest model, or you need headphones that fold small for a bag.",
-      "related": ["nothing-headphone-a", "apple-airpods-pro-3", "apple-airpods-4-walmart"]
+      "related": [
+        "nothing-headphone-a",
+        "apple-airpods-pro-3",
+        "apple-airpods-4-walmart"
+      ]
     },
     {
       "id": "oura-ring-5",
       "title": "Oura Ring 5",
+      "short_name": "Oura Ring 5",
+      "hook": "Smallest Oura Yet on Sale",
       "retailer": "bestbuy",
       "url": "https://www.bestbuy.com/site/searchpage.jsp?st=oura+ring+5",
       "category": "tech",
@@ -259,7 +291,11 @@
       ],
       "who_for": "People who care about sleep and recovery but don't want a watch on their wrist.",
       "skip_if": "You don't want another subscription, or you need on-screen notifications.",
-      "related": ["apple-airpods-pro-3", "sony-wh-1000xm5", "shark-flexstyle-hd430"]
+      "related": [
+        "apple-airpods-pro-3",
+        "sony-wh-1000xm5",
+        "shark-flexstyle-hd430"
+      ]
     },
     {
       "id": "google-home-speaker-2026",

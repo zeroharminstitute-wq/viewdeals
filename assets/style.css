@@ -1,0 +1,19 @@
+/* Phase 2 structural stylesheet. Replaced by the design system in Phase 3. */
+:root { --paper: #F4EFE6; --ink: #161412; --red: #D7261E; --rule: rgba(22,20,18,.15); }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 17px/1.55 system-ui, sans-serif; }
+main, .masthead, .footer, .disclosure-bar { max-width: 1280px; margin: 0 auto; padding: 16px; }
+a { color: inherit; }
+.skip { position: absolute; left: -999px; }
+.skip:focus { left: 16px; top: 16px; background: var(--paper); padding: 8px; }
+.departments ul, .crumbs ol, .footer ul { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 12px; }
+.disclosure-bar { border-block: 1px solid var(--rule); font-size: 14px; }
+.card { border: 1px solid var(--rule); padding: 16px; margin-bottom: 16px; background: #fff8; }
+.card--featured { background: #fff1dc; border-color: #e8b27a; }
+.card__art, .deal__art { max-width: 100%; height: auto; display: block; }
+.button { display: block; text-align: center; padding: 12px; background: var(--ink); color: var(--paper); text-decoration: none; }
+.stamp { color: #1d6b2f; font-weight: 700; margin-right: 8px; }
+.tag { display: inline-block; transform: rotate(var(--tilt, 0deg)); border: 1px solid var(--ink); padding: 0 8px; }
+.card__badges { display: flex; gap: 8px; justify-content: space-between; align-items: center; }
+.ended { border: 2px solid var(--red); padding: 12px; }
+[hidden] { display: none !important; }
