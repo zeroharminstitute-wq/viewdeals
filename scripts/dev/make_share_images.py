@@ -2,7 +2,7 @@
 
 Social sites don't show SVG previews, so every department, event hub, guide and
 the home page gets a PNG card in the house style: paper, the ViewDeals
-wordmark with its double rule, the page's headline, and its two-ink photo.
+wordmark with its double rule, the page's headline, and its header photo.
 Deal pages share one generic card with no photo, because a picture on a deal
 must be the exact item (see the Art direction amendment in BUILD_PLAN.md).
 
@@ -18,7 +18,7 @@ from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont, ImageOps
 
 ROOT = Path(__file__).resolve().parents[2]
-PAPER, INK, RED, MUTED = (244, 239, 230), (22, 20, 18), (215, 38, 30), (78, 73, 67)
+PAPER, INK, RED, MUTED = (255, 255, 255), (17, 17, 17), (215, 38, 30), (85, 85, 85)
 W, H, M = 1200, 630, 64
 
 

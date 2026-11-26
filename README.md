@@ -260,7 +260,7 @@ Serves the built site at http://localhost:8123. Note that this simple server doe
 
 Developer-only tools in `scripts/dev/` need extra packages (Pillow and fonttools). They aren't needed to build the site:
 
-- `treat_photos.py` gives the free-license header photos listed in `data/photo-sources.json` the two-ink print treatment.
+- `treat_photos.py` crops and compresses the free-license header photos listed in `data/photo-sources.json` (natural colour; `--style riso` gives the old two-ink print look).
 - `make_share_images.py --fonts DIR` draws the 1200×630 social share cards and the logo. It needs the full Newsreader and Hanken Grotesk TTF fonts.
 - `make_placeholder_art.py` and `screenshot.py` make placeholder art and take design screenshots.
 

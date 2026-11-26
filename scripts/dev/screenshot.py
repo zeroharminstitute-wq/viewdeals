@@ -49,6 +49,9 @@ def main():
     ap.add_argument("--widths", default="390,768,1280,1600")
     ap.add_argument("--modes", default="light,dark")
     ap.add_argument("--port", type=int, default=9333)
+    ap.add_argument("--css", help="trial CSS file applied on top of the page (for comparing looks; never shipped)")
+    ap.add_argument("--js", help="trial JS file run after load (for example, swapping preview images)")
+    ap.add_argument("--height", type=int, default=0, help="crop to this height instead of the full page")
     args = ap.parse_args()
 
     chrome = next(p for p in CHROME_PATHS if os.path.exists(p))
@@ -66,6 +69,12 @@ def main():
                 time.sleep(0.2)
         cdp = CDP(page["webSocketDebuggerUrl"])
         cdp.call("Page.enable")
+        trial = ""
+        if args.css:
+            css = json.dumps(Path(args.css).read_text(encoding="utf-8"))
+            trial += f"document.head.insertAdjacentHTML('beforeend', '<style id=trial-css></style>'); document.getElementById('trial-css').textContent = {css};"
+        if args.js:
+            trial += Path(args.js).read_text(encoding="utf-8")
         Path(args.out).mkdir(parents=True, exist_ok=True)
         for w in [int(x) for x in args.widths.split(",")]:
             for mode in args.modes.split(","):
@@ -73,6 +82,9 @@ def main():
                 cdp.call("Emulation.setEmulatedMedia", features=[{"name": "prefers-color-scheme", "value": mode}])
                 cdp.call("Page.navigate", url=args.url)
                 time.sleep(1.5)
+                if trial:
+                    cdp.call("Runtime.evaluate", expression=trial)
+                    time.sleep(1.0)
                 cdp.call("Runtime.evaluate", expression="document.fonts.ready", awaitPromise=True)
                 # Scroll through so scroll-in motion settles, then return to the top.
                 cdp.call("Runtime.evaluate", awaitPromise=True, expression="""(async()=>{
@@ -83,7 +95,7 @@ def main():
                 size = metrics["cssContentSize"]
                 overflow = cdp.call("Runtime.evaluate", expression="document.documentElement.scrollWidth > innerWidth")["result"]["value"]
                 shot = cdp.call("Page.captureScreenshot", format="png", captureBeyondViewport=True,
-                                clip={"x": 0, "y": 0, "width": w, "height": size["height"], "scale": 1})
+                                clip={"x": 0, "y": 0, "width": w, "height": min(size["height"], args.height or size["height"]), "scale": 1})
                 path = Path(args.out) / f"{args.name}-{w}-{mode}.png"
                 path.write_bytes(base64.b64decode(shot["data"]))
                 print(f"{path.name}  {w}x{int(size['height'])}  horizontal overflow: {overflow}")

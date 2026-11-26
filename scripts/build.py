@@ -933,8 +933,8 @@ def layout(site, page, main):
 <meta name="description" content="{e(smart(page.description))}">
 <link rel="canonical" href="{e(canonical)}">
 {robots}{refresh}{verification}
-<meta name="theme-color" content="#F4EFE6" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#141210" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#131416" media="(prefers-color-scheme: dark)">
 <meta property="og:site_name" content="{e(c['site_name'])}">
 <meta property="og:title" content="{e(smart(page.title))}">
 <meta property="og:description" content="{e(smart(page.description))}">
@@ -1291,7 +1291,7 @@ def photo_credits(site):
     names = [f'<a href="{e(url)}" rel="nofollow noopener">{t(name)}</a> ({t(src)})' for (name, src), url in sorted(by.items())]
     listed = ", ".join(names[:-1]) + " and " + names[-1] if len(names) > 1 else names[0]
     return (t("Photographs on department, sale and guide pages are by ") + listed +
-            t(", used under the Unsplash License and printed in our two-ink style. Product photos appear only where a retailer's affiliate program supplies them."))
+            t(", used under the Unsplash License. Product photos appear only where a retailer's affiliate program supplies them."))
 
 
 def static_pages(site):
@@ -1362,12 +1362,12 @@ def render_styleguide(site, page):
                 f'<span><b>{name}</b><br><span class="sg-note">{note}</span></span></li>')
 
     swatches = "".join([
-        swatch("Paper", "--paper", "#F4EFE6 · night #141210"),
-        swatch("Ink", "--ink", "#161412 · night #EEE7DA"),
+        swatch("Paper", "--paper", "#FFFFFF · night #131416"),
+        swatch("Ink", "--ink", "#111111 · night #F2F2F0"),
         swatch("Tag red", "--spot1", "#D7261E · night #FF5A4E"),
         swatch("Highlighter", "--spot2", "#FFD23F · night #E8C23A 85%"),
         swatch("Featured wash", "--tint", "highlighter on paper"),
-        swatch("Rule", "--rule", "ink at 15% · night 18%"),
+        swatch("Rule", "--rule", "ink at 13% · night 16%"),
     ])
 
     def components(theme):
@@ -1422,7 +1422,7 @@ def render_styleguide(site, page):
 .sg-mark .mark{{max-height:96px;width:auto}}
 </style>
 <div class="page-head"><p class="label">Internal · not indexed</p><h1>Style guide: the Daily Circular</h1>
-<p class="dek sg-intro">Two spot colors on newsprint, an editorial serif and a crisp grotesque. Every component the site uses, in the day and night editions. Art marked “placeholder” is stand-in work until the commissioned set arrives.</p></div>
+<p class="dek sg-intro">Two spot colors on white paper, an editorial serif and a crisp grotesque. Every component the site uses, in the day and night editions. Art marked “placeholder” is stand-in work until the commissioned set arrives.</p></div>
 
 <section class="sg-section" aria-labelledby="sg-type"><h2 class="section-head" id="sg-type">Type scale</h2>{type_html}</section>
 

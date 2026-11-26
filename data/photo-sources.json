@@ -1,5 +1,5 @@
 {
-  "_about": "Source list for scripts/dev/treat_photos.py. Each entry is a free-license photo that gets the house two-ink treatment. Crop: focus_x / focus_y (0-1) set where the crop centres. Run: python scripts/dev/treat_photos.py (needs Pillow; dev only).",
+  "_about": "Source list for scripts/dev/treat_photos.py. Each entry is a free-license photo, shown in natural colour. Crop: focus_x / focus_y (0-1) set where the crop centres. Run: python scripts/dev/treat_photos.py (needs Pillow; dev only).",
   "photos": {
     "cat-tech": {
       "unsplash": "photo-1546435770-a3e426bf472b",

@@ -1,17 +1,22 @@
-"""Give free-license photos the house two-ink risograph treatment (dev only).
+"""Prepare the free-license header photos (dev only).
+
+Default style is "natural" (owner, 2026-11-26): the photo in its own colour,
+cropped, lightly sharpened and compressed. "riso" is the original two-ink print
+treatment, kept for reference: python scripts/dev/treat_photos.py --style riso
+
 
 Reads data/photo-sources.json, downloads each original once into photos-src/
 (git-ignored), and writes:
-  assets/photos/<key>.webp and <key>@2x.webp   two-ink prints, 3:2 (or 16:9 for "wide")
+  assets/photos/<key>.webp and <key>@2x.webp   3:2 (or 16:9 for "wide")
   data/photos.json                              what the build reads: files, alt, credits
 
-The print is made like a two-drum riso pull on cream paper:
+The riso style is made like a two-drum riso pull on cream paper:
   ink plate  (#161412)  from the photo's tones
   red plate  (#D7261E)  from the photo's saturated colors, so the subject carries the red
   both plates get grain, and the red plate is offset a few pixels (misregistration).
 
 Needs Pillow:  pip install pillow   (the site build itself stays standard-library only)
-Usage:         python scripts/dev/treat_photos.py [--only KEY] [--force]
+Usage:         python scripts/dev/treat_photos.py [--only KEY] [--force] [--style natural|riso]
 """
 import argparse
 import json
@@ -99,10 +104,16 @@ def treat(im, size, seed):
     return out
 
 
+def natural(im, size):
+    """The photo as it is: a gentle sharpen after resizing, nothing else."""
+    return im.filter(ImageFilter.UnsharpMask(radius=1.2, percent=60, threshold=2))
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--only")
     ap.add_argument("--force", action="store_true", help="re-download originals")
+    ap.add_argument("--style", choices=("natural", "riso"), default="natural")
     args = ap.parse_args()
     sources = json.loads((ROOT / "data" / "photo-sources.json").read_text(encoding="utf-8"))["photos"]
     out_dir = ROOT / "assets" / "photos"
@@ -117,9 +128,12 @@ def main():
         files = {}
         for mult, suffix in ((1, ""), (2, "@2x")):
             size = (base[0] * mult, base[1] * mult)
-            img = treat(crop(src, size, entry.get("focus_x", 0.5), entry.get("focus_y", 0.5)), size, seed=i * 10)
+            cropped = crop(src, size, entry.get("focus_x", 0.5), entry.get("focus_y", 0.5))
             name = f"assets/photos/{key}{suffix}.webp"
-            img.save(ROOT / name, "WEBP", quality=68 if mult == 1 else 52, method=6)
+            if args.style == "riso":
+                treat(cropped, size, seed=i * 10).save(ROOT / name, "WEBP", quality=68 if mult == 1 else 52, method=6)
+            else:
+                natural(cropped, size).save(ROOT / name, "WEBP", quality=74 if mult == 1 else 58, method=6)
             files[mult] = name
             print(f"{name}  {size[0]}x{size[1]}  {(ROOT / name).stat().st_size // 1024} KB")
         manifest["photos"][key] = {

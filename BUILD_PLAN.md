@@ -270,6 +270,20 @@ The palette is two spot colors on paper, like a real print run.
 
 All text meets WCAG AA contrast. Dark mode follows `prefers-color-scheme`, with a manual toggle in the footer.
 
+**Amendment (owner, 2026-11-26): white paper, natural photos.** The cream newsprint read as brown, so the site uses clean white paper and neutral inks. The two spot colours, the type and the layout are unchanged. The paper grain texture and the lead-card texture are removed.
+
+| Role | Day edition | Night edition |
+| --- | --- | --- |
+| Paper | #FFFFFF | #131416 (neutral charcoal) |
+| Ink | #111111 | #F2F2F0 |
+| Muted text | #555555 | #B4B4B4 |
+| Spot 1 | #D7261E tag red | #FF5A4E |
+| Spot 2 | #FFD23F highlighter | #E8C23A at 85% |
+| Featured wash | #FFF6CC, edge #F0C419 | #1F2024, edge #6B5A1A |
+| Rules | #111111 at 13% | #F2F2F0 at 16% |
+
+Every text pair still meets WCAG AA (tag red on white 5.0:1, on the featured wash 4.6:1).
+
 ### Illustration and imagery
 
 With no Amazon product photos allowed, illustration carries the visual weight, so it has to be excellent and consistent.
@@ -284,7 +298,7 @@ With no Amazon product photos allowed, illustration carries the visual weight, s
 - **Amendment (owner, 2026-11-25): treated photographs.** Departments, event hubs and guides may use real photographs instead of the illustrations, provided that:
   - the photo is free-license (Unsplash or Pexels license, never Unsplash+ or other paid tiers) or the owner's own;
   - it shows no readable brand logos and no identifiable faces;
-  - it gets the house two-ink treatment (ink plus tag red, grain, slight misregistration), made by `scripts/dev/treat_photos.py`;
+  - it is prepared by `scripts/dev/treat_photos.py`: shown in natural colour since the 2026-11-26 amendment (the original two-ink treatment remains available as `--style riso`);
   - it is credited in `data/photos.json` (photographer, source, link), shown in a caption on page headers and articles and listed on the About page.
   The illustrations stay as the fallback for anything without a photo.
 - **Product photos on deals (owner, 2026-11-25): exact item or nothing.** A deal shows a picture only when it is the exact product being sold, from a source its retailer's affiliate program allows (`product_images` in `site.config.json`; the build refuses anything else). Without one, the deal card and deal page have no picture at all: never a department photo, illustration or look-alike, because readers take any picture on a deal to be the item.
