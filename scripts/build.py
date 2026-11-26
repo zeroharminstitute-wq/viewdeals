@@ -93,6 +93,22 @@ MONTHS = ["January", "February", "March", "April", "May", "June", "July",
 DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
 
+def eastern_midnight(d):
+    """ISO 8601 datetime for the start of a date in New York, with its UTC offset.
+
+    Structured data and article:*_time tags need a time zone; a bare date is flagged.
+    """
+    if isinstance(d, str):
+        d = parse_date(d)
+
+    def nth_sunday(month, n):
+        first = dt.date(d.year, month, 1)
+        return first + dt.timedelta(days=(6 - first.weekday()) % 7 + 7 * (n - 1))
+
+    offset = "-04:00" if nth_sunday(3, 2) <= d < nth_sunday(11, 1) else "-05:00"
+    return f"{d.isoformat()}T00:00:00{offset}"
+
+
 def fmt_date(d):
     return f"{MONTHS[d.month - 1][:3]} {d.day}, {d.year}"
 
@@ -791,9 +807,9 @@ def social_tags(site, page):
                  f'<meta property="og:image:alt" content="{e(smart(alt))}">',
                  '<meta name="twitter:card" content="summary_large_image">']
     if article and page.published:
-        tags.append(f'<meta property="article:published_time" content="{page.published.isoformat()}">')
+        tags.append(f'<meta property="article:published_time" content="{eastern_midnight(page.published)}">')
     if article and page.updated:
-        tags.append(f'<meta property="article:modified_time" content="{page.updated.isoformat()}">')
+        tags.append(f'<meta property="article:modified_time" content="{eastern_midnight(page.updated)}">')
     return "".join(tags)
 
 
@@ -851,7 +867,7 @@ def jsonld(site, page):
         graph.append({"@type": "Article", "@id": url + "#article", "headline": smart(g["title"])[:110],
                       "description": smart(page.description), "image": [image, site.abs_url(page.image)] if page.image else [image],
                       "author": person(g["author"]), "publisher": {"@id": org_id},
-                      "datePublished": g["published"], "dateModified": page.updated.isoformat(),
+                      "datePublished": eastern_midnight(g["published"]), "dateModified": eastern_midnight(page.updated),
                       "mainEntityOfPage": url, "isPartOf": {"@id": site_id}})
     elif page.kind == "author":
         graph.append({"@type": "ProfilePage", "@id": url, "url": url, "name": page.title,
@@ -863,7 +879,7 @@ def jsonld(site, page):
         graph.append({"@type": "WebPage", "@id": url, "url": url, "name": smart(page.title),
                       "description": smart(page.description), "isPartOf": {"@id": site_id},
                       "breadcrumb": {"@id": url + "#breadcrumb"},
-                      "datePublished": d["added"], "dateModified": page.updated.isoformat(),
+                      "datePublished": eastern_midnight(d["added"]), "dateModified": eastern_midnight(page.updated),
                       "author": person(d.get("author") or c.get("default_author", "viewdeals-desk")),
                       "about": {"@type": "Thing", "name": smart(d["title"])}})
     return {"@context": "https://schema.org", "@graph": graph}

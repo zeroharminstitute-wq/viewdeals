@@ -104,6 +104,14 @@ class AffiliateUrlTests(unittest.TestCase):
         self.assertEqual(out, "https://net.example/?u=https%3A%2F%2Fshop.example%2Fp")
 
 
+class DateTests(unittest.TestCase):
+    def test_eastern_midnight_has_the_right_offset(self):
+        self.assertEqual(build.eastern_midnight("2026-11-25"), "2026-11-25T00:00:00-05:00")
+        self.assertEqual(build.eastern_midnight(D("2026-07-14")), "2026-07-14T00:00:00-04:00")
+        self.assertEqual(build.eastern_midnight("2026-03-08"), "2026-03-08T00:00:00-04:00")   # DST starts
+        self.assertEqual(build.eastern_midnight("2026-11-01"), "2026-11-01T00:00:00-05:00")   # DST ends
+
+
 # --------------------------------------------------------------------------
 # Validation: one failing deal per rule gives exactly that error
 # --------------------------------------------------------------------------

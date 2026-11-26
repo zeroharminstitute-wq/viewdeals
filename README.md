@@ -54,16 +54,16 @@ gh repo create viewdeals --public --source . --push
 ```
 
 ```powershell
-gh api -X POST repos/YOUR-GITHUB-USERNAME/viewdeals/pages -f "source[branch]=main" -f "source[path]=/docs"
+gh api -X POST repos/zeroharminstitute-wq/viewdeals/pages -f "source[branch]=main" -f "source[path]=/docs"
 ```
 
 ```powershell
-gh api -X PUT repos/YOUR-GITHUB-USERNAME/viewdeals/pages -f cname=viewdeals.com
+gh api -X PUT repos/zeroharminstitute-wq/viewdeals/pages -f cname=viewdeals.com
 ```
 
 The repository has to be **public**, because free GitHub Pages only serves public repositories. Nothing secret is stored in it: the only ID in the files is your Amazon tracking ID, which appears in every Amazon link on the site anyway.
 
-**It worked if** github.com/YOUR-GITHUB-USERNAME/viewdeals shows the files, and its **Settings → Pages** says "Your site is live" or "DNS check in progress".
+**It worked if** github.com/zeroharminstitute-wq/viewdeals shows the files, and its **Settings → Pages** says "Your site is live" or "DNS check in progress".
 
 ## Step 3. Point viewdeals.com at GitHub (DNS)
 
@@ -78,7 +78,7 @@ Do this where you bought the domain (GoDaddy, Namecheap, Squarespace and so on) 
    | A | @ | 185.199.109.153 |
    | A | @ | 185.199.110.153 |
    | A | @ | 185.199.111.153 |
-   | CNAME | www | YOUR-GITHUB-USERNAME.github.io |
+   | CNAME | www | zeroharminstitute-wq.github.io |
 
 3. **On Cloudflare only:** click the orange cloud next to each record so it turns grey ("DNS only"). You can turn it orange again after Step 4 if you want.
 4. Optional but recommended: in GitHub go to your profile picture → **Settings → Pages → Add a domain** and verify viewdeals.com. That stops anyone else from claiming it on GitHub.
@@ -92,7 +92,7 @@ DNS changes usually take 10–60 minutes to spread, and occasionally a few hours
 When the DNS check is green, GitHub issues a free security certificate. This can take another hour. Then either tick **Enforce HTTPS** in **Settings → Pages**, or let Claude Code run:
 
 ```powershell
-gh api -X PUT repos/YOUR-GITHUB-USERNAME/viewdeals/pages -F https_enforced=true
+gh api -X PUT repos/zeroharminstitute-wq/viewdeals/pages -F https_enforced=true
 ```
 
 **It worked if** these all load with a padlock: https://viewdeals.com, https://www.viewdeals.com, https://viewdeals.com/sitemap.xml and https://viewdeals.com/feed.xml. Typing http://viewdeals.com should also jump to the https address.
