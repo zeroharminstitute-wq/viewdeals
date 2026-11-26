@@ -1,0 +1,108 @@
+{
+  "slug": "best-time-to-buy-smart-home-devices",
+  "title": "Best Time to Buy Smart Home Devices",
+  "kicker": "Buying guide",
+  "dek": "Smart speakers, cameras, thermostats and plugs go on sale at the same few points every year. Here is when, why the makers' own sales matter most, and what to check before buying.",
+  "author": "viewdeals-desk",
+  "published": "2026-11-26",
+  "updated": "2026-11-26",
+  "evergreen": true,
+  "category": "smart-home",
+  "image": "assets/art/cat-smart-home.svg",
+  "image_alt": "Illustration for this department",
+  "meta_description": "When smart speakers, cameras and thermostats go on sale: Prime Day, Black Friday week and after new models launch. With sources and a buying checklist.",
+  "sections": [
+    {
+      "heading": "The short answer",
+      "paragraphs": [
+        "There are two main windows: Amazon's Prime Day in summer, and the week from Thanksgiving to Cyber Monday. A third chance comes whenever a maker replaces a device, because the model it replaces is usually discounted.",
+        "That is the advice of both sources we read. Asurion, a company that insures and repairs electronics, published its guide in September 2023. Digital Trends' guide is about Amazon's Echo speakers in particular and was written a few years ago, so treat its specifics as a pattern, not a promise."
+      ]
+    },
+    {
+      "heading": "The smart home calendar",
+      "paragraphs": [
+        "The table combines the two sources. Where it names a kind of device, that comes from Asurion's lists of what tends to be on sale at each event."
+      ],
+      "table": {
+        "head": [
+          "When",
+          "What happens",
+          "Best for"
+        ],
+        "rows": [
+          [
+            "Prime Day (usually July)",
+            "Amazon discounts its own devices and others follow",
+            "Echo speakers and other Amazon gadgets"
+          ],
+          [
+            "Late July to September",
+            "Back-to-school promotions on home technology",
+            "Devices for a dorm or a first apartment"
+          ],
+          [
+            "Thanksgiving to Cyber Monday",
+            "The biggest electronics sales of the year",
+            "Speakers, cameras, thermostats, lights and locks"
+          ],
+          [
+            "After a new model launches",
+            "The older model is discounted to clear it",
+            "Anyone who doesn't need the newest version"
+          ],
+          [
+            "Other holiday weekends",
+            "Echo discounts appear often enough to be worth a look",
+            "Checking in if you missed the big sales"
+          ]
+        ]
+      }
+    },
+    {
+      "heading": "Why the makers' own sales matter",
+      "paragraphs": [
+        "Many smart home devices are made by the companies that sell them, and those companies discount their own products on their own schedule. Digital Trends calls Prime Day easily the best time to buy an Echo, because Amazon reliably cuts the price of its own product lines then and makes sure it has stock.",
+        "Digital Trends also recommends looking for bundles at Prime Day: a speaker sold together with a compatible plug, bulb or other accessory, at a reduced price or sometimes with the accessory included. If you were going to buy the accessory anyway, the bundle can be the better deal."
+      ]
+    },
+    {
+      "heading": "Black Friday week",
+      "paragraphs": [
+        "Asurion says the period from Thanksgiving through Cyber Monday is expected to keep offering the best electronics deals of the year, and lists smart home devices such as speakers, security cameras, thermostats, lights and locks among the things commonly on sale. Its expert suggests Prime Day and Cyber Monday for people who shop online and Black Friday for people who shop in stores.",
+        "Both sources warn about stock. Digital Trends notes that many shoppers are after the same deals that weekend. Asurion suggests checking retailers' sites in early November, when the sales are advertised ahead of time, and putting the item in your cart before a short sale starts."
+      ]
+    },
+    {
+      "heading": "After a new model comes out",
+      "paragraphs": [
+        "Asurion's expert says that when a new device is released, makers often offer good deals on the previous model to make way for it. Digital Trends agrees, with a caution that applies to Amazon's speakers in particular: older models are sometimes withdrawn soon after their replacement arrives, so this window can be short."
+      ]
+    },
+    {
+      "heading": "What to check before you buy",
+      "paragraphs": [
+        "Check that it works with what you already own. Asurion advises buying devices that connect to the same system and work together. A cheap camera that needs its own separate app is less useful than one that fits the system you have.",
+        "Check whether it needs a subscription. Some cameras and doorbells charge a monthly fee for features such as stored recordings, so the price of the device may not be the whole cost.",
+        "Check the generation. Smart devices are sold for years under the same name. Make sure the sale price is for the version you think it is.",
+        "Compare the sale price with the usual price. Asurion suggests a price-history site for this, and waiting if the discount turns out to be small."
+      ]
+    },
+    {
+      "heading": "How we will keep this guide honest",
+      "paragraphs": [
+        "ViewDeals began recording prices at Walmart, Target and Best Buy on November 26, 2026. That record is too short to say anything about a full year yet, so this guide rests on the sources named. When our own checks can add to it, we will put them here and say how many checks they are based on."
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "name": "Asurion: The best time of year to buy home tech (September 20, 2023)",
+      "url": "https://www.asurion.com/connect/tech-tips/best-time-of-year-to-buy-home-tech/"
+    },
+    {
+      "name": "Digital Trends: The best time to buy an Echo device (and the worst time to buy)",
+      "url": "https://www.digitaltrends.com/home/best-time-to-buy-an-echo-device/"
+    }
+  ]
+}

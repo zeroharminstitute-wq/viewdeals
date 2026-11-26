@@ -1,0 +1,109 @@
+{
+  "slug": "best-time-to-buy-clothes",
+  "title": "Best Time to Buy Clothes, Season by Season",
+  "kicker": "Buying guide",
+  "dek": "Clothes are cheapest when the season they are made for is ending. Here is the calendar for winter, spring and summer clothing, and how to buy ahead without wasting money.",
+  "author": "viewdeals-desk",
+  "published": "2026-11-26",
+  "updated": "2026-11-26",
+  "evergreen": true,
+  "category": "fashion",
+  "image": "assets/art/cat-fashion.svg",
+  "image_alt": "Illustration for this department",
+  "meta_description": "When clothes are cheapest: end-of-season clearance and holiday weekends. A season-by-season guide to winter coats, summer clothes and buying ahead.",
+  "sections": [
+    {
+      "heading": "The short answer",
+      "paragraphs": [
+        "There are two reliable times to buy clothes for less: the big holiday weekends, when stores run sales across everything, and the end of each season, when they clear what is left to make room for the next one. A retail expert quoted by Reader's Digest, in a guide updated in September 2024, gives exactly those two answers.",
+        "The trade-off is choice. The same guide points out that buying early in a season gives you the widest selection and the most wear that year. Buying at the end gives you the lowest price, a thinner rack, and clothes you may not wear for months."
+      ]
+    },
+    {
+      "heading": "The clothing calendar",
+      "paragraphs": [
+        "The months below come from Reader's Digest's expert, with the late-winter detail from a ConsumerAffairs report published in March 2026."
+      ],
+      "table": {
+        "head": [
+          "When",
+          "What is marked down",
+          "Why"
+        ],
+        "rows": [
+          [
+            "Presidents Day (February)",
+            "Winter coats, sweaters, boots, hats and scarves",
+            "Winter is ending and stores want the space"
+          ],
+          [
+            "Late winter into March",
+            "Coats, snow gear, gloves and other bulky winter stock",
+            "Spring shipments are arriving"
+          ],
+          [
+            "Memorial Day (May)",
+            "Spring clothing, including jackets and rain boots",
+            "Stores are getting ready for summer lines"
+          ],
+          [
+            "Fourth of July and Prime Day (July)",
+            "Spring and summer clothes; sometimes swimwear",
+            "Holiday sales, with rival sales around Prime Day"
+          ],
+          [
+            "Labor Day (September)",
+            "Summer clearance",
+            "The unofficial end of summer"
+          ]
+        ]
+      }
+    },
+    {
+      "heading": "Winter clothes: the clearest case",
+      "paragraphs": [
+        "Winter clothing shows the pattern best because it is bulky and stores cannot keep it. ConsumerAffairs reports that retailers are eager to move coats, snow pants, boots, gloves and sweaters before spring stock arrives, and that clearance discounts of 40 to 70 percent are common at that point. Reader's Digest's expert names Presidents Day weekend as the best time for coats, sweaters and boots.",
+        "ConsumerAffairs makes the point that explains the whole calendar: many people wait for the first cold snap to buy winter gear, which is when prices are highest. The saving comes from buying for next winter, not for this week."
+      ]
+    },
+    {
+      "heading": "Spring and summer clothes",
+      "paragraphs": [
+        "For warm-weather clothes, Reader's Digest's expert points to three months. Memorial Day weekend brings sales as stores prepare for summer lines. July has the Fourth of July sales and Amazon's Prime Day, when several other large retailers run competing sales. Labor Day weekend is when summer stock is cleared.",
+        "The discounts quoted in that guide are large, and they are the expert's figures for the best cases, not a typical price cut. We have not checked them against our own record and repeat them only as what the source says is possible."
+      ]
+    },
+    {
+      "heading": "How to buy ahead without wasting money",
+      "paragraphs": [
+        "Buying out of season only saves money if the clothes are worn. ConsumerAffairs suggests sticking to plain basics that will not date before you can wear them: coats in neutral colours, fleece layers and thermal base layers.",
+        "For children, buying a year ahead means guessing a size. In our view it is safer to buy ahead only for adults and for items where a slightly loose fit does not matter.",
+        "ConsumerAffairs also suggests looking at the online stock of stores in warmer parts of the country, which it says often mark down winter gear earlier because demand there falls sooner."
+      ]
+    },
+    {
+      "heading": "What to check before you buy",
+      "paragraphs": [
+        "Check the return window. Clearance items are sometimes final sale, and a coat bought in March may not be tried in earnest until November.",
+        "Check the fabric and the care label, not only the discount. A big markdown on something that needs dry cleaning, or that will not last, is not the bargain it looks.",
+        "Check whether you would buy it at this price if it were not marked down. A crossed-out price says what the store hoped to get, not what the item is worth to you."
+      ]
+    },
+    {
+      "heading": "How we will keep this guide honest",
+      "paragraphs": [
+        "ViewDeals began recording prices at Walmart, Target and Best Buy on November 26, 2026. That record is too short to say anything about a full year yet, so this guide rests on the sources named. When our own checks can add to it, we will put them here and say how many checks they are based on."
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "name": "Reader's Digest: When Is the Best Time to Buy Clothes? (updated September 4, 2024)",
+      "url": "https://www.rd.com/article/best-time-to-buy-clothes/"
+    },
+    {
+      "name": "ConsumerAffairs: The best things to buy at the end of winter (March 2026)",
+      "url": "https://www.consumeraffairs.com/news/the-best-things-to-buy-at-the-end-of-winter-and-how-to-save-the-most-031626.html"
+    }
+  ]
+}

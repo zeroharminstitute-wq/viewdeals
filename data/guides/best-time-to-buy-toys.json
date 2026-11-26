@@ -1,0 +1,93 @@
+{
+  "slug": "best-time-to-buy-toys",
+  "title": "Best Time to Buy Toys for the Holidays",
+  "kicker": "Buying guide",
+  "dek": "Black Friday is not the only good day to buy toys, and it may not be the cheapest. Here is what the evidence says, how old that evidence is, and how to decide when to buy.",
+  "author": "viewdeals-desk",
+  "published": "2026-11-26",
+  "updated": "2026-11-26",
+  "evergreen": true,
+  "category": "toys",
+  "image": "assets/art/cat-toys.svg",
+  "image_alt": "Illustration for this department",
+  "meta_description": "When toy prices are lowest: Thanksgiving week, Cyber Monday or early December. What two sources found, how dated the evidence is, and when not to wait.",
+  "sections": [
+    {
+      "heading": "The short answer",
+      "paragraphs": [
+        "The good window for toys runs from Thanksgiving week into the first part of December. Within that window the sources do not agree on a single best day, and the evidence is older than we would like, so the practical advice is this: buy a toy you must have as soon as you see a fair price, and take more time over the rest.",
+        "We say that plainly because this guide rests on two sources, one from 2024 and one from 2018. Neither is recent enough to promise that this year will follow the same pattern."
+      ]
+    },
+    {
+      "heading": "What the two sources found",
+      "paragraphs": [
+        "NBC News, in a report from November 2024, quoted forecasts from Adobe, which tracks online spending. Adobe expected Thanksgiving Day itself to be an ideal day to shop for toys, with average discounts across all goods peaking at roughly 30 percent between Thanksgiving and Cyber Monday. After that it expected discounts to soften for the rest of December while staying fairly good for shoppers.",
+        "Money magazine, writing in November 2018, said that research over the years generally showed the lowest toy prices arriving just after Cyber Monday and running into early December, and that Black Friday and Cyber Monday do not always have the season's lowest prices on toys."
+      ],
+      "table": {
+        "head": [
+          "Source",
+          "Year",
+          "Best time for toys"
+        ],
+        "rows": [
+          [
+            "NBC News, citing Adobe's forecast",
+            "2024",
+            "Thanksgiving Day, within a peak that runs to Cyber Monday"
+          ],
+          [
+            "Money",
+            "2018",
+            "Just after Cyber Monday, into early December"
+          ]
+        ]
+      }
+    },
+    {
+      "heading": "How to read the disagreement",
+      "paragraphs": [
+        "The two claims are closer than they look. Both put the best prices inside a period of about three weeks that starts at Thanksgiving. They differ on whether the low point is at the start of that period or just after the big weekend. A forecast is also not the same as a result: Adobe's figures in the NBC report were what it expected, published before the sales happened.",
+        "What both agree on is that prices keep moving. NBC News, which tracked the prices of five popular gifts across several stores that season, found that retailers change prices regularly and make cuts without announcing them. Money made the same point in 2018: a toy price that is valid in the morning may be gone by the afternoon."
+      ]
+    },
+    {
+      "heading": "When not to wait",
+      "paragraphs": [
+        "Waiting for early December only makes sense if the toy will still be there. In our view the one thing worse than paying a little more is not being able to buy the toy at all, and the most wanted toys of a season are the ones most likely to run out. So split your list in two. For the toy a child has asked for by name, buy when you see a fair price. For everything else, where one building set or board game is as good as another, you can afford to watch prices into December.",
+        "That is our judgment, not a finding from either source."
+      ]
+    },
+    {
+      "heading": "How to tell a real toy deal",
+      "paragraphs": [
+        "Check the price at more than one store. NBC News observed that Amazon tends to set the pace on discounts and that its main rivals follow closely, so the same toy is often cut at several stores within days.",
+        "Check the exact set. Toy makers sell many versions of a popular toy, with different piece counts and accessories. A lower price may simply be a smaller box.",
+        "Ignore the crossed-out price. What matters is what the toy sold for last week and last month, not the list price printed beside the sale price."
+      ]
+    },
+    {
+      "heading": "Other times of year",
+      "paragraphs": [
+        "This guide covers the holiday season because that is what our two sources cover. We did not find a source we could read in full on toy prices in the rest of the year, so we make no claim about it here."
+      ]
+    },
+    {
+      "heading": "How we will keep this guide honest",
+      "paragraphs": [
+        "ViewDeals began recording prices at Walmart, Target and Best Buy on November 26, 2026. That record is too short to say anything about a full year yet, so this guide rests on the sources named. When our own checks can add to it, we will put them here and say how many checks they are based on."
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "name": "NBC News: When's the best time to buy TVs, AirPods and more as Black Friday nears? (November 25, 2024)",
+      "url": "https://www.nbcnews.com/business/consumer/holiday-shopping-black-friday-cyber-monday-when-buy-rcna181670"
+    },
+    {
+      "name": "Money: Cyber Week Toy Deals (November 28, 2018)",
+      "url": "https://money.com/best-toy-deals-cyber-week-walmart-amazon-target/"
+    }
+  ]
+}

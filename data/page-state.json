@@ -1,6 +1,6 @@
 {
   "": {
-    "hash": "0d36d3c06d16507e",
+    "hash": "d9edd124af9f0eb8",
     "updated": "2026-11-26",
     "first_seen": "2026-11-25"
   },
@@ -15,7 +15,7 @@
     "first_seen": "2026-11-25"
   },
   "authors/viewdeals-desk/": {
-    "hash": "2c7ad543de82e5b7",
+    "hash": "44596c50c5be2f14",
     "updated": "2026-11-26",
     "first_seen": "2026-11-25"
   },
@@ -70,12 +70,12 @@
     "first_seen": "2026-11-26"
   },
   "deals/lego-polaroid-onestep-sx-70/": {
-    "hash": "51a83ed635319f74",
+    "hash": "643be4269270b3f9",
     "updated": "2026-11-26",
     "first_seen": "2026-11-25"
   },
   "deals/nintendo-switch-2-mario-kart-world-bundle/": {
-    "hash": "118ae4caa4e71cf0",
+    "hash": "b0ddf943a9f385c0",
     "updated": "2026-11-26",
     "first_seen": "2026-11-26"
   },
@@ -90,12 +90,12 @@
     "first_seen": "2026-11-25"
   },
   "deals/shark-depuffi/": {
-    "hash": "c1b5b28c1aa90077",
+    "hash": "600451a7b6326265",
     "updated": "2026-11-26",
     "first_seen": "2026-11-26"
   },
   "deals/shark-flexstyle-hd430/": {
-    "hash": "3454b5a5503ea7b1",
+    "hash": "3bb7955051d1305a",
     "updated": "2026-11-26",
     "first_seen": "2026-11-25"
   },
@@ -140,7 +140,12 @@
     "first_seen": "2026-11-25"
   },
   "guides/": {
-    "hash": "b54f4c676cc2e00a",
+    "hash": "8291fe62bc44e663",
+    "updated": "2026-11-26",
+    "first_seen": "2026-11-26"
+  },
+  "guides/best-time-to-buy-a-grill/": {
+    "hash": "5b80797db0e29101",
     "updated": "2026-11-26",
     "first_seen": "2026-11-26"
   },
@@ -164,10 +169,30 @@
     "updated": "2026-11-26",
     "first_seen": "2026-11-26"
   },
+  "guides/best-time-to-buy-clothes/": {
+    "hash": "9b6284beb4aeefb9",
+    "updated": "2026-11-26",
+    "first_seen": "2026-11-26"
+  },
+  "guides/best-time-to-buy-smart-home-devices/": {
+    "hash": "b4a86163e33360ab",
+    "updated": "2026-11-26",
+    "first_seen": "2026-11-26"
+  },
+  "guides/best-time-to-buy-toys/": {
+    "hash": "0d51ef88c9fac0b4",
+    "updated": "2026-11-26",
+    "first_seen": "2026-11-26"
+  },
   "guides/black-friday-gifts-worth-giving/": {
     "hash": "68f1eebdbeff1b8b",
     "updated": "2026-11-26",
     "first_seen": "2026-11-25"
+  },
+  "guides/sephora-and-ulta-sale-calendar/": {
+    "hash": "4f3cb7ebfb5ef9b0",
+    "updated": "2026-11-26",
+    "first_seen": "2026-11-26"
   },
   "how-we-pick/": {
     "hash": "26071f0fbc65a1f8",
