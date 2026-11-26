@@ -1,0 +1,92 @@
+{
+  "products": {
+    "apple-airpods-4-walmart": {
+      "title": "Apple AirPods 4",
+      "points": [
+        {
+          "date": "2026-11-26",
+          "retailer": "walmart",
+          "price": 89,
+          "deal": "apple-airpods-4-walmart"
+        }
+      ]
+    },
+    "crock-pot-7qt-manual": {
+      "title": "Crock-Pot Manual 7-Quart Slow Cooker",
+      "points": [
+        {
+          "date": "2026-11-26",
+          "retailer": "walmart",
+          "price": 31.98,
+          "deal": "crock-pot-7qt-manual"
+        }
+      ]
+    },
+    "dyson-v9-motorbar-walmart": {
+      "title": "Dyson V9 Motorbar",
+      "points": [
+        {
+          "date": "2026-11-26",
+          "retailer": "walmart",
+          "price": 269.95,
+          "deal": "dyson-v9-motorbar-walmart"
+        }
+      ]
+    },
+    "ninja-slushi-fs300": {
+      "title": "Ninja SLUSHi 72 oz Frozen Drink Machine (FS300)",
+      "points": [
+        {
+          "date": "2026-11-26",
+          "retailer": "walmart",
+          "price": 199,
+          "deal": "ninja-slushi-fs300"
+        }
+      ]
+    },
+    "nintendo-switch-2-mario-kart-world-bundle": {
+      "title": "Switch 2 Mario Kart",
+      "points": [
+        {
+          "date": "2026-11-26",
+          "retailer": "bestbuy",
+          "price": 499.99,
+          "deal": "nintendo-switch-2-mario-kart-world-bundle"
+        }
+      ]
+    },
+    "oral-b-io3": {
+      "title": "Oral-B iO3 Electric Toothbrush",
+      "points": [
+        {
+          "date": "2026-11-26",
+          "retailer": "target",
+          "price": 59.99,
+          "deal": "oral-b-io3"
+        }
+      ]
+    },
+    "shark-depuffi": {
+      "title": "Shark DePuffi",
+      "points": [
+        {
+          "date": "2026-11-26",
+          "retailer": "bestbuy",
+          "price": 149.99,
+          "deal": "shark-depuffi"
+        }
+      ]
+    },
+    "ue-wonderboom-4": {
+      "title": "Ultimate Ears WONDERBOOM 4",
+      "points": [
+        {
+          "date": "2026-11-26",
+          "retailer": "walmart",
+          "price": 59.99,
+          "deal": "ue-wonderboom-4"
+        }
+      ]
+    }
+  }
+}

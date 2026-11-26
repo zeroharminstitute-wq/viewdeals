@@ -23,6 +23,7 @@ Commands below use `python3`. On Windows use `python`.
 2. Re-check by hand every **featured** deal and every deal whose `expires` is within 2 days of today. Open the retailer page and the source.
 3. If a deal has ended early, sold out, or a source says it's over, end it. Set its `expires` to **yesterday**, then run `--prune` again. If yesterday is before its `added` date, set `added` to yesterday as well. Don't delete deals from `deals.json` by hand: archived deals keep their pages working (see "Deal page lifecycle" below).
 4. If a deal is still on but its end date changed, update `expires` and `label`.
+5. For every deal you re-check that is not from Amazon, read the price on the retailer's page and set `price` and `price_checked` (see **Prices and the price record**). If you can't read the price for certain, leave both fields as they are.
 
 ## 3. Find
 
@@ -81,6 +82,9 @@ Add each deal to the `deals` array in `data/deals.json`:
 | `added` | yes | `TODAY` |
 | `expires` | yes | The last day the deal should show (see below) |
 | `source` | yes, for this runbook | The page where you confirmed the deal. It isn't shown on the site; it's there so the deal can be re-checked |
+| `price` | no, never for Amazon | The price you saw on the retailer's own page, as a number: `179` or `24.99`. No `$` sign. |
+| `price_checked` | with `price` | The day you saw that price: `TODAY` |
+| `product` | no | A key shared by the same product at every store and every time it returns, such as `sony-wh-1000xm5`. Leave it out and the deal's `id` is used. |
 | `event` | no | `black-friday`, `cyber-monday`, `prime-day`, `back-to-school` or `holiday-gifts`, if the deal is part of that live event |
 
 **Links.** For Amazon, use `https://www.amazon.com/dp/ASIN` only when you have confirmed the ASIN on the product page itself. Otherwise use a search link: `https://www.amazon.com/s?k=Brand+Model+Name`. For other stores, use the product page link.
@@ -90,6 +94,17 @@ Add each deal to the `deals` array in `data/deals.json`:
 - Use the announced end date if there is one.
 - For a single-product price drop with no end date, use `added` + 3 days.
 - For a sale event with no end date, use `added` + 7 days.
+
+### Prices and the price record
+
+The site keeps its own record of prices in `data/price-log.json`: one entry per product, store and day. The build adds to it from the `price` and `price_checked` fields; never edit the file by hand and never delete from it. Over time it lets a page say "Lowest in our 6 price checks since Nov 26", which no other site can copy.
+
+- **Record a price only if you saw it yourself** on the retailer's product page today, for the new item sold by the retailer or the brand (not open-box, refurbished, a membership price or a price that needs a coupon). A price from a roundup is not enough.
+- **If the page shows several prices and you can't tell which is the normal new price, record nothing.** A missing price is fine; a wrong one is not.
+- **Never for Amazon.** Amazon deals must not have `price` or `price_checked`; `--check` rejects them.
+- **Set `product` when the product has been listed before** under another id or at another store, so the new price joins the old record. Look in `data/price-log.json` and `data/archive.json` for the earlier key.
+- **Each day, refresh the price of every live non-Amazon deal you open:** set `price` to what you see and `price_checked` to `TODAY`. Cards stop showing a price 3 days after it was last checked.
+- Don't write "lowest price" in a `label` or blurb yourself. The build adds that wording only when the record supports it.
 
 ### Amazon compliance (the account can be closed for breaking these)
 
@@ -248,6 +263,7 @@ Start the report with **blockers**: anything that stopped a step or needs the ow
 - **Added (N):** id, title, retailer, category. Mark which got a write-up page.
 - **Amazon, two-source:** each Amazon deal confirmed through two sources instead of Amazon's page, with both links.
 - **Removed (M):** id and why (expired, ended early, sold out).
+- **Prices recorded:** how many non-Amazon deals got a price today, and the ids whose price you couldn't read for certain.
 - **Live now:** total count and count per category; featured ids.
 - **Broken or suspicious links:** any deal or source link that failed, redirected to a different product, or showed a different price than the source claimed.
 - **Coming up:** sale events in the next 4 weeks, and any hub due to roll forward.
@@ -256,7 +272,7 @@ Start the report with **blockers**: anything that stopped a step or needs the ow
 
 ## 8. Never
 
-- **Never edit affiliate settings** in `site.config.json`: `query_params`, `link_template`, `product_images`, verification codes, analytics or the IndexNow key. Only the owner changes those. If a link template looks wrong, report it.
+- **Never edit affiliate settings** in `site.config.json`: `query_params`, `link_template`, `product_images`, `newsletter`, verification codes, analytics or the IndexNow key. Only the owner changes those. If a link template looks wrong, report it.
 - **Never put `tag=`** or any affiliate parameter in a deal `url`.
 - **Never host, copy or link Amazon product images.**
 - **Never show Amazon prices,** discount figures, star ratings or review counts.
@@ -264,6 +280,8 @@ Start the report with **blockers**: anything that stopped a step or needs the ow
 - **Never edit files in `docs/` by hand.** The build rewrites it.
 - **Never push** when `--check`, the tests or the build fail.
 - **Never invent** deals, prices, price history, reviews, testimonials or bylines.
+- **Never edit `data/price-log.json` by hand**, guess a price, or give an Amazon deal a price.
+- **Never put a retailer link in the daily email.** The build writes `docs/daily.xml` with links to our own pages only; Amazon forbids its affiliate links in email.
 
 ---
 
@@ -302,3 +320,5 @@ This only works if ended deals reach `archive.json` through `--prune`, which is 
 | `links to 4 deal pages (needs at least 5)` | Add a deal with a page to the guide's `deal_ids`, or write up one more deal |
 | `related id 'x' does not exist` | Fix the id, or pick another related deal |
 | `duplicate id` | Rename the new deal's id |
+| `Amazon deals must not carry a price` | Remove `price` and `price_checked` from that deal |
+| `price needs price_checked` | Add `price_checked` with the day you saw the price |

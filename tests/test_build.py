@@ -199,6 +199,16 @@ class ValidationTests(unittest.TestCase):
     def test_related_must_exist(self):
         self.assertOneError(self.base(related=["no-such-deal"]), "related id 'no-such-deal' does not exist")
 
+    def test_amazon_deal_cannot_carry_a_price(self):
+        self.assertOneError(self.base(price=19.99, price_checked="2026-11-25"), "must not carry a price")
+
+    def test_price_needs_a_number_and_the_day_it_was_checked(self):
+        other = dict(retailer="walmart", url="https://www.walmart.com/ip/1")
+        self.assertEqual(self.errors(self.base(price=19.99, price_checked="2026-11-25", **other)), [])
+        self.assertOneError(self.base(price=19.99, **other), "price_checked")
+        self.assertOneError(self.base(price="19.99", price_checked="2026-11-25", **other), "price must be a number")
+        self.assertOneError(self.base(product="Bad Key", **other), "product must be")
+
     def test_seed_data_passes(self):
         today = D("2026-11-25")
         site = build.Site(ROOT, today)
@@ -324,6 +334,10 @@ class BuildTests(unittest.TestCase):
         self.assertEqual(missing, [])
         self.assertEqual((self.docs / "CNAME").read_text(encoding="utf-8").strip(), config["domain"])
 
+    def test_no_sign_up_form_until_the_owner_sets_one(self):
+        self.assertNotIn('class="signup', "".join(self.html.values()))
+        self.assertTrue((self.docs / "daily.xml").is_file())
+
     def test_titles_are_html_escaped(self):
         text = "".join(self.html.values())
         self.assertIn("Kasa &lt;Smart&gt; Plug &amp;", text)
@@ -423,6 +437,84 @@ class ConfigBuildTests(unittest.TestCase):
         self.assertIn('<meta name="msvalidate.01" content="b-test-code">', home)
         key = self.docs / "a1b2c3d4e5f60718293a4b5c6d7e8f90.txt"
         self.assertEqual(key.read_text(encoding="utf-8").strip(), "a1b2c3d4e5f60718293a4b5c6d7e8f90")
+
+
+class PriceAndEmailTests(unittest.TestCase):
+    """A checked price joins the price record, and the email sign-up appears once it is set up."""
+    TODAY = "2026-11-26"
+
+    @classmethod
+    def setUpClass(cls):
+        cls.root = repo_copy()
+        deals = cls.root / "data" / "deals.json"
+        data = json.loads(deals.read_text(encoding="utf-8"))
+        cls.deal = next(d for d in data["deals"] if d["retailer"] != "amazon" and d["expires"] >= cls.TODAY
+                        and build.word_count(d.get("write_up")) >= build.WRITE_UP_MIN_WORDS)
+
+        def price(d):
+            d["updated"] = cls.TODAY
+            for x in d["deals"]:
+                x.pop("price", None)
+                x.pop("price_checked", None)
+                if x["id"] == cls.deal["id"]:
+                    x.update(price=100, price_checked=cls.TODAY, product="unit-test-product", added=cls.TODAY)
+        edit_json(deals, price)
+        (cls.root / "data" / "price-log.json").write_text(json.dumps({"products": {"unit-test-product": {
+            "title": "Unit test product", "points": [{"date": "2026-11-01", "retailer": "target", "price": 120, "deal": "older"}]}}}),
+            encoding="utf-8")
+        edit_json(cls.root / "site.config.json", lambda c: c.update(newsletter={
+            "provider_name": "Test Mail", "form_action": "https://mail.example/subscribe", "email_field": "email_address",
+            "hidden_fields": {"list": "abc"}}))
+        cls.code, cls.out = run("--today", cls.TODAY, "--root", cls.root)
+        cls.docs = cls.root / "docs"
+        cls.html = html_files(cls.docs) if cls.docs.exists() else {}
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(cls.root.parent, ignore_errors=True)
+
+    def points(self):
+        log = json.loads((self.root / "data" / "price-log.json").read_text(encoding="utf-8"))
+        return log["products"]["unit-test-product"]["points"]
+
+    def test_build_succeeds(self):
+        self.assertEqual(self.code, 0, self.out)
+
+    def test_price_is_recorded_once(self):
+        self.assertEqual([(x["date"], x["price"]) for x in self.points()], [("2026-11-01", 120), (self.TODAY, 100)])
+        build.record_prices(self.root, json.loads((self.root / "data" / "deals.json").read_text(encoding="utf-8"))["deals"])
+        self.assertEqual(len(self.points()), 2)
+
+    def test_deal_page_shows_price_and_record(self):
+        page = self.html[self.docs / "deals" / self.deal["id"] / "index.html"]
+        self.assertIn("$100</b> when we checked on", page)
+        self.assertIn("Lowest in our 2 price checks since Nov 1, 2026.", page)
+        self.assertIn("Our price record", page)
+        self.assertIn("$120", page)
+
+    def test_no_price_is_shown_for_amazon(self):
+        for text in self.html.values():
+            for card in re.findall(r'<article class="card.*?</article>', text, re.S):
+                if "amazon.com" in card:
+                    self.assertNotIn("card__price", card)
+
+    def test_sign_up_form_and_privacy_wording(self):
+        home = self.html[self.docs / "index.html"]
+        self.assertIn('action="https://mail.example/subscribe"', home)
+        self.assertIn('name="email_address"', home)
+        self.assertIn('name="list" value="abc"', home)
+        privacy = self.html[self.docs / "privacy" / "index.html"]
+        self.assertIn("Test Mail", privacy)
+        self.assertNotIn("no newsletter sign-up", privacy)
+
+    def test_daily_feed_links_only_to_our_own_pages(self):
+        feed = (self.docs / "daily.xml").read_text(encoding="utf-8")
+        self.assertIn(f"viewdeals-edition-{self.TODAY}", feed)
+        self.assertIn("https://viewdeals.com/deals/" + self.deal["id"] + "/", feed)
+        import html as html_lib
+        links = re.findall(r'href="([^"]+)"', html_lib.unescape(feed))
+        self.assertTrue(links)
+        self.assertEqual([u for u in links if not u.startswith("https://viewdeals.com/")], [])
 
 
 class LifecycleTests(unittest.TestCase):

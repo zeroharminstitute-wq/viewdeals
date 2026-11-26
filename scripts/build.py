@@ -166,6 +166,56 @@ def fit_description(sentences, filler="Every deal is picked and checked by hand 
 
 
 # --------------------------------------------------------------------------
+# Price record
+# --------------------------------------------------------------------------
+#
+# data/price-log.json is our own record of prices we confirmed on a retailer's
+# page: one point per product, retailer and day. It only ever grows. Amazon is
+# never in it: Amazon allows prices only from its own API.
+
+PRICE_SHOW_DAYS = 3         # a card shows its price only this many days after it was checked
+PRICE_FIELDS = ("price", "price_checked")
+
+
+def fmt_price(value):
+    text = f"{float(value):,.2f}"
+    return "$" + (text[:-3] if text.endswith(".00") else text)
+
+
+def product_key(deal):
+    """The same product keeps one key across retailers and across returning deals."""
+    return deal.get("product") or deal["id"]
+
+
+def has_price(deal):
+    return (deal.get("retailer") != "amazon" and isinstance(deal.get("price"), (int, float))
+            and not isinstance(deal.get("price"), bool) and deal["price"] > 0
+            and parse_date(deal.get("price_checked")) is not None)
+
+
+def record_prices(root, deals):
+    """Add each deal's checked price to data/price-log.json. Safe to run twice."""
+    path = Path(root) / "data" / "price-log.json"
+    log = load_json(path, {"products": {}})
+    before = json.dumps(log, sort_keys=True)
+    for deal in deals:
+        if not has_price(deal):
+            continue
+        entry = log["products"].setdefault(product_key(deal), {"title": deal.get("short_name") or deal["title"], "points": []})
+        point = {"date": deal["price_checked"], "retailer": deal["retailer"], "price": deal["price"], "deal": deal["id"]}
+        same = [x for x in entry["points"] if x["date"] == point["date"] and x["retailer"] == point["retailer"]]
+        if same:
+            same[0].update(point)
+        else:
+            entry["points"].append(point)
+        entry["points"].sort(key=lambda x: (x["date"], x["retailer"]))
+    if json.dumps(log, sort_keys=True) != before:
+        log["products"] = dict(sorted(log["products"].items()))
+        write_json(path, log)
+    return log
+
+
+# --------------------------------------------------------------------------
 # Affiliate links
 # --------------------------------------------------------------------------
 
@@ -345,6 +395,19 @@ def validate(config, deals, events=None, archive=None, guides=None, root=None, p
                 if PRICE_RE.search(str(deal.get(field) or "")):
                     errors.append(f"{did}: Amazon {field} must not show a price or discount")
 
+        # Prices: never on Amazon; elsewhere a positive number with the day it was checked.
+        if deal.get("retailer") == "amazon":
+            if any(f in deal for f in PRICE_FIELDS):
+                errors.append(f"{did}: Amazon deals must not carry a price (remove price and price_checked)")
+        elif any(f in deal for f in PRICE_FIELDS):
+            price = deal.get("price")
+            if isinstance(price, bool) or not isinstance(price, (int, float)) or price <= 0:
+                errors.append(f"{did}: price must be a number above 0, such as 179 or 24.99")
+            if not parse_date(deal.get("price_checked")):
+                errors.append(f"{did}: price needs price_checked, the YYYY-MM-DD day you saw it on the retailer's page")
+        if "product" in deal and not ID_RE.match(str(deal["product"])):
+            errors.append(f"{did}: product must be lowercase letters, numbers and dashes")
+
         # Rule 7: dates parse and expires >= added.
         added, expires = parse_date(deal.get("added")), parse_date(deal.get("expires"))
         if deal.get("added") and not added:
@@ -480,6 +543,7 @@ class Site:
         self.guides = [load_json(p) for p in sorted(guide_dir.glob("*.json"))] if guide_dir.exists() else []
         self.state = load_json(self.root / "data" / "page-state.json", {})
         self.photos = load_json(self.root / "data" / "photos.json", {"photos": {}}).get("photos", {})
+        self.price_log = load_json(self.root / "data" / "price-log.json", {"products": {}}).get("products", {})
         self._img_cache = {}
 
     # --- data views --------------------------------------------------------
@@ -605,6 +669,15 @@ class Site:
                     "alt": im["alt"], "remote": True, "credit": None, "product": True}
         return None
 
+    def price_points(self, deal):
+        """Every price we have recorded for this deal's product, oldest first."""
+        return (self.price_log.get(product_key(deal)) or {}).get("points", [])
+
+    def newsletter(self):
+        """The owner's email sign-up settings, or None until a form address is set."""
+        n = self.config.get("newsletter") or {}
+        return n if str(n.get("form_action", "")).startswith("https://") else None
+
     def abs_url(self, path):
         return self.config["base_url"].rstrip("/") + "/" + path
 
@@ -668,6 +741,59 @@ def timing_html(site, deal):
     return f'<span class="card__timing{urgent}">{v(text)}</span>'
 
 
+def price_line(site, deal, cls="card__price"):
+    """Today's checked price and how it compares with our own record; '' when there is nothing honest to say."""
+    if not has_price(deal) or site.deal_state(deal) != "live":
+        return ""
+    checked = parse_date(deal["price_checked"])
+    if not 0 <= (site.today - checked).days <= PRICE_SHOW_DAYS:
+        return ""
+    out = f'<b class="num">{fmt_price(deal["price"])}</b> when we checked on {time_el(checked)}.'
+    points = site.price_points(deal)
+    days = sorted({x["date"] for x in points})
+    if len(days) >= 2:
+        low = min(points, key=lambda x: (x["price"], x["date"]))
+        if deal["price"] <= low["price"]:
+            out += (f' <span class="card__low">Lowest in our {len(days)} price checks since '
+                    f'{fmt_date(parse_date(days[0]))}.</span>')
+        else:
+            where = site.config["retailers"].get(low["retailer"], {}).get("name", low["retailer"])
+            out += f' We recorded {fmt_price(low["price"])} at {t(where)} on {fmt_date(parse_date(low["date"]))}.'
+    return f'<p class="{cls}">{out}</p>'
+
+
+def price_record(site, deal):
+    """Our dated price checks for a product, newest first, for its deal page."""
+    points = site.price_points(deal)
+    if not points:
+        return ""
+    low = min(x["price"] for x in points)
+    rows = "".join(
+        f'<tr><td>{time_el(parse_date(x["date"]))}</td>'
+        f'<td>{t(site.config["retailers"].get(x["retailer"], {}).get("name", x["retailer"]))}</td>'
+        f'<td class="num">{fmt_price(x["price"])}'
+        + (' <span class="label">lowest</span>' if x["price"] == low and len(points) > 1 else "") + "</td></tr>"
+        for x in reversed(points[-12:]))
+    return ('<section class="price-record" aria-labelledby="pr-h"><h2 id="pr-h">Our price record</h2>'
+            '<p>Prices we saw ourselves on the retailer’s page, on the day shown. It is our own record, not a full price history.</p>'
+            f'<table><thead><tr><th scope="col">Checked</th><th scope="col">Store</th><th scope="col">Price</th></tr></thead><tbody>{rows}</tbody></table></section>')
+
+
+def signup_form(site, page, where):
+    """Email sign-up form that posts straight to the owner's email service. '' until it is set up."""
+    n = site.newsletter()
+    if not n:
+        return ""
+    fid = f"nl-{where}"
+    hidden = "".join(f'<input type="hidden" name="{e(k)}" value="{e(val)}">' for k, val in (n.get("hidden_fields") or {}).items())
+    return (f'<form class="signup signup--{where}" action="{e(n["form_action"])}" method="post" target="_blank">'
+            f'<label for="{fid}">Get tomorrow’s deals by email</label>'
+            f'<div class="signup__row"><input id="{fid}" type="email" name="{e(n.get("email_field") or "email")}" '
+            'autocomplete="email" placeholder="you@example.com" required>'
+            f'{hidden}<button class="button" type="submit">Sign up free</button></div>'
+            f'<p class="signup__fine">One short email each morning. Unsubscribe any time. <a href="{link(page, "privacy/")}">Privacy</a></p></form>')
+
+
 def deal_card(site, page, deal, variant="standard", lead=False, annotate=None):
     """One deal in one of four variants: lead, feature, standard, compact."""
     retailer = site.retailer_name(deal)
@@ -694,6 +820,7 @@ def deal_card(site, page, deal, variant="standard", lead=False, annotate=None):
     parts.append(f'<{tag} class="card__title"><a href="{title_href}"{title_attrs}>{t(deal["title"])}</a></{tag}>')
     if variant != "compact":
         parts.append(f'<p class="card__blurb">{t(deal["blurb"])}</p>')
+        parts.append(price_line(site, deal))
     if variant == "lead" and deal.get("who_for"):
         parts.append(f'<p class="card__note"><span class="label">Editor’s note</span>{t("Best for " + deal["who_for"][0].lower() + deal["who_for"][1:])}</p>')
     if variant == "compact":
@@ -923,6 +1050,8 @@ def layout(site, page, main):
         for ev in site.events.get("events", []))
     count = len(site.live_deals())
     edition = v(f'No. {site.edition_number()} · {fmt_long(site.today)} · {count} deal{"s" if count != 1 else ""} today')
+    signup = signup_form(site, page, "footer") if page.kind not in ("home", "styleguide") else ""
+    signup = f'<div class="footer__signup">{signup}</div>' if signup else ""
     body_class = f"page--{page.kind} " + ("page--home" if page.kind == "home" else "page--inner")
     return f"""<!doctype html>
 <html lang="en">
@@ -966,7 +1095,7 @@ def layout(site, page, main):
 {main}
 </main>
 <footer class="footer wrap">
-<div class="footer__cols">
+{signup}<div class="footer__cols">
 <nav aria-label="Sale events"><h2>Sale events</h2><ul>{events}</ul></nav>
 <nav aria-label="About this site"><h2>About</h2><ul>
 <li><a href="{p}about/">About ViewDeals</a></li>
@@ -1061,6 +1190,9 @@ def render_home(site, page):
             out.append('<aside class="front__soon" data-search-section aria-labelledby="soon-h"><h2 id="soon-h">Ending soon</h2>'
                        + "".join(deal_card(site, page, d, "compact") for d in soon) + "</aside>")
         out.append("</div>")
+    form = signup_form(site, page, "home")
+    if form:
+        out.append(f'<section class="section signup-band" aria-label="Daily email">{form}</section>')
     if picks:
         out.append('<section class="section" data-search-section aria-labelledby="picks-h"><h2 class="section-head" id="picks-h">Top picks</h2>'
                    '<div class="grid">' + "".join(f'<div class="span-6">{deal_card(site, page, d, "feature")}</div>' for d in picks) + "</div></section>")
@@ -1153,6 +1285,7 @@ def deal_box(site, page, deal):
                 f'<a class="button button--quiet" href="{link(page, "c/" + deal["category"] + "/")}">Live {t(site.category_name(deal["category"]))} deals →</a></div>')
     tag = f'<span class="tag" style="--tilt:{tilt(deal["id"])}deg"><span>{t(deal["label"])}</span></span>' if deal.get("label") else ""
     return (f'<div class="deal-box"><p class="label">The deal</p><p class="deal-box__retailer">{t(retailer)}</p>'
+            f'{price_line(site, deal, "deal-box__price")}'
             f'<div class="card__badges">{tag}{timing_html(site, deal)}</div>'
             f'<a class="button" href="{e(affiliate_url(site.config, deal))}" {out_attrs()}>See deal at {t(retailer)} →</a>'
             f'<p class="deal-box__note">Prices and stock are set by {t(retailer)} and change often. We may earn a commission.</p></div>')
@@ -1183,6 +1316,7 @@ def render_deal(deal):
             if deal.get("skip_if"):
                 fit += f'<dt>Skip it if</dt><dd>{t(deal["skip_if"])}</dd>'
             main.append(fit + "</dl>")
+        main.append(price_record(site, deal))
         more = [f'<li><a href="{link(page, "c/" + cat + "/")}">More {t(site.category_name(cat))} deals</a></li>']
         ev = site.event(deal.get("event")) if deal.get("event") else None
         if ev and site.event_status(ev) == "live":
@@ -1318,9 +1452,15 @@ def static_pages(site):
         ], kicker="The fine print", dek="How this site pays for itself, in plain words."),
         crumbs=[("Home", ""), ("Disclosure", None)]))
     pages.append(Page("privacy/", "privacy", "Privacy Policy | ViewDeals",
-        "ViewDeals has no accounts and collects no personal data. Here is what retailers, our host GitHub Pages and our cookieless analytics can see when you visit.",
+        "ViewDeals has no accounts and collects no personal data. Here is what retailers, our host GitHub Pages and our cookieless analytics can see when you visit."
+        if not site.newsletter() else
+        "ViewDeals has no accounts. Here is what we do with your email address if you sign up, and what retailers, our host and our analytics can see.",
         static_body("Privacy", [
-            t("ViewDeals has no accounts, no newsletter sign-up and no comments, and we don't collect or sell personal data. The search box works entirely in your browser and sends nothing anywhere. If you pick the night edition, your browser remembers that choice; it never leaves your device."),
+            t("ViewDeals has no accounts, no newsletter sign-up and no comments, and we don't collect or sell personal data. The search box works entirely in your browser and sends nothing anywhere. If you pick the night edition, your browser remembers that choice; it never leaves your device.")
+            if not site.newsletter() else
+            t("ViewDeals has no accounts and no comments, and we don't sell personal data. The search box works entirely in your browser and sends nothing anywhere. If you pick the night edition, your browser remembers that choice; it never leaves your device."),
+        ] + ([t(f"If you sign up for the daily email, your email address goes to {site.newsletter().get('provider_name') or 'our email service'}, which sends the email for us. We use it only to send that email, and every email has an unsubscribe link.")]
+             if site.newsletter() else []) + [
             t("When you click through to a retailer, that retailer may set its own cookies, including affiliate cookies that tell it the visit came from us. Their privacy policies apply once you are on their sites."),
             t("The site is hosted on GitHub Pages, which may log your IP address for security, as GitHub's privacy statement describes. "
               + ("We use Cloudflare Web Analytics to count visits. It sets no cookies, doesn't track you across sites, and doesn't collect personal data."
@@ -1338,6 +1478,7 @@ def static_pages(site):
             ("A real, recent sale", "A source from the last 48 hours confirms the discount, and any price-history claim we repeat names its source."),
             ("A product worth owning", "Well known or well reviewed. We say who it suits, who should skip it, and what to check before you buy."),
             ("Not a repeat", "If we already list it, it doesn't go up twice. When a deal ends, it comes down, and its page says so."),
+            ("A price we saw ourselves", "At Walmart, Target and Best Buy we write down the price on the day we check it and keep every one. When we say a price is the lowest in our record, the page shows the checks behind it. Amazon's rules don't let us show its prices, so we don't."),
         ]), crumbs=[("Home", ""), ("How we pick", None)]))
     pages.append(Page("404.html", "notfound", "Page Not Found | ViewDeals",
         "That page is gone, and the deal may have ended. Head back to today's edition of ViewDeals for the hand-picked deals that are live right now.",
@@ -1641,6 +1782,46 @@ def write_feeds(site, docs):
     write_text(docs / "feed.json", json.dumps(feed, indent=1, ensure_ascii=False) + "\n")
 
 
+def write_digest(site, docs):
+    """docs/daily.xml: one feed item per edition, for an email service to send each morning.
+
+    The item is dated by deals.json's "updated" day, so the nightly rebuild never makes a
+    new one. Every link goes to a ViewDeals page: Amazon does not allow its affiliate links in email.
+    """
+    c = site.config
+    day = parse_date(site.updated_data)
+    live = site.live_deals()
+    new = [d for d in live if day and d["added"] == day.isoformat()]
+    items = ""
+    if new:
+        def target(d):
+            return site.abs_url(site.deal_link_target(d) or f"c/{d['category']}/") + "?utm_source=daily-email"
+
+        def row(d):
+            return (f'<p><a href="{e(target(d))}"><strong>{t(d["title"])}</strong></a> at {t(site.retailer_name(d))}<br>'
+                    f'{t(d["blurb"])}</p>')
+
+        soon = [d for d in sorted(live, key=lambda d: d["expires"]) if d not in new][:5]
+        home = e(site.abs_url("") + "?utm_source=daily-email")
+        body = f"<p>{len(new)} new deal{'s' if len(new) != 1 else ''} this morning, each one checked by hand.</p>"
+        body += "".join(row(d) for d in new)
+        if soon:
+            body += "<h2>Ending soon</h2>" + "".join(
+                f'<p><a href="{e(target(d))}">{t(d["title"])}</a> at {t(site.retailer_name(d))}: {timing_text(site, d).lower()}</p>' for d in soon)
+        body += (f'<p><a href="{home}">See all {len(live)} live deals at ViewDeals</a></p>'
+                 f"<p><small>{t(c['disclosure_short'])} Prices and availability change often; check the retailer's page before you buy.</small></p>")
+        lead = new[0].get("short_name") or new[0]["title"]
+        title = f"{lead} and {len(new) - 1} more new deals" if len(new) > 2 else " and ".join(d.get("short_name") or d["title"] for d in new)
+        items = (f"<item><title>{e(smart(title))}</title><link>{home}</link>"
+                 f'<guid isPermaLink="false">viewdeals-edition-{day.isoformat()}</guid><pubDate>{rfc822(day)}</pubDate>'
+                 f"<description>{e(body)}</description></item>\n")
+    write_text(docs / "daily.xml",
+        f'<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel>'
+        f"<title>{e(c['site_name'])} daily</title><link>{e(c['base_url'])}/</link><description>The morning list of new deals.</description>"
+        f'<language>en-us</language><atom:link href="{e(site.abs_url("daily.xml"))}" rel="self" type="application/rss+xml"/>\n'
+        f"{items}</channel></rss>\n")
+
+
 def check_links(docs):
     """Return broken internal links found in docs/*.html."""
     errors = []
@@ -1709,6 +1890,7 @@ def build(site):
         write_text(out, render_page(site, page))
     write_sitemaps(site, pages, docs)
     write_feeds(site, docs)
+    write_digest(site, docs)
     write_text(docs / "robots.txt",
         f"User-agent: *\nDisallow: /styleguide/\n\nSitemap: {site.abs_url('sitemap.xml')}\n")
     write_text(docs / "CNAME", site.config["domain"] + "\n")
@@ -1763,7 +1945,8 @@ def main(argv=None):
 
     if args.prune:
         prune(root, today)
-        site = Site(root, today)
+    record_prices(root, load_json(root / "data" / "deals.json")["deals"])
+    site = Site(root, today)
 
     errors = build(site)
     if errors:

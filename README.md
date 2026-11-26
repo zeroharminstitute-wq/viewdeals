@@ -188,6 +188,21 @@ For the first week, read each morning's report and click a few of the new deals 
 
 ---
 
+## Step 10. The daily email (optional)
+
+The site can collect email addresses and send the morning's new deals. It stays switched off until you fill in the `newsletter` block in `site.config.json`.
+
+1. Open an account with an email newsletter service that offers **a plain HTML sign-up form** and can **send automatically from an RSS feed**.
+2. In that service, find the sign-up form's HTML. Copy the form's `action` address into `form_action`, the name of its email box into `email_field`, any hidden boxes into `hidden_fields`, and the service's name into `provider_name` (the Privacy page names it).
+3. In that service, set up a daily "RSS to email" send from `https://viewdeals.com/daily.xml`, a little after the daily task runs.
+4. Rebuild and push. A sign-up box appears on the home page and above the footer everywhere else, and the Privacy page changes its wording to match.
+
+`daily.xml` holds one item for each morning's edition and links only to ViewDeals pages. Amazon does not allow its affiliate links in email, so never paste retailer links into an email by hand.
+
+## The price record
+
+For Walmart, Target and Best Buy deals, the daily task writes down the price it saw (`price` and `price_checked` in `data/deals.json`). The build keeps every one in `data/price-log.json` and shows them on the site: the price with the day it was checked, a "Lowest in our N price checks" line when the record supports it, and a table of past checks on the deal's page. Amazon prices are never recorded or shown, because Amazon's rules forbid it.
+
 ## What runs by itself
 
 | What | When | Where to look |

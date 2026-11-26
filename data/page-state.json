@@ -1,11 +1,11 @@
 {
   "": {
-    "hash": "38e0ffdca016f1c5",
+    "hash": "910f01340b6ad95a",
     "updated": "2026-11-26",
     "first_seen": "2026-11-25"
   },
   "404.html": {
-    "hash": "618f23963cc15566",
+    "hash": "f84ce6bb743f09a0",
     "updated": "2026-11-26",
     "first_seen": "2026-11-25"
   },
@@ -20,92 +20,92 @@
     "first_seen": "2026-11-25"
   },
   "c/beauty/": {
-    "hash": "9be82e57f3c601e7",
+    "hash": "3882c4af6c5eba38",
     "updated": "2026-11-26",
     "first_seen": "2026-11-25"
   },
   "c/events/": {
-    "hash": "3e4c7ffc9ed53e66",
+    "hash": "8f098c23b4bcbded",
     "updated": "2026-11-26",
     "first_seen": "2026-11-25"
   },
   "c/fashion/": {
-    "hash": "6f4563fbdb47bcc5",
-    "updated": "2026-11-25",
+    "hash": "f5aaf4b272231033",
+    "updated": "2026-11-26",
     "first_seen": "2026-11-25"
   },
   "c/home/": {
-    "hash": "cf0f8d0dc5200968",
+    "hash": "5a3d8807f7b8e8bb",
     "updated": "2026-11-26",
     "first_seen": "2026-11-25"
   },
   "c/outdoors/": {
-    "hash": "73723775b9f20326",
-    "updated": "2026-11-25",
+    "hash": "c38bacdf5a7403dc",
+    "updated": "2026-11-26",
     "first_seen": "2026-11-25"
   },
   "c/smart-home/": {
-    "hash": "113e04e82f965d72",
-    "updated": "2026-11-25",
+    "hash": "3799e64f95c85bdb",
+    "updated": "2026-11-26",
     "first_seen": "2026-11-25"
   },
   "c/tech/": {
-    "hash": "664f530f9f437f9d",
+    "hash": "c072ce9e4a92d21c",
     "updated": "2026-11-26",
     "first_seen": "2026-11-25"
   },
   "c/toys/": {
-    "hash": "43eeff9f5db80726",
+    "hash": "5ad76bf85a4822e5",
     "updated": "2026-11-26",
     "first_seen": "2026-11-25"
   },
   "deals/apple-airpods-pro-3/": {
-    "hash": "1003e4fbfd1f5679",
-    "updated": "2026-11-25",
+    "hash": "d55c36f046b35b3f",
+    "updated": "2026-11-26",
     "first_seen": "2026-11-25"
   },
   "deals/dyson-v9-motorbar-walmart/": {
-    "hash": "250d48b8ece1cbb4",
+    "hash": "b28434bab7167990",
     "updated": "2026-11-26",
     "first_seen": "2026-11-26"
   },
   "deals/lego-polaroid-onestep-sx-70/": {
-    "hash": "4497ea9e912054eb",
-    "updated": "2026-11-25",
+    "hash": "51a83ed635319f74",
+    "updated": "2026-11-26",
     "first_seen": "2026-11-25"
   },
   "deals/nintendo-switch-2-mario-kart-world-bundle/": {
-    "hash": "78b4269942531f58",
+    "hash": "118ae4caa4e71cf0",
     "updated": "2026-11-26",
     "first_seen": "2026-11-26"
   },
   "deals/oura-ring-5/": {
-    "hash": "18d0a13bab5452b9",
-    "updated": "2026-11-25",
+    "hash": "82d7ef5a1d9f52a4",
+    "updated": "2026-11-26",
     "first_seen": "2026-11-25"
   },
   "deals/roborock-q7-m5-plus/": {
-    "hash": "71a9436297bfcd11",
-    "updated": "2026-11-25",
+    "hash": "526d7cb57e0d5138",
+    "updated": "2026-11-26",
     "first_seen": "2026-11-25"
   },
   "deals/shark-depuffi/": {
-    "hash": "1b3948ce9267385a",
+    "hash": "c1b5b28c1aa90077",
     "updated": "2026-11-26",
     "first_seen": "2026-11-26"
   },
   "deals/shark-flexstyle-hd430/": {
-    "hash": "0d340b3e63a4a056",
-    "updated": "2026-11-25",
+    "hash": "3454b5a5503ea7b1",
+    "updated": "2026-11-26",
     "first_seen": "2026-11-25"
   },
   "deals/sony-wh-1000xm5/": {
-    "hash": "45dfce89793c08c8",
-    "updated": "2026-11-25",
+    "hash": "47880eda00837903",
+    "updated": "2026-11-26",
     "first_seen": "2026-11-25"
   },
   "deals/tcl-65-s4cf-fire-tv/": {
-    "hash": "b8ea7d6b2295dd56",
+    "hash": "8515f9dd94c77252",
     "updated": "2026-11-26",
     "first_seen": "2026-11-26"
   },
@@ -120,7 +120,7 @@
     "first_seen": "2026-11-25"
   },
   "events/black-friday/": {
-    "hash": "e6480fd5607960d2",
+    "hash": "165878975188d22d",
     "updated": "2026-11-26",
     "first_seen": "2026-11-25"
   },
@@ -130,7 +130,7 @@
     "first_seen": "2026-11-25"
   },
   "events/holiday-gifts/": {
-    "hash": "097052bd70800471",
+    "hash": "dd0d9bade3141e19",
     "updated": "2026-11-26",
     "first_seen": "2026-11-25"
   },
@@ -140,13 +140,13 @@
     "first_seen": "2026-11-25"
   },
   "guides/black-friday-gifts-worth-giving/": {
-    "hash": "b604f93c9e82c57d",
+    "hash": "68f1eebdbeff1b8b",
     "updated": "2026-11-26",
     "first_seen": "2026-11-25"
   },
   "how-we-pick/": {
-    "hash": "377a43f04a20927c",
-    "updated": "2026-11-25",
+    "hash": "26071f0fbc65a1f8",
+    "updated": "2026-11-26",
     "first_seen": "2026-11-25"
   },
   "privacy/": {
@@ -155,7 +155,7 @@
     "first_seen": "2026-11-25"
   },
   "styleguide/": {
-    "hash": "30734c07e0077ab3",
+    "hash": "d51d1af36d35625b",
     "updated": "2026-11-26",
     "first_seen": "2026-11-25"
   }

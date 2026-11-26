@@ -66,5 +66,11 @@
   "analytics": {
     "cloudflare_token": "ad92b74f98ee4b02a8099cf173e28a07"
   },
+  "newsletter": {
+    "provider_name": "",
+    "form_action": "",
+    "email_field": "email",
+    "hidden_fields": {}
+  },
   "logo": "assets/logo-512.png"
 }

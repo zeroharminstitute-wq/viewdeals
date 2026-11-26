@@ -156,6 +156,9 @@ main { padding-block: var(--s6) var(--s8); }
 .card__timing { margin-left: auto; font-family: var(--font-display); font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .03em; font-variation-settings: "opsz" 8; color: var(--muted); }
 .card__timing--urgent { color: var(--ink); background: linear-gradient(var(--spot1), var(--spot1)) 0 100% / 100% 2px no-repeat; }
 .card__more { margin: 0; font-size: 15px; }
+.card__price, .deal-box__price { margin: 0; font-size: 15px; line-height: 1.45; color: var(--muted); }
+.card__price b, .deal-box__price b { font-family: var(--font-display); font-size: 22px; font-weight: 700; color: var(--ink); margin-right: 2px; }
+.card__low { color: var(--ink); font-weight: 600; background: linear-gradient(var(--spot2), var(--spot2)) 0 88% / 100% 34% no-repeat; }
 .card .button { margin-top: var(--s2); }
 
 .card--standard { padding-top: var(--s4); border-top: 1px solid var(--ink); }
@@ -311,6 +314,13 @@ main { padding-block: var(--s6) var(--s8); }
 .prose h2 { font-size: 28px; font-variation-settings: "opsz" 36; margin: var(--s6) 0 var(--s3); }
 .prose--page { margin-bottom: var(--s8); }
 .fit { margin: var(--s6) 0 0; max-width: 68ch; }
+.price-record { margin: var(--s6) 0 0; max-width: 68ch; }
+.price-record h2 { font-size: 24px; margin-bottom: var(--s2); }
+.price-record p { font-size: 15px; color: var(--muted); }
+.price-record table { width: 100%; border-collapse: collapse; font-size: 16px; }
+.price-record th, .price-record td { text-align: left; padding: var(--s2) var(--s3) var(--s2) 0; border-bottom: 1px solid var(--rule); }
+.price-record th { font-size: 13px; text-transform: uppercase; letter-spacing: .03em; color: var(--muted); }
+.price-record .label { color: var(--spot1); margin-left: var(--s2); }
 .deal-cta--inline { margin-bottom: var(--s5); }
 @media (min-width: 1000px) {
   .deal-cta--inline { display: none; }
@@ -369,3 +379,13 @@ main { padding-block: var(--s6) var(--s8); }
 /* Pinterest link on guides [only: guide] */
 .pin { margin: 0; font-size: 15px; }
 .pin a { text-decoration-color: var(--spot1); }
+
+/* Daily email sign-up [defer] */
+.signup { display: grid; gap: var(--s2); max-width: 560px; }
+.signup label { font-family: var(--font-display); font-weight: 600; font-size: 24px; line-height: 1.15; }
+.signup__row { display: flex; flex-wrap: wrap; gap: var(--s3); }
+.signup input[type="email"] { flex: 1 1 220px; min-width: 0; min-height: 48px; padding: 0 var(--s3); font: 400 17px/1.3 var(--font-text); color: var(--ink); background: var(--paper); border: 1.5px solid var(--ink); border-radius: var(--radius); }
+.signup input::placeholder { color: var(--muted); }
+.signup__fine { margin: 0; font-size: 14px; color: var(--muted); }
+.signup-band { padding: var(--s5); border: 1px solid var(--ink); border-top-width: 4px; background: var(--tint); }
+.footer__signup { margin-bottom: var(--s6); padding-bottom: var(--s5); border-bottom: 1px solid var(--rule); }

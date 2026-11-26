@@ -174,7 +174,9 @@
       "added": "2026-11-25",
       "expires": "2026-11-29",
       "event": "black-friday",
-      "source": "https://www.nbcnews.com/select/shopping/walmart-early-black-friday-deals-2026-rcna609055"
+      "source": "https://www.nbcnews.com/select/shopping/walmart-early-black-friday-deals-2026-rcna609055",
+      "price": 89,
+      "price_checked": "2026-11-26"
     },
     {
       "id": "ninja-slushi-fs300",
@@ -187,7 +189,9 @@
       "added": "2026-11-25",
       "expires": "2026-11-29",
       "event": "black-friday",
-      "source": "https://www.nbcnews.com/select/shopping/walmart-early-black-friday-deals-2026-rcna609055"
+      "source": "https://www.nbcnews.com/select/shopping/walmart-early-black-friday-deals-2026-rcna609055",
+      "price": 199,
+      "price_checked": "2026-11-26"
     },
     {
       "id": "ue-wonderboom-4",
@@ -200,7 +204,9 @@
       "added": "2026-11-25",
       "expires": "2026-11-29",
       "event": "black-friday",
-      "source": "https://www.nbcnews.com/select/shopping/best-black-friday-deals-11-25-2026-rcna610836"
+      "source": "https://www.nbcnews.com/select/shopping/best-black-friday-deals-11-25-2026-rcna610836",
+      "price": 59.99,
+      "price_checked": "2026-11-26"
     },
     {
       "id": "oral-b-io3",
@@ -213,7 +219,9 @@
       "added": "2026-11-25",
       "expires": "2026-11-29",
       "event": "black-friday",
-      "source": "https://www.nbcnews.com/select/shopping/best-black-friday-deals-11-25-2026-rcna610836"
+      "source": "https://www.nbcnews.com/select/shopping/best-black-friday-deals-11-25-2026-rcna610836",
+      "price": 59.99,
+      "price_checked": "2026-11-26"
     },
     {
       "id": "delonghi-linea-classic",
@@ -336,7 +344,9 @@
         "lego-polaroid-onestep-sx-70",
         "tcl-65-s4cf-fire-tv",
         "apple-airpods-pro-3"
-      ]
+      ],
+      "price": 499.99,
+      "price_checked": "2026-11-26"
     },
     {
       "id": "tcl-65-s4cf-fire-tv",
@@ -392,7 +402,9 @@
         "roborock-q7-m5-plus",
         "crock-pot-7qt-manual",
         "ninja-slushi-fs300"
-      ]
+      ],
+      "price": 269.95,
+      "price_checked": "2026-11-26"
     },
     {
       "id": "shark-depuffi",
@@ -420,7 +432,9 @@
         "shark-flexstyle-hd430",
         "oral-b-io3",
         "oura-ring-5"
-      ]
+      ],
+      "price": 149.99,
+      "price_checked": "2026-11-26"
     },
     {
       "id": "crock-pot-7qt-manual",
@@ -433,7 +447,9 @@
       "added": "2026-11-26",
       "expires": "2026-11-29",
       "event": "black-friday",
-      "source": "https://www.walmart.com/search?q=crock-pot+7+quart+slow+cooker"
+      "source": "https://www.walmart.com/search?q=crock-pot+7+quart+slow+cooker",
+      "price": 31.98,
+      "price_checked": "2026-11-26"
     },
     {
       "id": "kindle-paperwhite-16gb",
