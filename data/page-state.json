@@ -1,12 +1,12 @@
 {
   "": {
-    "hash": "d781a74c55cd6c16",
-    "updated": "2026-11-25",
+    "hash": "38e0ffdca016f1c5",
+    "updated": "2026-11-26",
     "first_seen": "2026-11-25"
   },
   "404.html": {
-    "hash": "08676bbd0638643d",
-    "updated": "2026-11-25",
+    "hash": "618f23963cc15566",
+    "updated": "2026-11-26",
     "first_seen": "2026-11-25"
   },
   "about/": {
@@ -15,18 +15,18 @@
     "first_seen": "2026-11-25"
   },
   "authors/viewdeals-desk/": {
-    "hash": "ca1d648779abfd3a",
-    "updated": "2026-11-25",
+    "hash": "fd37ba0fced57f49",
+    "updated": "2026-11-26",
     "first_seen": "2026-11-25"
   },
   "c/beauty/": {
-    "hash": "aecb4375e84a0f53",
-    "updated": "2026-11-25",
+    "hash": "9be82e57f3c601e7",
+    "updated": "2026-11-26",
     "first_seen": "2026-11-25"
   },
   "c/events/": {
-    "hash": "42265df692112ec0",
-    "updated": "2026-11-25",
+    "hash": "3e4c7ffc9ed53e66",
+    "updated": "2026-11-26",
     "first_seen": "2026-11-25"
   },
   "c/fashion/": {
@@ -35,8 +35,8 @@
     "first_seen": "2026-11-25"
   },
   "c/home/": {
-    "hash": "dd676746fc9308eb",
-    "updated": "2026-11-25",
+    "hash": "cf0f8d0dc5200968",
+    "updated": "2026-11-26",
     "first_seen": "2026-11-25"
   },
   "c/outdoors/": {
@@ -50,13 +50,13 @@
     "first_seen": "2026-11-25"
   },
   "c/tech/": {
-    "hash": "543b7b0de2da0aab",
-    "updated": "2026-11-25",
+    "hash": "664f530f9f437f9d",
+    "updated": "2026-11-26",
     "first_seen": "2026-11-25"
   },
   "c/toys/": {
-    "hash": "aebd3b75eb71f9cc",
-    "updated": "2026-11-25",
+    "hash": "43eeff9f5db80726",
+    "updated": "2026-11-26",
     "first_seen": "2026-11-25"
   },
   "deals/apple-airpods-pro-3/": {
@@ -64,10 +64,20 @@
     "updated": "2026-11-25",
     "first_seen": "2026-11-25"
   },
+  "deals/dyson-v9-motorbar-walmart/": {
+    "hash": "250d48b8ece1cbb4",
+    "updated": "2026-11-26",
+    "first_seen": "2026-11-26"
+  },
   "deals/lego-polaroid-onestep-sx-70/": {
     "hash": "4497ea9e912054eb",
     "updated": "2026-11-25",
     "first_seen": "2026-11-25"
+  },
+  "deals/nintendo-switch-2-mario-kart-world-bundle/": {
+    "hash": "78b4269942531f58",
+    "updated": "2026-11-26",
+    "first_seen": "2026-11-26"
   },
   "deals/oura-ring-5/": {
     "hash": "18d0a13bab5452b9",
@@ -79,6 +89,11 @@
     "updated": "2026-11-25",
     "first_seen": "2026-11-25"
   },
+  "deals/shark-depuffi/": {
+    "hash": "1b3948ce9267385a",
+    "updated": "2026-11-26",
+    "first_seen": "2026-11-26"
+  },
   "deals/shark-flexstyle-hd430/": {
     "hash": "0d340b3e63a4a056",
     "updated": "2026-11-25",
@@ -88,6 +103,11 @@
     "hash": "45dfce89793c08c8",
     "updated": "2026-11-25",
     "first_seen": "2026-11-25"
+  },
+  "deals/tcl-65-s4cf-fire-tv/": {
+    "hash": "b8ea7d6b2295dd56",
+    "updated": "2026-11-26",
+    "first_seen": "2026-11-26"
   },
   "disclosure/": {
     "hash": "024f45ca07b4badb",
@@ -100,8 +120,8 @@
     "first_seen": "2026-11-25"
   },
   "events/black-friday/": {
-    "hash": "ae99134351299000",
-    "updated": "2026-11-25",
+    "hash": "e6480fd5607960d2",
+    "updated": "2026-11-26",
     "first_seen": "2026-11-25"
   },
   "events/cyber-monday/": {
@@ -110,8 +130,8 @@
     "first_seen": "2026-11-25"
   },
   "events/holiday-gifts/": {
-    "hash": "2fa6f50491634663",
-    "updated": "2026-11-25",
+    "hash": "097052bd70800471",
+    "updated": "2026-11-26",
     "first_seen": "2026-11-25"
   },
   "events/prime-day/": {
@@ -120,8 +140,8 @@
     "first_seen": "2026-11-25"
   },
   "guides/black-friday-gifts-worth-giving/": {
-    "hash": "83af96ae6d30b35b",
-    "updated": "2026-11-25",
+    "hash": "b604f93c9e82c57d",
+    "updated": "2026-11-26",
     "first_seen": "2026-11-25"
   },
   "how-we-pick/": {
@@ -135,8 +155,8 @@
     "first_seen": "2026-11-25"
   },
   "styleguide/": {
-    "hash": "169421f91d5f86e0",
-    "updated": "2026-11-25",
+    "hash": "30734c07e0077ab3",
+    "updated": "2026-11-26",
     "first_seen": "2026-11-25"
   }
 }
