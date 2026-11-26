@@ -50,12 +50,14 @@ Fewer good deals beats more weak ones. If you can only find 3 that pass **Qualif
 
 A roundup is a lead, not proof. Always confirm the deal on the retailer's own page before adding it.
 
+**Amazon exception (owner, 2026-11-25).** Amazon blocks automated browsers, so its pages often can't be opened. When that happens, an Amazon deal may still be added if **two independent reputable sources** from the list above, both dated within 48 hours, report it. List every deal added this way under **Amazon, two-source** in the report, with both source links, so the owner can spot-check it.
+
 ## 4. Qualify
 
 Add a deal only if every one of these is true:
 
 - **The retailer is in `site.config.json`**: `amazon`, `walmart`, `target` or `bestbuy`. Use `other` only for another big, established retailer, and say so in the report.
-- **It's on sale now**, per the retailer's page or a source dated within 48 hours.
+- **It's on sale now**, confirmed on the retailer's page. Amazon deals may instead be confirmed by two independent sources (see **Find**).
 - **It's a known or well-reviewed product**, from a recognized brand or with strong reviews from a reputable outlet. No unknown-brand marketplace listings.
 - **It isn't a duplicate.** Check `data/deals.json` for the same product at any retailer. If two stores have it, keep the better deal. Also check `data/archive.json`: an archived id can't be reused, so give a returning product a new id such as `stanley-quencher-40oz-dec`.
 - **It suits the categories:** `tech`, `home`, `smart-home`, `beauty`, `toys`, `outdoors`, `fashion`, `events`. Use `events` for store-wide sales, not single products.
@@ -244,6 +246,7 @@ Count "this week" as the previous Monday through Sunday. Use `git log --since` a
 Start the report with **blockers**: anything that stopped a step or needs the owner, such as `--check` failing, a failed push, a missing permission, or a source that couldn't be reached. Write "No blockers" if there were none. Then:
 
 - **Added (N):** id, title, retailer, category. Mark which got a write-up page.
+- **Amazon, two-source:** each Amazon deal confirmed through two sources instead of Amazon's page, with both links.
 - **Removed (M):** id and why (expired, ended early, sold out).
 - **Live now:** total count and count per category; featured ids.
 - **Broken or suspicious links:** any deal or source link that failed, redirected to a different product, or showed a different price than the source claimed.
