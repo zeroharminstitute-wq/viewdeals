@@ -67,9 +67,9 @@
     "cloudflare_token": "ad92b74f98ee4b02a8099cf173e28a07"
   },
   "newsletter": {
-    "provider_name": "",
-    "form_action": "",
-    "email_field": "email",
+    "provider_name": "Kit",
+    "form_action": "https://app.kit.com/forms/10248906/subscriptions",
+    "email_field": "email_address",
     "hidden_fields": {}
   },
   "logo": "assets/logo-512.png"
