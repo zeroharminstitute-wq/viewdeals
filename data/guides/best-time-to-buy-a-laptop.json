@@ -1,0 +1,79 @@
+{
+  "slug": "best-time-to-buy-a-laptop",
+  "title": "Best Time to Buy a Laptop, Month by Month",
+  "kicker": "Buying guide",
+  "dek": "Laptop deals cluster around four points in the year. Here is when they are, which one suits you, and how to tell a real discount from an ordinary price.",
+  "author": "viewdeals-desk",
+  "published": "2026-11-26",
+  "updated": "2026-11-26",
+  "evergreen": true,
+  "category": "tech",
+  "image": "assets/art/cat-tech.svg",
+  "image_alt": "Illustration for the Tech department",
+  "meta_description": "When laptops are cheapest: Black Friday, back-to-school season, Prime Day and Memorial Day, plus the spring window for last year's models. With sources.",
+  "sections": [
+    {
+      "heading": "The short answer",
+      "paragraphs": [
+        "November is the strongest month for laptop deals. Clark.com, which has logged the laptop deals its team has posted since 2016, reports that more of them appeared in November, around Black Friday, than in any other month. Digital Trends reaches the same conclusion in its Black Friday coverage and calls it the best time to buy a laptop.",
+        "It is not the only good time. Clark.com names four points in the year when the best prices tend to appear: Memorial Day in May, Prime Day in July, back-to-school season in August, and Black Friday in November. If your laptop has just died, one of the first three may be much closer than the fourth."
+      ]
+    },
+    {
+      "heading": "The laptop calendar",
+      "paragraphs": [
+        "The table sets out the year as Clark.com describes it. Its claim about November rests on its own count of deals; the other windows are its editors' experience, and it does not publish figures for them."
+      ],
+      "table": {
+        "head": ["When", "What happens", "Best for"],
+        "rows": [
+          ["March and April", "New models roll out; the previous ones are discounted", "Last year's model at a markdown"],
+          ["Memorial Day (May)", "Holiday sales at the big stores", "Anyone who can't wait for summer"],
+          ["Prime Day (July)", "Amazon's sale, with rival sales elsewhere", "Mainstream and budget laptops"],
+          ["August", "Back-to-school sales", "Students and school-year deadlines"],
+          ["November", "Black Friday and Cyber Monday", "The most deals of the year"]
+        ]
+      }
+    },
+    {
+      "heading": "Black Friday or Cyber Monday?",
+      "paragraphs": [
+        "If you are shopping that weekend, Digital Trends advises buying on Black Friday and not holding out for Cyber Monday. Its reasoning is that Cyber Monday mostly repeats the same offers with less stock left, so waiting risks losing the deal without gaining a lower price. That is one publication's judgment, not a measured result, but it matches how limited-stock sales work: the price rarely improves and the laptop may be gone.",
+        "The safer habit is the one Clark.com recommends for any time of year: if a price is clearly lower than anything you have seen for that model, take it, because many laptop deals last a single day."
+      ]
+    },
+    {
+      "heading": "Spring: the window for last year's model",
+      "paragraphs": [
+        "Clark.com says new laptop models arrive around March and April and calls those months excellent for deals on the models they replace. In our view this is often the best value of the year for someone who does not need the newest model, though neither source measures how much the older models fall. The catch is choice: once the older stock is gone, it is gone, so the spring window rewards buying early in it."
+      ]
+    },
+    {
+      "heading": "How to tell a real discount",
+      "paragraphs": [
+        "Watch the price before you buy. Clark.com's editors suggest following the model you want for a while, so that you learn what it usually costs and can recognise a good sale price. A crossed-out price on the listing tells you little; the price it sold for last month tells you a lot.",
+        "Compare stores on the same day. Clark.com suggests a comparison tool such as Google Shopping, and points to a price-history site for seeing how today's price sits against past ones.",
+        "Check the warehouse clubs. Clark.com's deals editor says Costco and Sam's Club are worth checking for laptops all year, not only during the big sales."
+      ]
+    },
+    {
+      "heading": "What to check before you buy",
+      "paragraphs": [
+        "Check the exact model and its parts. Two laptops with the same name can have different processors, memory and storage, and the cheaper one is often cheaper for that reason. Compare the full specification, not the name on the lid.",
+        "Don't pay for power you won't use. Clark.com's deals editor cautions against overbuying on features and says most people's everyday use does not need a high-end machine. Decide what you will do with it first, then buy for that.",
+        "Check the seller. Clark.com advises reading reviews of both the product and the retailer, especially when a price from an unfamiliar third-party seller looks too good.",
+        "Be careful with refurbished. It can be good value, and Clark.com recommends it for people who don't need a new model, with one condition: read the warranty, the return terms and who the seller is before you pay."
+      ]
+    },
+    {
+      "heading": "How we will keep this guide honest",
+      "paragraphs": [
+        "This guide leans on fewer hard numbers than we would like. Only one of its sources counts deals over time, and neither publishes prices. ViewDeals began recording laptop and other prices at Walmart, Target and Best Buy on November 26, 2026. When that record covers a full year, we will add what it shows here, including anything that contradicts the calendar above."
+      ]
+    }
+  ],
+  "sources": [
+    {"name": "Clark.com: The Best Time To Buy a Laptop (April 28, 2026)", "url": "https://clark.com/shopping-retail/best-time-to-buy-laptop/"},
+    {"name": "Digital Trends: Should you buy a laptop on Black Friday or wait for Cyber Monday? (2026 Black Friday coverage)", "url": "https://www.digitaltrends.com/computing/should-you-buy-a-laptop-on-black-friday-or-cyber-monday/"}
+  ]
+}

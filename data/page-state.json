@@ -1,6 +1,6 @@
 {
   "": {
-    "hash": "0d3fcb28eefb6e26",
+    "hash": "0d36d3c06d16507e",
     "updated": "2026-11-26",
     "first_seen": "2026-11-25"
   },
@@ -15,7 +15,7 @@
     "first_seen": "2026-11-25"
   },
   "authors/viewdeals-desk/": {
-    "hash": "23978b7d98242f40",
+    "hash": "2c7ad543de82e5b7",
     "updated": "2026-11-26",
     "first_seen": "2026-11-25"
   },
@@ -60,12 +60,12 @@
     "first_seen": "2026-11-25"
   },
   "deals/apple-airpods-pro-3/": {
-    "hash": "41aa7a42e38a84c1",
+    "hash": "aefa37835188af6f",
     "updated": "2026-11-26",
     "first_seen": "2026-11-25"
   },
   "deals/dyson-v9-motorbar-walmart/": {
-    "hash": "b28434bab7167990",
+    "hash": "1b5b42a2f56469eb",
     "updated": "2026-11-26",
     "first_seen": "2026-11-26"
   },
@@ -80,12 +80,12 @@
     "first_seen": "2026-11-26"
   },
   "deals/oura-ring-5/": {
-    "hash": "64026eb23fdcca74",
+    "hash": "f92bd9717d0e59bf",
     "updated": "2026-11-26",
     "first_seen": "2026-11-25"
   },
   "deals/roborock-q7-m5-plus/": {
-    "hash": "526d7cb57e0d5138",
+    "hash": "71ed27e7cc9a55b3",
     "updated": "2026-11-26",
     "first_seen": "2026-11-25"
   },
@@ -100,12 +100,12 @@
     "first_seen": "2026-11-25"
   },
   "deals/sony-wh-1000xm5/": {
-    "hash": "f8dcad735d935546",
+    "hash": "06063c478c1c2755",
     "updated": "2026-11-26",
     "first_seen": "2026-11-25"
   },
   "deals/tcl-65-s4cf-fire-tv/": {
-    "hash": "693c18b091593482",
+    "hash": "484af34b2fbb8847",
     "updated": "2026-11-26",
     "first_seen": "2026-11-26"
   },
@@ -140,12 +140,27 @@
     "first_seen": "2026-11-25"
   },
   "guides/": {
-    "hash": "f96558d0649a71e6",
+    "hash": "b54f4c676cc2e00a",
+    "updated": "2026-11-26",
+    "first_seen": "2026-11-26"
+  },
+  "guides/best-time-to-buy-a-laptop/": {
+    "hash": "612f0b4e9f300660",
+    "updated": "2026-11-26",
+    "first_seen": "2026-11-26"
+  },
+  "guides/best-time-to-buy-a-mattress/": {
+    "hash": "8c5636948da223d6",
     "updated": "2026-11-26",
     "first_seen": "2026-11-26"
   },
   "guides/best-time-to-buy-a-tv/": {
-    "hash": "a6503ae5731979af",
+    "hash": "b1a38565e7e42e18",
+    "updated": "2026-11-26",
+    "first_seen": "2026-11-26"
+  },
+  "guides/best-time-to-buy-appliances/": {
+    "hash": "a757be0ba4f0e533",
     "updated": "2026-11-26",
     "first_seen": "2026-11-26"
   },

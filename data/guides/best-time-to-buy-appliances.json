@@ -1,0 +1,84 @@
+{
+  "slug": "best-time-to-buy-appliances",
+  "title": "Best Time to Buy Appliances, by Appliance",
+  "kicker": "Buying guide",
+  "dek": "Refrigerators, washers, dryers and dishwashers do not all go on sale at the same time. Here is the best window for each, the holiday sales worth waiting for, and other ways to pay less.",
+  "author": "viewdeals-desk",
+  "published": "2026-11-26",
+  "updated": "2026-11-26",
+  "evergreen": true,
+  "category": "home",
+  "image": "assets/art/cat-home.svg",
+  "image_alt": "Illustration for the Home department",
+  "meta_description": "When to buy a refrigerator, washer, dryer or dishwasher: the best month for each appliance, the holiday sales that matter, and other ways to pay less.",
+  "sections": [
+    {
+      "heading": "The short answer",
+      "paragraphs": [
+        "Two things decide appliance prices: the holiday sales and the arrival of new models. Buy on a holiday weekend if you want the widest choice of discounts, and buy just as the new models arrive if you are happy with last year's version of one particular appliance.",
+        "For the holidays, an appliance retailer interviewed by Fidelity names the Fourth of July and Black Friday as the two best sales of the year, with discounts on every kind of appliance. NerdWallet's guide, updated in August 2026, lists Memorial Day, the Fourth of July, Labor Day, Veterans Day and Black Friday."
+      ]
+    },
+    {
+      "heading": "The best window for each appliance",
+      "paragraphs": [
+        "Different appliances are replaced on different schedules. The months below come from a Lowe's merchandising executive quoted by Fidelity. When a new model arrives, the store marks down the one it replaces to clear the floor."
+      ],
+      "table": {
+        "head": ["Appliance", "Best window", "Why"],
+        "rows": [
+          ["Refrigerator", "May, around Memorial Day", "New models arrive in late spring"],
+          ["Washing machine", "September and October", "New models arrive in early fall; deals can run into November"],
+          ["Dryer", "September and October", "Same cycle as washers"],
+          ["Dishwasher", "September and October", "Same cycle; Labor Day sales can add to the discount"],
+          ["Air conditioner", "Winter", "Few people are shopping for one, so prices are lower"]
+        ]
+      }
+    },
+    {
+      "heading": "Where the sources differ",
+      "paragraphs": [
+        "NerdWallet describes the model cycle a little differently. It says new appliance technology is often announced in January, and suggests looking for deals on the previous models from October to November or from January to March. That overlaps with Fidelity's fall window for washers, dryers and dishwashers and adds a second chance early in the year. Neither source gives price data to settle the difference, so treat both windows as worth checking.",
+        "They also rank the holidays differently. Fidelity's retailer says Presidents Day and Memorial Day bring smaller deals than the Fourth of July and Black Friday. NerdWallet says retailers concentrate appliance sales around Memorial Day and notes that it coincides with one brand's biggest sale of the year. For a refrigerator, both point to May."
+      ]
+    },
+    {
+      "heading": "What each holiday sale tends to offer",
+      "paragraphs": [
+        "Memorial Day: discounts usually come as a percentage off or as a rebate, according to NerdWallet.",
+        "Fourth of July: NerdWallet says to look for extra savings when you buy several appliances together, and notes that the sales often continue into August.",
+        "Labor Day: appliances are swept into the end-of-summer sales, and NerdWallet says retailers have been known to add free delivery.",
+        "Veterans Day: NerdWallet says the savings are real but not as deep as Black Friday's.",
+        "Black Friday: now a sale lasting several weeks. NerdWallet warns that the advertised appliances may be stocked in small numbers, so the best ones go quickly. Fidelity's retailer adds that stores push hard at the end of the year to meet their sales targets."
+      ]
+    },
+    {
+      "heading": "Other ways to pay less",
+      "paragraphs": [
+        "Buy out of season. The Lowe's executive quoted by Fidelity says prices tend to fall when demand is low, which is why winter is the time for an air conditioner. The retailer adds that building and renovation work pushes appliance demand up in warm weather.",
+        "Ask about scratched or dented units. Fidelity explains that these are usually brand-new appliances with cosmetic damage from the factory, shipping or the warehouse, sold at a discount.",
+        "Ask for a price match. NerdWallet notes that many appliance retailers match prices and that the policy is usually on the retailer's website.",
+        "Look for rebates. Fidelity lists rebates from manufacturers and energy-saving rebates from government programs among the ways to cut the cost."
+      ]
+    },
+    {
+      "heading": "What to check before you buy",
+      "paragraphs": [
+        "Measure the space, the doorways and the route into the house. A discount is no use on an appliance that will not fit through the door.",
+        "Check what delivery includes: bringing it inside, connecting it, and taking the old one away are often priced separately.",
+        "Check the model number and the year. A sale on last year's model is the point of the fall and spring windows, but an older model than that should cost less again.",
+        "Plan ahead if you can. NerdWallet suggests noting how old each appliance is and setting money aside before it fails, so that you are choosing the sale and not being forced into the first price you see."
+      ]
+    },
+    {
+      "heading": "How we will keep this guide honest",
+      "paragraphs": [
+        "ViewDeals began recording prices at Walmart, Target and Best Buy on November 26, 2026. We do not have a year of appliance prices yet, so the windows above come from the two sources named. As our own record grows, we will add what it shows and say how many checks it is based on."
+      ]
+    }
+  ],
+  "sources": [
+    {"name": "NerdWallet: When Is the Best Time to Buy Appliances? (updated August 31, 2026)", "url": "https://www.nerdwallet.com/finance/learn/best-time-to-buy-appliances"},
+    {"name": "Fidelity Viewpoints: When is the best time to buy appliances?", "url": "https://www.fidelity.com/learning-center/smart-money/best-time-to-buy-appliances"}
+  ]
+}
