@@ -1,0 +1,38 @@
+# Runs the unit tests and the data check on every push and pull request.
+# A red X here means the push has a problem; see README.md, "When something breaks".
+name: ci
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Unit tests
+        run: python3 -m unittest discover tests -v
+
+      - name: Check the deal data
+        run: python3 scripts/build.py --check --today "$(TZ=America/New_York date +%F)"
+
+      - name: docs/ matches the data
+        # A rebuild should reproduce the committed docs/ exactly. If it doesn't, someone edited
+        # docs/ by hand or forgot to rebuild. This only warns: the next build fixes it.
+        run: |
+          day="$(TZ=America/New_York git log -1 --date=format-local:%F --format=%cd)"
+          python3 scripts/build.py --today "$day"
+          if [ -n "$(git status --porcelain -- docs)" ]; then
+            git status --short -- docs | head -40
+            echo "::warning::docs/ is out of date. Run: python3 scripts/build.py, then commit docs/."
+          fi

@@ -887,6 +887,12 @@ def layout(site, page, main):
         verification += f'<meta name="google-site-verification" content="{e(c["verification"]["google"])}">'
     if c.get("verification", {}).get("bing"):
         verification += f'<meta name="msvalidate.01" content="{e(c["verification"]["bing"])}">'
+    analytics = ""
+    token = (c.get("analytics") or {}).get("cloudflare_token")
+    if token and not page.redirect and page.kind != "styleguide":
+        # Cloudflare Web Analytics: cookieless, the one third-party request allowed (SEO > Measurement).
+        beacon = e(json.dumps({"token": token}))
+        analytics = f'<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon="{beacon}"></script>'
     refresh = ""
     if page.redirect:
         refresh = f'<meta http-equiv="refresh" content="0; url={link(page, page.redirect)}">'
@@ -928,6 +934,7 @@ def layout(site, page, main):
 {jsonld_tag(site, page)}
 {HEAD_SCRIPT}
 <script src="{p}assets/app.js" defer></script>
+{analytics}
 </head>
 <body class="{body_class}">
 <a class="skip" href="#main">Skip to the deals</a>
