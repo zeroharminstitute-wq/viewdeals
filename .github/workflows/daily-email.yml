@@ -1,0 +1,33 @@
+# When the daily task pushes a new edition, make it into a Kit email broadcast.
+# Does nothing until the owner adds the KIT_API_KEY secret. It saves a draft unless
+# the repository variable KIT_SEND_MODE is "send". See README, Step 10.
+name: daily-email
+
+on:
+  push:
+    branches: [main]
+    paths: ["docs/daily.xml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: daily-email
+  cancel-in-progress: false
+
+jobs:
+  email:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Make today's broadcast
+        env:
+          KIT_API_KEY: ${{ secrets.KIT_API_KEY }}
+          KIT_SEND_MODE: ${{ vars.KIT_SEND_MODE }}
+        run: python3 scripts/send_daily_email.py

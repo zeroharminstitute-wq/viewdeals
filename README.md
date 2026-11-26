@@ -188,16 +188,25 @@ For the first week, read each morning's report and click a few of the new deals 
 
 ---
 
-## Step 10. The daily email (optional)
+## Step 10. The daily email (Kit)
 
-The site can collect email addresses and send the morning's new deals. It stays switched off until you fill in the `newsletter` block in `site.config.json`.
+The site can collect email addresses and send each morning's new deals through [Kit](https://kit.com), whose free plan covers up to 10,000 subscribers. Both halves stay switched off until you do the steps below.
 
-1. Open an account with an email newsletter service that offers **a plain HTML sign-up form** and can **send automatically from an RSS feed**.
-2. In that service, find the sign-up form's HTML. Copy the form's `action` address into `form_action`, the name of its email box into `email_field`, any hidden boxes into `hidden_fields`, and the service's name into `provider_name` (the Privacy page names it).
-3. In that service, set up a daily "RSS to email" send from `https://viewdeals.com/daily.xml`, a little after the daily task runs.
+**The sign-up box**
+
+1. Create a free Kit account. Kit asks for a postal address to print at the bottom of every email; the law requires one.
+2. In Kit, create a form. Open its **Embed** options, choose **HTML**, and copy the code.
+3. From that code, put the form's `action` address into `form_action` in the `newsletter` block of `site.config.json`, the `name` of its email box into `email_field`, any hidden boxes into `hidden_fields`, and `Kit` into `provider_name` (the Privacy page names it). Claude can do this step if you paste the code into a chat.
 4. Rebuild and push. A sign-up box appears on the home page and above the footer everywhere else, and the Privacy page changes its wording to match.
 
-`daily.xml` holds one item for each morning's edition and links only to ViewDeals pages. Amazon does not allow its affiliate links in email, so never paste retailer links into an email by hand.
+**The morning email**
+
+1. In Kit, open **Settings → Developer** and create a **V4 API key**. Kit shows it once.
+2. On GitHub, open the `viewdeals` repository → **Settings → Secrets and variables → Actions → New repository secret**. Name it `KIT_API_KEY` and paste the key. Never put the key in a file or a chat.
+3. From then on, each time the daily task pushes a new edition, the `daily-email` job makes a **draft** broadcast in Kit from `docs/daily.xml`. Look at a draft or two in Kit.
+4. When the drafts look right, switch to sending: same GitHub page, **Variables** tab → **New repository variable**, name `KIT_SEND_MODE`, value `send`. Emails then go out about 10 minutes after each morning's push. Delete the variable to go back to drafts.
+
+A day with no new deals sends nothing, and an edition is never sent twice. `daily.xml` links only to ViewDeals pages. Amazon does not allow its affiliate links in email, so never paste retailer links into an email by hand.
 
 ## The price record
 
