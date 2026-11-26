@@ -1,6 +1,6 @@
 {
   "": {
-    "hash": "259319a12f58b538",
+    "hash": "0d3fcb28eefb6e26",
     "updated": "2026-11-26",
     "first_seen": "2026-11-25"
   },
@@ -15,7 +15,7 @@
     "first_seen": "2026-11-25"
   },
   "authors/viewdeals-desk/": {
-    "hash": "fd37ba0fced57f49",
+    "hash": "23978b7d98242f40",
     "updated": "2026-11-26",
     "first_seen": "2026-11-25"
   },
@@ -40,7 +40,7 @@
     "first_seen": "2026-11-25"
   },
   "c/outdoors/": {
-    "hash": "c38bacdf5a7403dc",
+    "hash": "3eba6414cfa666d4",
     "updated": "2026-11-26",
     "first_seen": "2026-11-25"
   },
@@ -60,7 +60,7 @@
     "first_seen": "2026-11-25"
   },
   "deals/apple-airpods-pro-3/": {
-    "hash": "d55c36f046b35b3f",
+    "hash": "41aa7a42e38a84c1",
     "updated": "2026-11-26",
     "first_seen": "2026-11-25"
   },
@@ -80,7 +80,7 @@
     "first_seen": "2026-11-26"
   },
   "deals/oura-ring-5/": {
-    "hash": "82d7ef5a1d9f52a4",
+    "hash": "64026eb23fdcca74",
     "updated": "2026-11-26",
     "first_seen": "2026-11-25"
   },
@@ -100,12 +100,12 @@
     "first_seen": "2026-11-25"
   },
   "deals/sony-wh-1000xm5/": {
-    "hash": "47880eda00837903",
+    "hash": "f8dcad735d935546",
     "updated": "2026-11-26",
     "first_seen": "2026-11-25"
   },
   "deals/tcl-65-s4cf-fire-tv/": {
-    "hash": "8515f9dd94c77252",
+    "hash": "693c18b091593482",
     "updated": "2026-11-26",
     "first_seen": "2026-11-26"
   },
@@ -120,7 +120,7 @@
     "first_seen": "2026-11-25"
   },
   "events/black-friday/": {
-    "hash": "165878975188d22d",
+    "hash": "9e6ff02188f1f60f",
     "updated": "2026-11-26",
     "first_seen": "2026-11-25"
   },
@@ -138,6 +138,16 @@
     "hash": "8f83e0b597081e05",
     "updated": "2026-11-25",
     "first_seen": "2026-11-25"
+  },
+  "guides/": {
+    "hash": "f96558d0649a71e6",
+    "updated": "2026-11-26",
+    "first_seen": "2026-11-26"
+  },
+  "guides/best-time-to-buy-a-tv/": {
+    "hash": "a6503ae5731979af",
+    "updated": "2026-11-26",
+    "first_seen": "2026-11-26"
   },
   "guides/black-friday-gifts-worth-giving/": {
     "hash": "68f1eebdbeff1b8b",

@@ -389,3 +389,17 @@ main { padding-block: var(--s6) var(--s8); }
 .signup__fine { margin: 0; font-size: 14px; color: var(--muted); }
 .signup-band { padding: var(--s5); border: 1px solid var(--ink); border-top-width: 4px; background: var(--tint); }
 .footer__signup { margin-bottom: var(--s6); padding-bottom: var(--s5); border-bottom: 1px solid var(--rule); }
+
+/* Guide lists, guide tables and sources [defer] */
+.guide-list { list-style: none; padding: 0; margin: 0 0 var(--s4); display: grid; gap: var(--s5); grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+.guide-list li { border-top: 1px solid var(--ink); padding-top: var(--s3); }
+.guide-list .label { margin: 0 0 var(--s1); color: var(--muted); }
+.guide-list h3 { font-family: var(--font-display); font-weight: 600; font-size: 22px; line-height: 1.15; margin: 0 0 var(--s2); }
+.guide-list h3 a { text-decoration: none; }
+.guide-list h3 a:hover { text-decoration: underline; text-decoration-color: var(--spot1); text-decoration-thickness: 2px; }
+.guide-list p { margin: 0; font-size: 16px; line-height: 1.5; }
+.guide-table { overflow-x: auto; margin: var(--s4) 0; }
+.guide-table table { width: 100%; border-collapse: collapse; font-size: 16px; }
+.guide-table th, .guide-table td { text-align: left; vertical-align: top; padding: var(--s2) var(--s4) var(--s2) 0; border-bottom: 1px solid var(--rule); }
+.guide-table th { font-size: 13px; text-transform: uppercase; letter-spacing: .03em; color: var(--muted); }
+.prose--guide ul { padding-left: 1.2em; font-size: 17px; line-height: 1.6; }

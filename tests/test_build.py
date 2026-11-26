@@ -4,7 +4,8 @@ Run from the repo root:
     python3 -m unittest discover tests
 
 Build tests work on a throwaway copy of the repo in a temp folder, so the real
-data/ and docs/ are never touched.
+data/ and docs/ are never touched. The copy uses the fixed deals and guides in
+tests/fixtures, not today's; only test_seed_data_passes reads the real data.
 """
 import contextlib
 import copy
@@ -33,6 +34,15 @@ def repo_copy():
     tmp = Path(tempfile.mkdtemp(prefix="viewdeals-test-"))
     dest = tmp / "repo"
     shutil.copytree(ROOT, dest, ignore=lambda d, names: [n for n in names if n in SKIP_DIRS])
+    # The copy gets a fixed set of deals and guides (tests/fixtures, a snapshot from 2026-11-26),
+    # so the tests give the same answer whatever is live on the real site today.
+    fixtures = ROOT / "tests" / "fixtures"
+    shutil.copy(fixtures / "deals.json", dest / "data" / "deals.json")
+    shutil.copy(fixtures / "archive.json", dest / "data" / "archive.json")
+    shutil.rmtree(dest / "data" / "guides", ignore_errors=True)
+    shutil.copytree(fixtures / "guides", dest / "data" / "guides")
+    for name in ("price-log.json", "page-state.json"):
+        (dest / "data" / name).unlink(missing_ok=True)
     return dest
 
 
@@ -278,9 +288,9 @@ class PruneTests(unittest.TestCase):
 class BuildTests(unittest.TestCase):
     """One build of a temp copy on 2026-11-30.
 
-    On that date the Kasa plugs (expires 11-30) are on their last day and the
-    UE Wonderboom (expired 11-29) is over. Neither has a write-up, so each is
-    only a card. The Kasa title gets HTML special characters to test escaping.
+    The build adds two deals of its own: Kasa plugs on their last day (expires
+    11-30) and a speaker that ended the day before. Neither has a write-up, so each
+    is only a card. The Kasa title has HTML special characters to test escaping.
     """
     TODAY = "2026-11-30"
     ODD_TITLE = 'Kasa <Smart> Plug & "Mini" 4-Pack'
@@ -290,10 +300,13 @@ class BuildTests(unittest.TestCase):
         cls.root = repo_copy()
         deals = cls.root / "data" / "deals.json"
         data = json.loads(deals.read_text(encoding="utf-8"))
-        by_id = {d["id"]: d for d in data["deals"]}
-        cls.today_deal, cls.gone_deal = by_id["kasa-smart-plug-mini-4-pack"], by_id["ue-wonderboom-4"]
-        assert cls.today_deal["expires"] == cls.TODAY and "write_up" not in cls.today_deal
-        assert cls.gone_deal["expires"] == "2026-11-29" and "write_up" not in cls.gone_deal
+        # The two deals under test are added here, so the tests don't depend on which real deals are live.
+        cls.today_deal = {"id": "unit-test-kasa-plugs", "title": cls.ODD_TITLE, "retailer": "amazon",
+                          "url": "https://www.amazon.com/s?k=unit+test+kasa+plugs", "category": "smart-home",
+                          "blurb": "Four small smart plugs for lamps and fans.", "added": "2026-11-25", "expires": cls.TODAY}
+        cls.gone_deal = {"id": "unit-test-gone-speaker", "title": "Unit Test Gone Speaker", "retailer": "walmart",
+                         "url": "https://www.walmart.com/ip/unit-test-gone-speaker/1", "category": "outdoors",
+                         "blurb": "A small speaker whose deal ended yesterday.", "added": "2026-11-25", "expires": "2026-11-29"}
 
         # These tests check a build with no analytics, so they don't depend on the owner's token.
         # ...and with no email sign-up, so the "off until set up" test doesn't either.
@@ -302,11 +315,7 @@ class BuildTests(unittest.TestCase):
             c["newsletter"] = {"provider_name": "", "form_action": "", "email_field": "email", "hidden_fields": {}}
         edit_json(cls.root / "site.config.json", owner_settings_off)
 
-        def retitle(d):
-            for x in d["deals"]:
-                if x["id"] == cls.today_deal["id"]:
-                    x["title"] = cls.ODD_TITLE
-        edit_json(deals, retitle)
+        edit_json(deals, lambda d: d["deals"].extend([cls.today_deal, cls.gone_deal]))
         cls.code, cls.out = run("--today", cls.TODAY, "--root", cls.root)
         cls.docs = cls.root / "docs"
         cls.html = html_files(cls.docs) if cls.docs.exists() else {}
@@ -341,6 +350,14 @@ class BuildTests(unittest.TestCase):
     def test_no_sign_up_form_until_the_owner_sets_one(self):
         self.assertNotIn('class="signup', "".join(self.html.values()))
         self.assertTrue((self.docs / "daily.xml").is_file())
+
+    def test_guides_index_and_evergreen_guide_are_built_and_linked(self):
+        index = self.html[self.docs / "guides" / "index.html"]
+        self.assertIn("Year-round guides", index)
+        page = self.html[self.docs / "guides" / "best-time-to-buy-a-tv" / "index.html"]
+        self.assertIn("<h2>Sources</h2>", page)
+        self.assertIn("<table>", page)
+        self.assertIn('href="./guides/"', self.html[self.docs / "index.html"])
 
     def test_titles_are_html_escaped(self):
         text = "".join(self.html.values())
@@ -452,16 +469,20 @@ class PriceAndEmailTests(unittest.TestCase):
         cls.root = repo_copy()
         deals = cls.root / "data" / "deals.json"
         data = json.loads(deals.read_text(encoding="utf-8"))
-        cls.deal = next(d for d in data["deals"] if d["retailer"] != "amazon" and d["expires"] >= cls.TODAY
-                        and build.word_count(d.get("write_up")) >= build.WRITE_UP_MIN_WORDS)
+        # The deal under test is added here, so the tests don't depend on which real deals are live.
+        cls.deal = {"id": "unit-test-priced-kettle", "title": "Unit Test Priced Kettle", "retailer": "walmart",
+                    "url": "https://www.walmart.com/ip/unit-test-priced-kettle/2", "category": "home",
+                    "blurb": "A plain electric kettle used by the tests.", "added": cls.TODAY, "expires": "2026-11-30",
+                    "short_name": "Unit Test Kettle", "hook": "Test Only",
+                    "write_up": ["kettle " * (build.WRITE_UP_MIN_WORDS + 10)],
+                    "price": 100, "price_checked": cls.TODAY, "product": "unit-test-product"}
 
         def price(d):
             d["updated"] = cls.TODAY
             for x in d["deals"]:
                 x.pop("price", None)
                 x.pop("price_checked", None)
-                if x["id"] == cls.deal["id"]:
-                    x.update(price=100, price_checked=cls.TODAY, product="unit-test-product", added=cls.TODAY)
+            d["deals"].append(cls.deal)
         edit_json(deals, price)
         (cls.root / "data" / "price-log.json").write_text(json.dumps({"products": {"unit-test-product": {
             "title": "Unit test product", "points": [{"date": "2026-11-01", "retailer": "target", "price": 120, "deal": "older"}]}}}),
@@ -519,6 +540,51 @@ class PriceAndEmailTests(unittest.TestCase):
         links = re.findall(r'href="([^"]+)"', html_lib.unescape(feed))
         self.assertTrue(links)
         self.assertEqual([u for u in links if not u.startswith("https://viewdeals.com/")], [])
+
+
+class EvergreenGuideTests(unittest.TestCase):
+    """A year-round guide needs sources and length, not live deals."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.config = json.loads((ROOT / "site.config.json").read_text(encoding="utf-8"))
+
+    def guide(self, **changes):
+        g = {"slug": "best-time-to-buy-a-test", "title": "Best Time to Buy a Test", "dek": "A dek.",
+             "author": "viewdeals-desk", "published": "2026-11-26", "updated": "2026-11-26",
+             "image": "assets/art/cat-tech.svg", "evergreen": True, "category": "tech",
+             "sections": [{"heading": "One", "paragraphs": ["word " * build.EVERGREEN_MIN_WORDS]}],
+             "sources": [{"name": "A", "url": "https://a.example/x"}, {"name": "B", "url": "https://b.example/y"}]}
+        g.update(changes)
+        return g
+
+    def errors(self, guide):
+        return build.validate(self.config, [], guides=[guide])
+
+    def test_valid_without_deal_ids(self):
+        self.assertEqual(self.errors(self.guide()), [])
+
+    def test_needs_two_sources(self):
+        errs = self.errors(self.guide(sources=[{"name": "A", "url": "https://a.example/x"}]))
+        self.assertEqual(len(errs), 1, errs)
+        self.assertIn("at least 2 sources", errs[0])
+
+    def test_source_needs_https_url(self):
+        errs = self.errors(self.guide(sources=[{"name": "A", "url": "http://a.example"}, {"name": "B", "url": "https://b.example"}]))
+        self.assertIn("https url", errs[0])
+
+    def test_needs_length(self):
+        errs = self.errors(self.guide(sections=[{"heading": "One", "paragraphs": ["too short"]}]))
+        self.assertIn(f"at least {build.EVERGREEN_MIN_WORDS} words", errs[0])
+
+    def test_table_rows_must_match_head(self):
+        g = self.guide()
+        g["sections"][0]["table"] = {"head": ["a", "b"], "rows": [["1"]]}
+        self.assertIn("table needs", self.errors(g)[0])
+
+    def test_ordinary_guide_still_needs_deal_ids(self):
+        g = self.guide(evergreen=False)
+        self.assertTrue(any("deal_ids" in x for x in self.errors(g)))
 
 
 class LifecycleTests(unittest.TestCase):

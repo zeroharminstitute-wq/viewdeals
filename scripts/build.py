@@ -27,6 +27,7 @@ ID_RE = re.compile(r"^[a-z0-9][a-z0-9-]*$")
 PRICE_RE = re.compile(r"[$€£]\s?\d|\d+\s?%|\bpercent\b", re.IGNORECASE)
 BLURB_MAX = 320
 WRITE_UP_MIN_WORDS = 150
+EVERGREEN_MIN_WORDS = 500
 TITLE_MAX = 60
 DESC_MIN, DESC_MAX = 120, 155
 NOINDEX_AFTER_DAYS = 60     # an ended deal page gets noindex after this many days
@@ -447,9 +448,29 @@ def validate(config, deals, events=None, archive=None, guides=None, root=None, p
 
     for g in guides or []:
         gid = g.get("slug", "?")
-        for field in ("slug", "title", "dek", "author", "published", "updated", "image", "sections", "deal_ids"):
+        evergreen = bool(g.get("evergreen"))
+        needed = ("slug", "title", "dek", "author", "published", "updated", "image", "sections")
+        for field in needed + (() if evergreen else ("deal_ids",)):
             if not g.get(field):
                 errors.append(f"guide {gid}: missing required field '{field}'")
+        if evergreen:
+            # A year-round guide makes claims about prices and seasons, so it has to show where they come from.
+            sources = g.get("sources") or []
+            if len(sources) < 2:
+                errors.append(f"guide {gid}: an evergreen guide needs at least 2 sources")
+            for src in sources:
+                if not (isinstance(src, dict) and str(src.get("name", "")).strip()
+                        and str(src.get("url", "")).startswith("https://")):
+                    errors.append(f"guide {gid}: each source needs a name and an https url")
+            if word_count([p for sec in g.get("sections", []) for p in sec.get("paragraphs", [])]) < EVERGREEN_MIN_WORDS:
+                errors.append(f"guide {gid}: an evergreen guide needs at least {EVERGREEN_MIN_WORDS} words")
+        if g.get("category") and g["category"] not in categories:
+            errors.append(f"guide {gid}: unknown category '{g['category']}'")
+        for sec in g.get("sections", []):
+            table = sec.get("table")
+            if table and not (isinstance(table.get("head"), list) and table.get("rows")
+                              and all(isinstance(r, list) and len(r) == len(table["head"]) for r in table["rows"])):
+                errors.append(f"guide {gid}: a table needs 'head' and 'rows' with the same number of cells in every row")
         if g.get("author") and g["author"] not in config.get("authors", {}):
             errors.append(f"guide {gid}: unknown author '{g['author']}'")
         for rid in g.get("deal_ids", []):
@@ -1052,6 +1073,7 @@ def layout(site, page, main):
     edition = v(f'No. {site.edition_number()} · {fmt_long(site.today)} · {count} deal{"s" if count != 1 else ""} today')
     signup = signup_form(site, page, "footer") if page.kind not in ("home", "styleguide") else ""
     signup = f'<div class="footer__signup">{signup}</div>' if signup else ""
+    guides_link = f'<li><a href="{p}guides/">Buying guides</a></li>\n' if site.guides else ""
     body_class = f"page--{page.kind} " + ("page--home" if page.kind == "home" else "page--inner")
     return f"""<!doctype html>
 <html lang="en">
@@ -1100,7 +1122,7 @@ def layout(site, page, main):
 <nav aria-label="About this site"><h2>About</h2><ul>
 <li><a href="{p}about/">About ViewDeals</a></li>
 <li><a href="{p}how-we-pick/">How we pick deals</a></li>
-<li><a href="{p}disclosure/">Affiliate disclosure</a></li>
+{guides_link}<li><a href="{p}disclosure/">Affiliate disclosure</a></li>
 <li><a href="{p}privacy/">Privacy</a></li>
 <li><a href="{p}feed.xml">RSS feed</a></li>
 </ul></nav>
@@ -1202,6 +1224,10 @@ def render_home(site, page):
                    + deal_stream(site, page, others) + "</section>")
     if not live:
         out.append('<p class="empty">No live deals right now. The next edition lands tomorrow morning.</p>')
+    if site.guides:
+        out.append('<section class="section" aria-labelledby="guides-h"><h2 class="section-head" id="guides-h">Buying guides</h2>'
+                   + guide_list(site, page, guides_newest_first(site)[:3])
+                   + f'<p><a href="{link(page, "guides/")}">All buying guides</a></p></section>')
     out.append(sale_calendar(site, page))
     return "\n".join(out)
 
@@ -1321,6 +1347,8 @@ def render_deal(deal):
         ev = site.event(deal.get("event")) if deal.get("event") else None
         if ev and site.event_status(ev) == "live":
             more.append(f'<li><a href="{link(page, "events/" + ev["slug"] + "/")}">All {t(ev["name"])} deals</a></li>')
+        for g in [g for g in guides_newest_first(site) if g.get("evergreen") and g.get("category") == cat][:2]:
+            more.append(f'<li><a href="{link(page, "guides/" + g["slug"] + "/")}">{t(g["title"])}</a></li>')
         more.append(f'<li><a href="{link(page, "how-we-pick/")}">How we pick deals</a></li>')
         side = deal_box(site, page, deal) + f'<nav class="more" aria-label="More deals"><p class="label">Keep reading</p><ul>{"".join(more)}</ul></nav>'
         out = [f'<div class="grid article"><article class="span-8 article__main">{"".join(main)}</article>'
@@ -1351,7 +1379,7 @@ def pin_link(site, page, guide):
 def render_guide(guide):
     def render(site, page):
         by_id = {d["id"]: d for d in site.all_known_deals()}
-        picks = [by_id[i] for i in guide["deal_ids"] if i in by_id and site.deal_state(by_id[i]) == "live"]
+        picks = [by_id[i] for i in guide.get("deal_ids", []) if i in by_id and site.deal_state(by_id[i]) == "live"]
         main = [page_head(site, page, guide["title"], kicker=t(guide.get("kicker", "Guide")), dek=t(guide["dek"]),
                           extra=byline(site, page, guide["author"]) + pin_link(site, page, guide))]
         art = site.art(f"guide-{guide['slug']}")
@@ -1364,6 +1392,15 @@ def render_guide(guide):
         for sec in guide["sections"]:
             body.append(f"<h2>{t(sec['heading'])}</h2>")
             body.extend(f"<p>{t(p)}</p>" for p in sec.get("paragraphs", []))
+            table = sec.get("table")
+            if table:
+                body.append('<div class="guide-table"><table><thead><tr>'
+                            + "".join(f'<th scope="col">{t(h)}</th>' for h in table["head"]) + "</tr></thead><tbody>"
+                            + "".join("<tr>" + "".join(f"<td>{t(c)}</td>" for c in row) + "</tr>" for row in table["rows"])
+                            + "</tbody></table></div>")
+        if guide.get("sources"):
+            body.append("<h2>Sources</h2><ul>" + "".join(
+                f'<li><a href="{e(src["url"])}" rel="nofollow noopener">{t(src["name"])}</a></li>' for src in guide["sources"]) + "</ul>")
         main.append('<div class="prose prose--guide">' + "".join(body) + "</div>")
         toc = "".join(f'<li><a href="{link(page, site.deal_link_target(d))}">{t(d.get("short_name") or d["title"])}</a>'
                       f' <span class="label">{t(site.retailer_name(d))}</span></li>'
@@ -1374,8 +1411,40 @@ def render_guide(guide):
         if picks:
             out.append('<section class="section" aria-labelledby="g-h"><h2 class="section-head" id="g-h">The deals in this guide</h2>'
                        + deal_stream(site, page, picks, std=3, hits=0) + "</section>")
+        cat = guide.get("category")
+        live = [d for d in site.live_deals() if d["category"] == cat and d not in picks][:3] if cat else []
+        if live:
+            out.append(f'<section class="section" aria-labelledby="gl-h"><h2 class="section-head" id="gl-h">Live {t(site.category_name(cat))} deals right now</h2>'
+                       + deal_stream(site, page, live, std=3, hits=0)
+                       + f'<p><a href="{link(page, "c/" + cat + "/")}">All {t(site.category_name(cat))} deals</a></p></section>')
         return "\n".join(out)
     return render
+
+
+def guides_newest_first(site):
+    return sorted(site.guides, key=lambda g: (g["updated"], g["slug"]), reverse=True)
+
+
+def guide_list(site, page, guides):
+    return ('<ul class="guide-list">' + "".join(
+        f'<li><p class="label">{t(g.get("kicker", "Guide"))}</p>'
+        f'<h3><a href="{link(page, "guides/" + g["slug"] + "/")}">{t(g["title"])}</a></h3>'
+        f'<p>{t(g["dek"])}</p></li>' for g in guides) + "</ul>")
+
+
+def render_guides_index(site, page):
+    guides = guides_newest_first(site)
+    keep = [g for g in guides if g.get("evergreen")]
+    dated = [g for g in guides if not g.get("evergreen")]
+    out = [page_head(site, page, "Buying guides", kicker="Guides",
+                     dek=t("When to buy, what to check, and what is worth the money. Every claim names its source."))]
+    if keep:
+        out.append('<section class="section" aria-labelledby="gk-h"><h2 class="section-head" id="gk-h">Year-round guides</h2>'
+                   + guide_list(site, page, keep) + "</section>")
+    if dated:
+        out.append('<section class="section" aria-labelledby="gd-h"><h2 class="section-head" id="gd-h">Deal round-ups</h2>'
+                   + guide_list(site, page, dated) + "</section>")
+    return "\n".join(out)
 
 
 def render_author(slug):
@@ -1495,7 +1564,7 @@ def render_styleguide(site, page):
     features = (featured[1:3] + [d for d in live if not d.get("featured")])[:2]
     rest = [d for d in live if d not in [lead] + features]
     soon = sorted(live, key=lambda d: d["expires"])[:5]
-    plain = next((d for d in rest if not d.get("featured")), rest[0])
+    plain = next((d for d in rest if not d.get("featured")), rest[0] if rest else lead)
     marks = ["circle", "underline", "arrow", "starburst", "bracket", "checkmark", "editors-pick", "last-chance"]
 
     def swatch(name, var, note):
@@ -1647,6 +1716,11 @@ def plan_pages(site):
                           render_guide(g), sitemap="guides", crumbs=[("Home", ""), (g["title"], None)],
                           published=parse_date(g["published"]), entity=g,
                           image=site.share(f"guide-{g['slug']}") or g["image"]))
+    if site.guides:
+        pages.append(Page("guides/", "guides", "Buying Guides: When to Buy and What to Check | ViewDeals",
+                          "Buying guides from ViewDeals: the best time of year to buy, what to check before you pay, and which sales are worth waiting for, with sources.",
+                          render_guides_index, crumbs=[("Home", ""), ("Buying guides", None)],
+                          image=site.share("home")))
     for slug, a in c.get("authors", {}).items():
         pages.append(Page(f"authors/{slug}/", "author", f"{a['name']}, Deals Editor | ViewDeals",
                           fit_description([a["bio"]]), render_author(slug), entity=slug,
@@ -1681,7 +1755,7 @@ def validate_pages(site, pages):
     for g in site.guides:
         by_id = {d["id"]: d for d in site.all_known_deals()}
         with_pages = [i for i in g.get("deal_ids", []) if i in by_id and site.has_page(by_id[i])]
-        if len(with_pages) < 5:
+        if len(with_pages) < 5 and not g.get("evergreen"):
             errors.append(f"guide {g['slug']}: links to {len(with_pages)} deal pages (needs at least 5)")
     return errors
 

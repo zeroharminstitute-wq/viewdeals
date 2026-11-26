@@ -182,6 +182,21 @@ Guide rules:
 - **Use the same rules as write-ups:** original, sourced, and no Amazon prices.
 - **When you update an older guide** (swap out ended deals, fix advice), set its `updated` to `TODAY`. Don't change `published`.
 
+### Year-round guides
+
+A year-round guide answers a question people ask every year, such as "best time to buy a TV" or "is Black Friday the cheapest time for headphones". It doesn't depend on today's deals, so it keeps earning visits. On Mondays and Thursdays you may write one of these instead of a deal round-up, and in a big sale week you may skip it.
+
+It uses the same file layout as any guide, with these differences:
+
+- **`"evergreen": true`**, and `"kicker": "Buying guide"`. `deal_ids` is optional.
+- **`"category"`**: the department it belongs to. The page then shows up to three live deals from that department, and deal pages in it link to the guide.
+- **`"sources"`: at least 2**, each `{"name": "...", "url": "https://..."}`. Open and read every source yourself. Put the source's own date in the name when it shows one.
+- **At least 500 words**, and every claim about prices, seasons or timing says in the text which source it comes from. Where sources disagree, say so. Never state a pattern as fact on your own authority.
+- **A section may have a `"table"`**: `{"head": ["When", "What happens"], "rows": [["January", "..."]]}`.
+- **No prices from Amazon, and avoid specific prices altogether**; they date quickly.
+- **You may cite our own price record** (`data/price-log.json`) only for what it shows: the number of checks, the dates, the lowest price recorded. Never stretch it into a claim about the whole market.
+- **Once a quarter, re-read each year-round guide**, re-open its sources, fix anything that changed, and set `updated`.
+
 ### Seasonal calendar
 
 Plan deals, labels and guides around these:
