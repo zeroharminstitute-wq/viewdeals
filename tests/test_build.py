@@ -285,6 +285,9 @@ class BuildTests(unittest.TestCase):
         assert cls.today_deal["expires"] == cls.TODAY and "write_up" not in cls.today_deal
         assert cls.gone_deal["expires"] == "2026-11-29" and "write_up" not in cls.gone_deal
 
+        # These tests check a build with no analytics, so they don't depend on the owner's token.
+        edit_json(cls.root / "site.config.json", lambda c: c.setdefault("analytics", {}).update(cloudflare_token=""))
+
         def retitle(d):
             for x in d["deals"]:
                 if x["id"] == cls.today_deal["id"]:
@@ -357,7 +360,7 @@ class BuildTests(unittest.TestCase):
                 self.assertIn("As an Amazon Associate, ViewDeals earns from qualifying purchases.", text)
 
     def test_no_third_party_scripts(self):
-        # The seed config has no analytics token, so pages load nothing from other hosts.
+        # With no analytics token, pages load nothing from other hosts.
         for path, text in self.html.items():
             srcs = re.findall(r'<script[^>]+src="([^"]+)"', text)
             self.assertEqual([u for u in srcs if u.startswith(("http:", "https:", "//"))], [], str(path))

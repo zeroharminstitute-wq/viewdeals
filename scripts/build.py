@@ -1322,7 +1322,10 @@ def static_pages(site):
         static_body("Privacy", [
             t("ViewDeals has no accounts, no newsletter sign-up and no comments, and we don't collect or sell personal data. The search box works entirely in your browser and sends nothing anywhere. If you pick the night edition, your browser remembers that choice; it never leaves your device."),
             t("When you click through to a retailer, that retailer may set its own cookies, including affiliate cookies that tell it the visit came from us. Their privacy policies apply once you are on their sites."),
-            t("The site is hosted on GitHub Pages, which may log your IP address for security, as GitHub's privacy statement describes. If we turn on Cloudflare Web Analytics, it counts visits without cookies and without tracking you across sites."),
+            t("The site is hosted on GitHub Pages, which may log your IP address for security, as GitHub's privacy statement describes. "
+              + ("We use Cloudflare Web Analytics to count visits. It sets no cookies, doesn't track you across sites, and doesn't collect personal data."
+                 if (site.config.get("analytics") or {}).get("cloudflare_token")
+                 else "If we turn on Cloudflare Web Analytics, it counts visits without cookies and without tracking you across sites.")),
             f'{t("Privacy questions:")} {email}.',
         ], kicker="The fine print", dek="Short version: we don’t collect anything about you."),
         crumbs=[("Home", ""), ("Privacy", None)]))
