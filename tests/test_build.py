@@ -296,7 +296,11 @@ class BuildTests(unittest.TestCase):
         assert cls.gone_deal["expires"] == "2026-11-29" and "write_up" not in cls.gone_deal
 
         # These tests check a build with no analytics, so they don't depend on the owner's token.
-        edit_json(cls.root / "site.config.json", lambda c: c.setdefault("analytics", {}).update(cloudflare_token=""))
+        # ...and with no email sign-up, so the "off until set up" test doesn't either.
+        def owner_settings_off(c):
+            c.setdefault("analytics", {}).update(cloudflare_token="")
+            c["newsletter"] = {"provider_name": "", "form_action": "", "email_field": "email", "hidden_fields": {}}
+        edit_json(cls.root / "site.config.json", owner_settings_off)
 
         def retitle(d):
             for x in d["deals"]:
