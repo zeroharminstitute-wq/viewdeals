@@ -1,12 +1,12 @@
 {
   "": {
-    "hash": "d9edd124af9f0eb8",
-    "updated": "2026-11-26",
+    "hash": "c85c24a9fadd2122",
+    "updated": "2026-11-27",
     "first_seen": "2026-11-25"
   },
   "404.html": {
-    "hash": "f84ce6bb743f09a0",
-    "updated": "2026-11-26",
+    "hash": "3f0ee5a1f4fdefe6",
+    "updated": "2026-11-27",
     "first_seen": "2026-11-25"
   },
   "about/": {
@@ -15,13 +15,13 @@
     "first_seen": "2026-11-25"
   },
   "authors/viewdeals-desk/": {
-    "hash": "44596c50c5be2f14",
-    "updated": "2026-11-26",
+    "hash": "c9b304397940e611",
+    "updated": "2026-11-27",
     "first_seen": "2026-11-25"
   },
   "c/beauty/": {
-    "hash": "3882c4af6c5eba38",
-    "updated": "2026-11-26",
+    "hash": "1f0060fa1d480fac",
+    "updated": "2026-11-27",
     "first_seen": "2026-11-25"
   },
   "c/events/": {
@@ -45,23 +45,23 @@
     "first_seen": "2026-11-25"
   },
   "c/smart-home/": {
-    "hash": "3799e64f95c85bdb",
-    "updated": "2026-11-26",
+    "hash": "cca2858967a491b7",
+    "updated": "2026-11-27",
     "first_seen": "2026-11-25"
   },
   "c/tech/": {
-    "hash": "c072ce9e4a92d21c",
-    "updated": "2026-11-26",
+    "hash": "023eb10081867be4",
+    "updated": "2026-11-27",
     "first_seen": "2026-11-25"
   },
   "c/toys/": {
-    "hash": "5ad76bf85a4822e5",
-    "updated": "2026-11-26",
+    "hash": "474fc83fc55b959f",
+    "updated": "2026-11-27",
     "first_seen": "2026-11-25"
   },
   "deals/apple-airpods-pro-3/": {
-    "hash": "aefa37835188af6f",
-    "updated": "2026-11-26",
+    "hash": "971ac687a34df71e",
+    "updated": "2026-11-27",
     "first_seen": "2026-11-25"
   },
   "deals/dyson-v9-motorbar-walmart/": {
@@ -75,13 +75,13 @@
     "first_seen": "2026-11-25"
   },
   "deals/nintendo-switch-2-mario-kart-world-bundle/": {
-    "hash": "b0ddf943a9f385c0",
-    "updated": "2026-11-26",
+    "hash": "3d620bb8a981ef24",
+    "updated": "2026-11-27",
     "first_seen": "2026-11-26"
   },
   "deals/oura-ring-5/": {
-    "hash": "f92bd9717d0e59bf",
-    "updated": "2026-11-26",
+    "hash": "ba87a206ca1b96c0",
+    "updated": "2026-11-27",
     "first_seen": "2026-11-25"
   },
   "deals/roborock-q7-m5-plus/": {
@@ -90,23 +90,23 @@
     "first_seen": "2026-11-25"
   },
   "deals/shark-depuffi/": {
-    "hash": "600451a7b6326265",
-    "updated": "2026-11-26",
+    "hash": "d091108434e2174f",
+    "updated": "2026-11-27",
     "first_seen": "2026-11-26"
   },
   "deals/shark-flexstyle-hd430/": {
-    "hash": "3bb7955051d1305a",
-    "updated": "2026-11-26",
+    "hash": "120032702a408b8b",
+    "updated": "2026-11-27",
     "first_seen": "2026-11-25"
   },
   "deals/sony-wh-1000xm5/": {
-    "hash": "06063c478c1c2755",
-    "updated": "2026-11-26",
+    "hash": "917ec74ae068408a",
+    "updated": "2026-11-27",
     "first_seen": "2026-11-25"
   },
   "deals/tcl-65-s4cf-fire-tv/": {
-    "hash": "484af34b2fbb8847",
-    "updated": "2026-11-26",
+    "hash": "d3ffdd7739f87df7",
+    "updated": "2026-11-27",
     "first_seen": "2026-11-26"
   },
   "disclosure/": {
@@ -120,8 +120,8 @@
     "first_seen": "2026-11-25"
   },
   "events/black-friday/": {
-    "hash": "9e6ff02188f1f60f",
-    "updated": "2026-11-26",
+    "hash": "70be6394cd902099",
+    "updated": "2026-11-27",
     "first_seen": "2026-11-25"
   },
   "events/cyber-monday/": {
@@ -150,8 +150,8 @@
     "first_seen": "2026-11-26"
   },
   "guides/best-time-to-buy-a-laptop/": {
-    "hash": "612f0b4e9f300660",
-    "updated": "2026-11-26",
+    "hash": "c47a331e3e11340b",
+    "updated": "2026-11-27",
     "first_seen": "2026-11-26"
   },
   "guides/best-time-to-buy-a-mattress/": {
@@ -160,8 +160,8 @@
     "first_seen": "2026-11-26"
   },
   "guides/best-time-to-buy-a-tv/": {
-    "hash": "b1a38565e7e42e18",
-    "updated": "2026-11-26",
+    "hash": "f005fd83a95ac311",
+    "updated": "2026-11-27",
     "first_seen": "2026-11-26"
   },
   "guides/best-time-to-buy-appliances/": {
@@ -175,23 +175,23 @@
     "first_seen": "2026-11-26"
   },
   "guides/best-time-to-buy-smart-home-devices/": {
-    "hash": "b4a86163e33360ab",
-    "updated": "2026-11-26",
+    "hash": "fa2db6b3383d0fce",
+    "updated": "2026-11-27",
     "first_seen": "2026-11-26"
   },
   "guides/best-time-to-buy-toys/": {
-    "hash": "0d51ef88c9fac0b4",
-    "updated": "2026-11-26",
+    "hash": "4530a435496e8a14",
+    "updated": "2026-11-27",
     "first_seen": "2026-11-26"
   },
   "guides/black-friday-gifts-worth-giving/": {
-    "hash": "68f1eebdbeff1b8b",
-    "updated": "2026-11-26",
+    "hash": "6552affebd5bf47e",
+    "updated": "2026-11-27",
     "first_seen": "2026-11-25"
   },
   "guides/sephora-and-ulta-sale-calendar/": {
-    "hash": "4f3cb7ebfb5ef9b0",
-    "updated": "2026-11-26",
+    "hash": "e3eb2716895bca2c",
+    "updated": "2026-11-27",
     "first_seen": "2026-11-26"
   },
   "how-we-pick/": {
@@ -205,8 +205,8 @@
     "first_seen": "2026-11-25"
   },
   "styleguide/": {
-    "hash": "d51d1af36d35625b",
-    "updated": "2026-11-26",
+    "hash": "baf2d32eb6edbb6d",
+    "updated": "2026-11-27",
     "first_seen": "2026-11-25"
   }
 }
