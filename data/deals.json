@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-26",
+  "updated": "2026-11-27",
   "deals": [
     {
       "id": "apple-airpods-pro-3",
@@ -176,7 +176,7 @@
       "event": "black-friday",
       "source": "https://www.nbcnews.com/select/shopping/walmart-early-black-friday-deals-2026-rcna609055",
       "price": 89,
-      "price_checked": "2026-11-26"
+      "price_checked": "2026-11-27"
     },
     {
       "id": "ninja-slushi-fs300",
@@ -191,7 +191,7 @@
       "event": "black-friday",
       "source": "https://www.nbcnews.com/select/shopping/walmart-early-black-friday-deals-2026-rcna609055",
       "price": 199,
-      "price_checked": "2026-11-26"
+      "price_checked": "2026-11-27"
     },
     {
       "id": "oral-b-io3",
@@ -206,7 +206,7 @@
       "event": "black-friday",
       "source": "https://www.nbcnews.com/select/shopping/best-black-friday-deals-11-25-2026-rcna610836",
       "price": 59.99,
-      "price_checked": "2026-11-26"
+      "price_checked": "2026-11-27"
     },
     {
       "id": "delonghi-linea-classic",
@@ -260,7 +260,9 @@
         "nothing-headphone-a",
         "apple-airpods-pro-3",
         "apple-airpods-4-walmart"
-      ]
+      ],
+      "price": 169.99,
+      "price_checked": "2026-11-27"
     },
     {
       "id": "oura-ring-5",
@@ -331,7 +333,7 @@
         "apple-airpods-pro-3"
       ],
       "price": 499.99,
-      "price_checked": "2026-11-26"
+      "price_checked": "2026-11-27"
     },
     {
       "id": "tcl-65-s4cf-fire-tv",
@@ -359,7 +361,9 @@
         "nintendo-switch-2-mario-kart-world-bundle",
         "google-home-speaker-2026",
         "sony-wh-1000xm5"
-      ]
+      ],
+      "price": 229.99,
+      "price_checked": "2026-11-27"
     },
     {
       "id": "dyson-v9-motorbar-walmart",
@@ -389,7 +393,7 @@
         "ninja-slushi-fs300"
       ],
       "price": 269.95,
-      "price_checked": "2026-11-26"
+      "price_checked": "2026-11-27"
     },
     {
       "id": "shark-depuffi",
@@ -419,7 +423,7 @@
         "oura-ring-5"
       ],
       "price": 149.99,
-      "price_checked": "2026-11-26"
+      "price_checked": "2026-11-27"
     },
     {
       "id": "crock-pot-7qt-manual",
@@ -434,7 +438,7 @@
       "event": "black-friday",
       "source": "https://www.walmart.com/search?q=crock-pot+7+quart+slow+cooker",
       "price": 31.98,
-      "price_checked": "2026-11-26"
+      "price_checked": "2026-11-27"
     },
     {
       "id": "kindle-paperwhite-16gb",
@@ -474,6 +478,169 @@
       "expires": "2026-11-29",
       "event": "black-friday",
       "source": "https://www.walmart.com/shop/deals/black-friday"
+    },
+    {
+      "id": "ring-battery-doorbell-2k",
+      "title": "Ring Battery Doorbell 2K (2026)",
+      "short_name": "Ring Battery Doorbell 2K",
+      "hook": "Low-Cost Door Cam",
+      "retailer": "bestbuy",
+      "url": "https://www.bestbuy.com/product/ring-battery-doorbell-2k-2026-retinal-2k-wide-angle-video-6x-enhanced-zoom-two-way-talk-and-built-in-battery-speckled-grey/J39TLSSR6C/sku/6672118",
+      "category": "smart-home",
+      "blurb": "Ring's current battery doorbell, with 2K video and two-way talk, is a Best Buy Black Friday Deal at $39.99. No wiring needed, so it suits renters. Recorded clips need a paid Ring plan.",
+      "label": "Black Friday Deal",
+      "added": "2026-11-27",
+      "expires": "2026-11-28",
+      "event": "black-friday",
+      "source": "https://www.bestbuy.com/site/searchpage.jsp?st=ring+battery+doorbell",
+      "price": 39.99,
+      "price_checked": "2026-11-27",
+      "write_up": [
+        "Best Buy has the 2026 Ring Battery Doorbell 2K as a Black Friday Deal at $39.99, against a comparable value of $99.99. Tom's Guide's Black Friday coverage today lists a Ring Battery Doorbell at about the same price at Amazon, so this looks like the going rate for the weekend and not a one-store blip.",
+        "This is the plain, sensible Ring. It runs on a built-in rechargeable battery, so there is no wiring to do and no need for an existing doorbell, which makes it a good fit for renters and for anyone who doesn't want to open a wall. Best Buy's listing gives it 2K wide-angle video, a 6x zoom and two-way talk, so you can see who is at the door and answer from your phone.",
+        "Know two things before you buy. First, the battery is built in, so you take the whole doorbell off its mount to charge it. Ring's Battery Doorbell Plus, also on sale at Best Buy, has a quick-release battery pack and costs more. Second, live view and alerts are free, but saving and replaying recorded clips needs a paid Ring subscription, so count that into the real cost.",
+        "Check that the listing says 2K and 2026, and that it is sold by Best Buy. Each color has its own listing and may not carry the same price. If you'd rather start a smart home with something simpler, the Kasa smart plug four-pack and the Google Home Speaker on our site are both on sale this week."
+      ],
+      "who_for": "Renters and first-time smart-home buyers who want to see who is at the door without any wiring.",
+      "skip_if": "You don't want a monthly plan for recorded video, or you already have a wired doorbell you like.",
+      "related": [
+        "kasa-smart-plug-mini-4-pack",
+        "google-home-speaker-2026",
+        "tcl-65-s4cf-fire-tv"
+      ]
+    },
+    {
+      "id": "garmin-forerunner-265",
+      "title": "Garmin Forerunner 265 GPS Smartwatch",
+      "short_name": "Garmin Forerunner 265",
+      "hook": "Runner's Watch Sale",
+      "retailer": "bestbuy",
+      "url": "https://www.bestbuy.com/product/garmin-forerunner-265-gps-smartwatch-46-mm-fiber-reinforced-polymer-black-2023/JXF9YF4J4X",
+      "category": "outdoors",
+      "blurb": "Garmin's bright-screened running watch is a Best Buy Black Friday Deal at $299.99, $150 under its usual price. It's a 2023 model, but still one of the easiest picks for anyone training for a race.",
+      "label": "Black Friday Deal",
+      "added": "2026-11-27",
+      "expires": "2026-11-28",
+      "event": "black-friday",
+      "source": "https://www.bestbuy.com/site/searchpage.jsp?st=garmin+forerunner+265",
+      "price": 299.99,
+      "price_checked": "2026-11-27",
+      "write_up": [
+        "Best Buy has the Garmin Forerunner 265 as a Black Friday Deal at $299.99, down from a comparable value of $449.99. The smaller Forerunner 265S is the same price, and Tom's Guide's Black Friday coverage today lists the watch at about the same price at Amazon, so you can buy from whichever store you prefer.",
+        "The Forerunner 265 is a running watch first and a smartwatch second. It has a bright AMOLED touchscreen plus real buttons, which matter when your hands are sweaty or gloved, and it tracks pace, distance and heart rate with built-in GPS. Garmin's training features tell you how ready you are for a hard session and suggest daily workouts, and Garmin rates the battery at up to 13 days in smartwatch mode, far longer than an Apple Watch.",
+        "This is a 2023 model, and Garmin has released newer Forerunners since. For most runners that is a reason to buy it, not to avoid it: the price has fallen while the core features have stayed useful. It is not the watch for someone who mainly wants apps, phone calls from the wrist or mobile payments everywhere.",
+        "Before you buy, choose the size. The 265 has a 46 mm case and the 265S a 42 mm case for smaller wrists, and each color has its own listing, so check the price on the exact one you want. Make sure it is sold by Best Buy. If you want health tracking without a watch at all, the Oura Ring 5 is a Best Buy Doorbuster this week."
+      ],
+      "who_for": "Runners and people training for a race who want real training data and long battery life.",
+      "skip_if": "You want a full smartwatch with apps and calls, or you must have Garmin's newest model.",
+      "related": [
+        "oura-ring-5",
+        "apple-airpods-pro-3",
+        "sony-wh-1000xm5"
+      ]
+    },
+    {
+      "id": "nespresso-vertuo-pop-walmart",
+      "title": "Nespresso Vertuo Pop Coffee and Espresso Maker by De'Longhi",
+      "short_name": "Nespresso Vertuo Pop",
+      "hook": "Half-Price Pod Coffee",
+      "retailer": "walmart",
+      "url": "https://www.walmart.com/ip/Nespresso-Vertuo-Pop-by-De-Longhi-Coffee-and-Espresso-Maker-with-Coffee-Tasting-Set-Black/2258193826",
+      "category": "home",
+      "blurb": "Nespresso's smallest Vertuo machine makes both coffee and espresso from pods, and Walmart has it as a Black Friday Deal at $59 in black, with a 12-capsule starter set. Other colors cost more.",
+      "label": "Black Friday Deal",
+      "added": "2026-11-27",
+      "expires": "2026-11-29",
+      "event": "black-friday",
+      "source": "https://www.walmart.com/search?q=nespresso+vertuo+pop+coffee+tasting+set",
+      "price": 59,
+      "price_checked": "2026-11-27",
+      "write_up": [
+        "Walmart has the Nespresso Vertuo Pop by De'Longhi marked as a Black Friday Deal at $59, against a listed former price of $119. It is sold and shipped by Walmart itself, comes with a 12-capsule welcome set, and is one of the deals NBC Select picked from Walmart's sale today.",
+        "The Pop is the smallest machine in Nespresso's Vertuo line. You drop in a pod, press one button, and it reads the pod and brews the right size, from a single espresso up to a mug of coffee. That makes it a good gift for someone who wants a decent cup without learning to grind, dose and tamp, and its small footprint suits a dorm room, an office or a crowded counter.",
+        "The catch is the pods. Vertuo machines only take Vertuo capsules, which cost more per cup than ground coffee and are not the same as the older, smaller Nespresso Original pods. It also has no milk frother, so lattes need a separate one. Work out what you will spend on capsules in a year before deciding that the machine is cheap.",
+        "Check the color before you check out. The $59 price is on the Liquorice Black machine, and Walmart shows other colors from $59 up to about $85. Confirm the seller is Walmart.com. If you would rather make real espresso with a steam wand, the De'Longhi Linea Classic at Target is on our site too, and the Ninja SLUSHi is the fun kitchen gift at Walmart."
+      ],
+      "who_for": "Coffee drinkers who want a quick, tidy cup at the press of a button, and gift buyers on a budget.",
+      "skip_if": "You drink several cups a day and mind the price of pods, or you want milk drinks from one machine.",
+      "related": [
+        "delonghi-linea-classic",
+        "ninja-slushi-fs300",
+        "crock-pot-7qt-manual"
+      ]
+    },
+    {
+      "id": "toniebox-2-bluey-starter-set",
+      "title": "tonies Bluey Toniebox 2 Starter Set",
+      "short_name": "Toniebox 2 Bluey Set",
+      "hook": "Screen-Free Kid Gift",
+      "retailer": "walmart",
+      "url": "https://www.walmart.com/ip/tonies-Bluey-Toniebox-2-Starter-Set-Cloud-Pink-Age-Group-3/19599515416",
+      "category": "toys",
+      "blurb": "A soft, screen-free speaker that plays stories and songs when a child sets a figure on top. Walmart has the Bluey starter set as a Rollback at $99.97, a third off. Extra figures are sold separately.",
+      "label": "Rollback",
+      "added": "2026-11-27",
+      "expires": "2026-11-29",
+      "event": "holiday-gifts",
+      "source": "https://www.walmart.com/search?q=toniebox+2+starter+set",
+      "price": 99.97,
+      "price_checked": "2026-11-27",
+      "write_up": [
+        "Walmart has the tonies Bluey Toniebox 2 Starter Set as a Rollback at $99.97, down from a listed $149.99, sold and shipped by Walmart. NBC Select's Black Friday list today has the Toniebox 2 starter set at about a third off at Target and Amazon as well, and calls it the lowest price it has seen in more than six months.",
+        "The Toniebox is an audio player made for small hands. A child puts a figure, called a Tonie, on top of the box and it starts playing that character's stories or songs. There is no screen, and the controls are simple enough for a preschooler to use alone. NBC Select notes that the Toniebox 2 adds a sleep timer and a sunrise alarm that parents set up, and that parents can check use in the Tonies app.",
+        "It is a strong gift for ages three and up, especially for families trying to cut back on tablets at bedtime or in the car. It makes less sense for an older child who already picks their own music or audiobooks.",
+        "Think about the running cost. The starter set comes with one Bluey figure, and every further story means buying another Tonie, so the box is only the start. Check which bundle you are buying, too. Walmart lists several Toniebox 2 sets, and the Frozen and Spidey bundles cost more than the Bluey, Ms. Rachel and Moana sets today. For an older child, the LEGO Classic brick box at Walmart and the Switch 2 bundle at Best Buy are also on our site."
+      ],
+      "who_for": "Parents, grandparents and godparents shopping for a child of about three to six.",
+      "skip_if": "The child is past picture books, or you don't want to keep buying figures.",
+      "related": [
+        "lego-polaroid-onestep-sx-70",
+        "nintendo-switch-2-mario-kart-world-bundle",
+        "nespresso-vertuo-pop-walmart"
+      ]
+    },
+    {
+      "id": "lego-classic-large-brick-box-10698",
+      "title": "LEGO Classic Large Creative Brick Box (10698)",
+      "retailer": "walmart",
+      "url": "https://www.walmart.com/ip/LEGO-Classic-Large-Creative-Brick-Box/40996357",
+      "category": "toys",
+      "blurb": "The big yellow tub: 790 bricks in 33 colors with no instructions to follow, just building. Walmart sells it itself at $33.49, down from $59.99. It's the safe gift for a kid whose tastes you don't know.",
+      "label": "Gift idea",
+      "added": "2026-11-27",
+      "expires": "2026-11-29",
+      "event": "holiday-gifts",
+      "source": "https://www.walmart.com/search?q=lego+black+friday+deal",
+      "price": 33.49,
+      "price_checked": "2026-11-27"
+    },
+    {
+      "id": "owala-freesip-24oz-walmart",
+      "title": "Owala FreeSip Stainless Steel Water Bottle, 24 oz",
+      "retailer": "walmart",
+      "url": "https://www.walmart.com/ip/Owala-FreeSip-24oz-Stainless-Steel-Out-of-the-Blue/19528351183",
+      "category": "outdoors",
+      "blurb": "The bottle you can sip through a straw or tip back and gulp, and a long-time NBC Select favorite. Owala's own store on Walmart has the Out of the Blue color as a Black Friday Deal at $23.99. Prices differ by color.",
+      "label": "Stocking stuffer",
+      "added": "2026-11-27",
+      "expires": "2026-11-29",
+      "event": "black-friday",
+      "source": "https://www.walmart.com/search?q=owala+freesip+24+oz+stainless+steel",
+      "price": 23.99,
+      "price_checked": "2026-11-27"
+    },
+    {
+      "id": "medicube-zero-pore-pads",
+      "title": "Medicube Zero Pore Pads 2.0",
+      "retailer": "amazon",
+      "url": "https://www.amazon.com/s?k=Medicube+Zero+Pore+Pads+2.0",
+      "category": "beauty",
+      "blurb": "Korean exfoliating toner pads with a textured side to buff and a soft side to smooth. NBC Select calls this Amazon's best price on them this year, and Tom's Guide lists the deal today too. They contain acids, so go slowly on sensitive skin.",
+      "label": "Stocking stuffer",
+      "added": "2026-11-27",
+      "expires": "2026-11-30",
+      "event": "black-friday",
+      "source": "https://www.nbcnews.com/select/shopping/best-black-friday-deals-11-27-2026-rcna611358"
     }
   ]
 }

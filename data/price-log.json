@@ -8,6 +8,12 @@
           "retailer": "walmart",
           "price": 89,
           "deal": "apple-airpods-4-walmart"
+        },
+        {
+          "date": "2026-11-27",
+          "retailer": "walmart",
+          "price": 89,
+          "deal": "apple-airpods-4-walmart"
         }
       ]
     },
@@ -16,6 +22,12 @@
       "points": [
         {
           "date": "2026-11-26",
+          "retailer": "walmart",
+          "price": 31.98,
+          "deal": "crock-pot-7qt-manual"
+        },
+        {
+          "date": "2026-11-27",
           "retailer": "walmart",
           "price": 31.98,
           "deal": "crock-pot-7qt-manual"
@@ -30,6 +42,45 @@
           "retailer": "walmart",
           "price": 269.95,
           "deal": "dyson-v9-motorbar-walmart"
+        },
+        {
+          "date": "2026-11-27",
+          "retailer": "walmart",
+          "price": 269.95,
+          "deal": "dyson-v9-motorbar-walmart"
+        }
+      ]
+    },
+    "garmin-forerunner-265": {
+      "title": "Garmin Forerunner 265",
+      "points": [
+        {
+          "date": "2026-11-27",
+          "retailer": "bestbuy",
+          "price": 299.99,
+          "deal": "garmin-forerunner-265"
+        }
+      ]
+    },
+    "lego-classic-large-brick-box-10698": {
+      "title": "LEGO Classic Large Creative Brick Box (10698)",
+      "points": [
+        {
+          "date": "2026-11-27",
+          "retailer": "walmart",
+          "price": 33.49,
+          "deal": "lego-classic-large-brick-box-10698"
+        }
+      ]
+    },
+    "nespresso-vertuo-pop-walmart": {
+      "title": "Nespresso Vertuo Pop",
+      "points": [
+        {
+          "date": "2026-11-27",
+          "retailer": "walmart",
+          "price": 59,
+          "deal": "nespresso-vertuo-pop-walmart"
         }
       ]
     },
@@ -38,6 +89,12 @@
       "points": [
         {
           "date": "2026-11-26",
+          "retailer": "walmart",
+          "price": 199,
+          "deal": "ninja-slushi-fs300"
+        },
+        {
+          "date": "2026-11-27",
           "retailer": "walmart",
           "price": 199,
           "deal": "ninja-slushi-fs300"
@@ -52,6 +109,12 @@
           "retailer": "bestbuy",
           "price": 499.99,
           "deal": "nintendo-switch-2-mario-kart-world-bundle"
+        },
+        {
+          "date": "2026-11-27",
+          "retailer": "bestbuy",
+          "price": 499.99,
+          "deal": "nintendo-switch-2-mario-kart-world-bundle"
         }
       ]
     },
@@ -63,6 +126,34 @@
           "retailer": "target",
           "price": 59.99,
           "deal": "oral-b-io3"
+        },
+        {
+          "date": "2026-11-27",
+          "retailer": "target",
+          "price": 59.99,
+          "deal": "oral-b-io3"
+        }
+      ]
+    },
+    "owala-freesip-24oz-walmart": {
+      "title": "Owala FreeSip Stainless Steel Water Bottle, 24 oz",
+      "points": [
+        {
+          "date": "2026-11-27",
+          "retailer": "walmart",
+          "price": 23.99,
+          "deal": "owala-freesip-24oz-walmart"
+        }
+      ]
+    },
+    "ring-battery-doorbell-2k": {
+      "title": "Ring Battery Doorbell 2K",
+      "points": [
+        {
+          "date": "2026-11-27",
+          "retailer": "bestbuy",
+          "price": 39.99,
+          "deal": "ring-battery-doorbell-2k"
         }
       ]
     },
@@ -74,6 +165,45 @@
           "retailer": "bestbuy",
           "price": 149.99,
           "deal": "shark-depuffi"
+        },
+        {
+          "date": "2026-11-27",
+          "retailer": "bestbuy",
+          "price": 149.99,
+          "deal": "shark-depuffi"
+        }
+      ]
+    },
+    "sony-wh-1000xm5": {
+      "title": "Sony WH-1000XM5",
+      "points": [
+        {
+          "date": "2026-11-27",
+          "retailer": "bestbuy",
+          "price": 169.99,
+          "deal": "sony-wh-1000xm5"
+        }
+      ]
+    },
+    "tcl-65-s4cf-fire-tv": {
+      "title": "TCL 65\" S4 Fire TV",
+      "points": [
+        {
+          "date": "2026-11-27",
+          "retailer": "bestbuy",
+          "price": 229.99,
+          "deal": "tcl-65-s4cf-fire-tv"
+        }
+      ]
+    },
+    "toniebox-2-bluey-starter-set": {
+      "title": "Toniebox 2 Bluey Set",
+      "points": [
+        {
+          "date": "2026-11-27",
+          "retailer": "walmart",
+          "price": 99.97,
+          "deal": "toniebox-2-bluey-starter-set"
         }
       ]
     },
