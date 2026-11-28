@@ -14,6 +14,12 @@
           "retailer": "walmart",
           "price": 89,
           "deal": "apple-airpods-4-walmart"
+        },
+        {
+          "date": "2026-11-28",
+          "retailer": "walmart",
+          "price": 89,
+          "deal": "apple-airpods-4-walmart"
         }
       ]
     },
@@ -31,6 +37,23 @@
           "retailer": "walmart",
           "price": 31.98,
           "deal": "crock-pot-7qt-manual"
+        },
+        {
+          "date": "2026-11-28",
+          "retailer": "walmart",
+          "price": 31.98,
+          "deal": "crock-pot-7qt-manual"
+        }
+      ]
+    },
+    "delonghi-stilosa-walmart": {
+      "title": "De'Longhi Stilosa",
+      "points": [
+        {
+          "date": "2026-11-28",
+          "retailer": "walmart",
+          "price": 79,
+          "deal": "delonghi-stilosa-walmart"
         }
       ]
     },
@@ -48,6 +71,12 @@
           "retailer": "walmart",
           "price": 269.95,
           "deal": "dyson-v9-motorbar-walmart"
+        },
+        {
+          "date": "2026-11-28",
+          "retailer": "walmart",
+          "price": 269.95,
+          "deal": "dyson-v9-motorbar-walmart"
         }
       ]
     },
@@ -59,6 +88,23 @@
           "retailer": "bestbuy",
           "price": 299.99,
           "deal": "garmin-forerunner-265"
+        },
+        {
+          "date": "2026-11-28",
+          "retailer": "bestbuy",
+          "price": 299.99,
+          "deal": "garmin-forerunner-265"
+        }
+      ]
+    },
+    "google-home-speaker-2026": {
+      "title": "Google Home Speaker with Gemini for Home",
+      "points": [
+        {
+          "date": "2026-11-28",
+          "retailer": "bestbuy",
+          "price": 79.99,
+          "deal": "google-home-speaker-2026"
         }
       ]
     },
@@ -70,6 +116,34 @@
           "retailer": "walmart",
           "price": 33.49,
           "deal": "lego-classic-large-brick-box-10698"
+        },
+        {
+          "date": "2026-11-28",
+          "retailer": "walmart",
+          "price": 33.49,
+          "deal": "lego-classic-large-brick-box-10698"
+        }
+      ]
+    },
+    "lego-icons-bonsai-tree-10281": {
+      "title": "LEGO Bonsai Tree",
+      "points": [
+        {
+          "date": "2026-11-28",
+          "retailer": "walmart",
+          "price": 39.98,
+          "deal": "lego-icons-bonsai-tree-10281"
+        }
+      ]
+    },
+    "lg-48-b6-oled-2026": {
+      "title": "LG 48\" B6 OLED",
+      "points": [
+        {
+          "date": "2026-11-28",
+          "retailer": "bestbuy",
+          "price": 599.99,
+          "deal": "lg-48-b6-oled-2026"
         }
       ]
     },
@@ -78,6 +152,12 @@
       "points": [
         {
           "date": "2026-11-27",
+          "retailer": "walmart",
+          "price": 59,
+          "deal": "nespresso-vertuo-pop-walmart"
+        },
+        {
+          "date": "2026-11-28",
           "retailer": "walmart",
           "price": 59,
           "deal": "nespresso-vertuo-pop-walmart"
@@ -98,6 +178,12 @@
           "retailer": "walmart",
           "price": 199,
           "deal": "ninja-slushi-fs300"
+        },
+        {
+          "date": "2026-11-28",
+          "retailer": "walmart",
+          "price": 199,
+          "deal": "ninja-slushi-fs300"
         }
       ]
     },
@@ -112,6 +198,12 @@
         },
         {
           "date": "2026-11-27",
+          "retailer": "bestbuy",
+          "price": 499.99,
+          "deal": "nintendo-switch-2-mario-kart-world-bundle"
+        },
+        {
+          "date": "2026-11-28",
           "retailer": "bestbuy",
           "price": 499.99,
           "deal": "nintendo-switch-2-mario-kart-world-bundle"
@@ -143,6 +235,12 @@
           "retailer": "walmart",
           "price": 23.99,
           "deal": "owala-freesip-24oz-walmart"
+        },
+        {
+          "date": "2026-11-28",
+          "retailer": "walmart",
+          "price": 23.99,
+          "deal": "owala-freesip-24oz-walmart"
         }
       ]
     },
@@ -153,6 +251,12 @@
           "date": "2026-11-27",
           "retailer": "bestbuy",
           "price": 39.99,
+          "deal": "ring-battery-doorbell-2k"
+        },
+        {
+          "date": "2026-11-28",
+          "retailer": "bestbuy",
+          "price": 38.99,
           "deal": "ring-battery-doorbell-2k"
         }
       ]
@@ -182,6 +286,12 @@
           "retailer": "bestbuy",
           "price": 169.99,
           "deal": "sony-wh-1000xm5"
+        },
+        {
+          "date": "2026-11-28",
+          "retailer": "bestbuy",
+          "price": 169.99,
+          "deal": "sony-wh-1000xm5"
         }
       ]
     },
@@ -193,6 +303,12 @@
           "retailer": "bestbuy",
           "price": 229.99,
           "deal": "tcl-65-s4cf-fire-tv"
+        },
+        {
+          "date": "2026-11-28",
+          "retailer": "bestbuy",
+          "price": 229.99,
+          "deal": "tcl-65-s4cf-fire-tv"
         }
       ]
     },
@@ -201,6 +317,12 @@
       "points": [
         {
           "date": "2026-11-27",
+          "retailer": "walmart",
+          "price": 99.97,
+          "deal": "toniebox-2-bluey-starter-set"
+        },
+        {
+          "date": "2026-11-28",
           "retailer": "walmart",
           "price": 99.97,
           "deal": "toniebox-2-bluey-starter-set"

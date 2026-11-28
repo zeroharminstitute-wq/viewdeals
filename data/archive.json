@@ -14,6 +14,36 @@
       "source": "https://www.nbcnews.com/select/shopping/best-black-friday-deals-11-25-2026-rcna610836",
       "price": 59.99,
       "price_checked": "2026-11-26"
+    },
+    {
+      "id": "shark-depuffi",
+      "title": "Shark DePuffi Instant Hot + Cold Contrast Therapy Tool",
+      "short_name": "Shark DePuffi",
+      "hook": "Hot and Cold Face Tool Gift",
+      "retailer": "bestbuy",
+      "url": "https://www.bestbuy.com/product/shark-depuffi-instant-hot-cold-contrast-therapy-tool-pink/JXJVXLXCF2",
+      "category": "beauty",
+      "blurb": "Shark's hot-and-cold face tool is $149.99 at Best Buy, $50 off. It is one of the more talked-about beauty gifts this year, and Ulta has the same price.",
+      "label": "Gift idea",
+      "added": "2026-11-26",
+      "expires": "2026-11-27",
+      "event": "black-friday",
+      "source": "https://www.bestbuy.com/site/searchpage.jsp?st=shark+depuffi",
+      "write_up": [
+        "Best Buy has the Shark DePuffi at $149.99 as a Black Friday Deal, $50 under its usual $199.99. NBC Select's Thanksgiving roundup lists the same price at Best Buy, Ulta and Amazon, so this looks like the going sale price everywhere rather than a one-store blip.",
+        "The DePuffi is a handheld facial tool that switches between cold and warm settings, with six temperature levels and an edge shaped like a gua sha stone. The idea is a quick morning routine to calm puffiness and relax tense muscles in the face and neck. It comes with a travel case and charger, which makes it an easy gift to wrap.",
+        "It is a gift for the person who already enjoys a skincare routine and likes trying new gadgets. Be clear about what it is: a comfort and routine tool, not a medical device, and results are modest and temporary. Skip it for someone who never uses face tools.",
+        "Check delivery before you order. Best Buy showed store pickup as unavailable and delivery in early December, which is fine for Christmas but not for a gift you need this weekend. For a styling gift instead, the Shark FlexStyle on our site is also on sale, and the Oral-B iO3 at Target is a practical pick."
+      ],
+      "who_for": "Skincare fans who like new tools and want a calm morning routine.",
+      "skip_if": "The person never uses face tools, or you need it delivered this weekend.",
+      "related": [
+        "shark-flexstyle-hd430",
+        "oral-b-io3",
+        "oura-ring-5"
+      ],
+      "price": 149.99,
+      "price_checked": "2026-11-27"
     }
   ]
 }

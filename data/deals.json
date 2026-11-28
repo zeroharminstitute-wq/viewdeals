@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-27",
+  "updated": "2026-11-28",
   "deals": [
     {
       "id": "apple-airpods-pro-3",
@@ -176,7 +176,7 @@
       "event": "black-friday",
       "source": "https://www.nbcnews.com/select/shopping/walmart-early-black-friday-deals-2026-rcna609055",
       "price": 89,
-      "price_checked": "2026-11-27"
+      "price_checked": "2026-11-28"
     },
     {
       "id": "ninja-slushi-fs300",
@@ -191,7 +191,7 @@
       "event": "black-friday",
       "source": "https://www.nbcnews.com/select/shopping/walmart-early-black-friday-deals-2026-rcna609055",
       "price": 199,
-      "price_checked": "2026-11-27"
+      "price_checked": "2026-11-28"
     },
     {
       "id": "oral-b-io3",
@@ -244,7 +244,6 @@
       "category": "tech",
       "blurb": "Last year's Sony flagship, now a Doorbuster because the XM6 replaced it. The noise cancelling and comfort are still near the top of the class, so the older model is the smart buy.",
       "label": "Doorbuster",
-      "featured": true,
       "added": "2026-11-25",
       "expires": "2026-11-28",
       "event": "black-friday",
@@ -262,7 +261,7 @@
         "apple-airpods-4-walmart"
       ],
       "price": 169.99,
-      "price_checked": "2026-11-27"
+      "price_checked": "2026-11-28"
     },
     {
       "id": "oura-ring-5",
@@ -302,7 +301,9 @@
       "added": "2026-11-25",
       "expires": "2026-11-28",
       "event": "black-friday",
-      "source": "https://9to5toys.com/2026/11/23/best-buy-black-friday-week-4-deals-now-live/"
+      "source": "https://9to5toys.com/2026/11/23/best-buy-black-friday-week-4-deals-now-live/",
+      "price": 79.99,
+      "price_checked": "2026-11-28"
     },
     {
       "id": "nintendo-switch-2-mario-kart-world-bundle",
@@ -333,7 +334,7 @@
         "apple-airpods-pro-3"
       ],
       "price": 499.99,
-      "price_checked": "2026-11-27"
+      "price_checked": "2026-11-28"
     },
     {
       "id": "tcl-65-s4cf-fire-tv",
@@ -363,7 +364,7 @@
         "sony-wh-1000xm5"
       ],
       "price": 229.99,
-      "price_checked": "2026-11-27"
+      "price_checked": "2026-11-28"
     },
     {
       "id": "dyson-v9-motorbar-walmart",
@@ -393,37 +394,7 @@
         "ninja-slushi-fs300"
       ],
       "price": 269.95,
-      "price_checked": "2026-11-27"
-    },
-    {
-      "id": "shark-depuffi",
-      "title": "Shark DePuffi Instant Hot + Cold Contrast Therapy Tool",
-      "short_name": "Shark DePuffi",
-      "hook": "Hot and Cold Face Tool Gift",
-      "retailer": "bestbuy",
-      "url": "https://www.bestbuy.com/product/shark-depuffi-instant-hot-cold-contrast-therapy-tool-pink/JXJVXLXCF2",
-      "category": "beauty",
-      "blurb": "Shark's hot-and-cold face tool is $149.99 at Best Buy, $50 off. It is one of the more talked-about beauty gifts this year, and Ulta has the same price.",
-      "label": "Gift idea",
-      "added": "2026-11-26",
-      "expires": "2026-11-28",
-      "event": "black-friday",
-      "source": "https://www.bestbuy.com/site/searchpage.jsp?st=shark+depuffi",
-      "write_up": [
-        "Best Buy has the Shark DePuffi at $149.99 as a Black Friday Deal, $50 under its usual $199.99. NBC Select's Thanksgiving roundup lists the same price at Best Buy, Ulta and Amazon, so this looks like the going sale price everywhere rather than a one-store blip.",
-        "The DePuffi is a handheld facial tool that switches between cold and warm settings, with six temperature levels and an edge shaped like a gua sha stone. The idea is a quick morning routine to calm puffiness and relax tense muscles in the face and neck. It comes with a travel case and charger, which makes it an easy gift to wrap.",
-        "It is a gift for the person who already enjoys a skincare routine and likes trying new gadgets. Be clear about what it is: a comfort and routine tool, not a medical device, and results are modest and temporary. Skip it for someone who never uses face tools.",
-        "Check delivery before you order. Best Buy showed store pickup as unavailable and delivery in early December, which is fine for Christmas but not for a gift you need this weekend. For a styling gift instead, the Shark FlexStyle on our site is also on sale, and the Oral-B iO3 at Target is a practical pick."
-      ],
-      "who_for": "Skincare fans who like new tools and want a calm morning routine.",
-      "skip_if": "The person never uses face tools, or you need it delivered this weekend.",
-      "related": [
-        "shark-flexstyle-hd430",
-        "oral-b-io3",
-        "oura-ring-5"
-      ],
-      "price": 149.99,
-      "price_checked": "2026-11-27"
+      "price_checked": "2026-11-28"
     },
     {
       "id": "crock-pot-7qt-manual",
@@ -438,7 +409,7 @@
       "event": "black-friday",
       "source": "https://www.walmart.com/search?q=crock-pot+7+quart+slow+cooker",
       "price": 31.98,
-      "price_checked": "2026-11-27"
+      "price_checked": "2026-11-28"
     },
     {
       "id": "kindle-paperwhite-16gb",
@@ -493,8 +464,8 @@
       "expires": "2026-11-28",
       "event": "black-friday",
       "source": "https://www.bestbuy.com/site/searchpage.jsp?st=ring+battery+doorbell",
-      "price": 39.99,
-      "price_checked": "2026-11-27",
+      "price": 38.99,
+      "price_checked": "2026-11-28",
       "write_up": [
         "Best Buy has the 2026 Ring Battery Doorbell 2K as a Black Friday Deal at $39.99, against a comparable value of $99.99. Tom's Guide's Black Friday coverage today lists a Ring Battery Doorbell at about the same price at Amazon, so this looks like the going rate for the weekend and not a one-store blip.",
         "This is the plain, sensible Ring. It runs on a built-in rechargeable battery, so there is no wiring to do and no need for an existing doorbell, which makes it a good fit for renters and for anyone who doesn't want to open a wall. Best Buy's listing gives it 2K wide-angle video, a 6x zoom and two-way talk, so you can see who is at the door and answer from your phone.",
@@ -524,7 +495,7 @@
       "event": "black-friday",
       "source": "https://www.bestbuy.com/site/searchpage.jsp?st=garmin+forerunner+265",
       "price": 299.99,
-      "price_checked": "2026-11-27",
+      "price_checked": "2026-11-28",
       "write_up": [
         "Best Buy has the Garmin Forerunner 265 as a Black Friday Deal at $299.99, down from a comparable value of $449.99. The smaller Forerunner 265S is the same price, and Tom's Guide's Black Friday coverage today lists the watch at about the same price at Amazon, so you can buy from whichever store you prefer.",
         "The Forerunner 265 is a running watch first and a smartwatch second. It has a bright AMOLED touchscreen plus real buttons, which matter when your hands are sweaty or gloved, and it tracks pace, distance and heart rate with built-in GPS. Garmin's training features tell you how ready you are for a hard session and suggest daily workouts, and Garmin rates the battery at up to 13 days in smartwatch mode, far longer than an Apple Watch.",
@@ -554,7 +525,7 @@
       "event": "black-friday",
       "source": "https://www.walmart.com/search?q=nespresso+vertuo+pop+coffee+tasting+set",
       "price": 59,
-      "price_checked": "2026-11-27",
+      "price_checked": "2026-11-28",
       "write_up": [
         "Walmart has the Nespresso Vertuo Pop by De'Longhi marked as a Black Friday Deal at $59, against a listed former price of $119. It is sold and shipped by Walmart itself, comes with a 12-capsule welcome set, and is one of the deals NBC Select picked from Walmart's sale today.",
         "The Pop is the smallest machine in Nespresso's Vertuo line. You drop in a pod, press one button, and it reads the pod and brews the right size, from a single espresso up to a mug of coffee. That makes it a good gift for someone who wants a decent cup without learning to grind, dose and tamp, and its small footprint suits a dorm room, an office or a crowded counter.",
@@ -584,7 +555,7 @@
       "event": "holiday-gifts",
       "source": "https://www.walmart.com/search?q=toniebox+2+starter+set",
       "price": 99.97,
-      "price_checked": "2026-11-27",
+      "price_checked": "2026-11-28",
       "write_up": [
         "Walmart has the tonies Bluey Toniebox 2 Starter Set as a Rollback at $99.97, down from a listed $149.99, sold and shipped by Walmart. NBC Select's Black Friday list today has the Toniebox 2 starter set at about a third off at Target and Amazon as well, and calls it the lowest price it has seen in more than six months.",
         "The Toniebox is an audio player made for small hands. A child puts a figure, called a Tonie, on top of the box and it starts playing that character's stories or songs. There is no screen, and the controls are simple enough for a preschooler to use alone. NBC Select notes that the Toniebox 2 adds a sleep timer and a sunrise alarm that parents set up, and that parents can check use in the Tonies app.",
@@ -612,7 +583,7 @@
       "event": "holiday-gifts",
       "source": "https://www.walmart.com/search?q=lego+black+friday+deal",
       "price": 33.49,
-      "price_checked": "2026-11-27"
+      "price_checked": "2026-11-28"
     },
     {
       "id": "owala-freesip-24oz-walmart",
@@ -627,7 +598,7 @@
       "event": "black-friday",
       "source": "https://www.walmart.com/search?q=owala+freesip+24+oz+stainless+steel",
       "price": 23.99,
-      "price_checked": "2026-11-27"
+      "price_checked": "2026-11-28"
     },
     {
       "id": "medicube-zero-pore-pads",
@@ -641,6 +612,151 @@
       "expires": "2026-11-30",
       "event": "black-friday",
       "source": "https://www.nbcnews.com/select/shopping/best-black-friday-deals-11-27-2026-rcna611358"
+    },
+    {
+      "id": "lg-48-b6-oled-2026",
+      "title": "LG 48\" Class B6 OLED 4K Smart webOS TV (2026)",
+      "short_name": "LG 48\" B6 OLED",
+      "hook": "Small-Room OLED Pick",
+      "retailer": "bestbuy",
+      "url": "https://www.bestbuy.com/product/lg-48-class-b6-oled-ai-4k-smart-webos-tv-with-perfect-black-vivid-color-and-magic-remote-2026/JJ8VPZZCTJ/sku/6679051",
+      "category": "tech",
+      "blurb": "LG's 2026 entry OLED in the 48-inch size, half off its comparable value at Best Buy. A real OLED picture for a bedroom, office or gaming desk without a giant screen.",
+      "label": "Gift idea",
+      "featured": true,
+      "added": "2026-11-28",
+      "expires": "2026-12-01",
+      "event": "black-friday",
+      "source": "https://www.bestbuy.com/product/lg-48-class-b6-oled-ai-4k-smart-webos-tv-with-perfect-black-vivid-color-and-magic-remote-2026/JJ8VPZZCTJ/sku/6679051",
+      "price": 599.99,
+      "price_checked": "2026-11-28",
+      "write_up": [
+        "Best Buy has the 48-inch LG B6, the 2026 model, at $599.99 against a comparable value of $1,199.99. Both TechRadar and Tom's Guide picked it out in their Saturday roundups, and it is one of the few ways to get an OLED panel from a major brand for around the price of a mid-range LED set.",
+        "OLED is the draw. Each pixel makes its own light, so blacks are truly black and dark scenes keep their detail without the glow you see around bright objects on cheaper LED TVs. At 48 inches, this suits a bedroom, a home office, a small apartment or a desk setup for console or PC gaming, where a 65-inch screen would be too much.",
+        "The B6 is LG's entry OLED series. It sits below the C6, which Best Buy sells alongside it with LG's brightness booster, so the B6 will not get as bright in a sunny room. If your TV faces big windows, that matters more than the panel type. Before you buy, confirm the listing says B6, 2026 and 48-inch, that it is sold by Best Buy rather than a marketplace seller, and check Best Buy's return window for TVs on the product page, which can differ from other items.",
+        "If you need a bigger screen for less, the 65-inch TCL S4CF is still on our site, but it is a basic LED set and a long way behind in picture quality. If you mainly want something to play on, pair either TV with the Nintendo Switch 2 bundle."
+      ],
+      "who_for": "Anyone who wants an OLED picture in a smaller room or on a gaming desk without paying for a large screen.",
+      "skip_if": "Your TV sits in a very bright room or you want a screen bigger than 55 inches.",
+      "related": [
+        "tcl-65-s4cf-fire-tv",
+        "nintendo-switch-2-mario-kart-world-bundle",
+        "sony-wh-1000xm5"
+      ]
+    },
+    {
+      "id": "lego-icons-bonsai-tree-10281",
+      "title": "LEGO Icons Bonsai Tree Building Set (10281)",
+      "short_name": "LEGO Bonsai Tree",
+      "hook": "Calm Build for Adults",
+      "retailer": "walmart",
+      "url": "https://www.walmart.com/ip/LEGO-Icons-Bonsai-Tree-Building-Set-Features-Cherry-Blossom-Flowers-DIY-Plant-Model-Adults-Creative-Gift-Home-D-cor-Office-Art-Botanical-Collection-D/417378032",
+      "category": "toys",
+      "blurb": "An 878-piece display set with swappable green leaves and pink cherry blossoms. A relaxing evening build for an adult, and it looks good on a shelf afterwards.",
+      "label": "Black Friday Deal",
+      "added": "2026-11-28",
+      "expires": "2026-11-29",
+      "event": "black-friday",
+      "source": "https://www.walmart.com/ip/LEGO-Icons-Bonsai-Tree-Building-Set-Features-Cherry-Blossom-Flowers-DIY-Plant-Model-Adults-Creative-Gift-Home-D-cor-Office-Art-Botanical-Collection-D/417378032",
+      "price": 39.98,
+      "price_checked": "2026-11-28",
+      "write_up": [
+        "Walmart has the LEGO Bonsai Tree, set 10281, as a Black Friday Deal at $39.98, down from $49.99, sold and shipped by Walmart. TechRadar listed it in its Saturday roundup of deals still running, and Walmart's sale runs through Sunday, November 29.",
+        "This is one of LEGO's sets for adults rather than children. You build a bonsai in a stand and a pot, and the set includes two kinds of foliage, green leaves and pink cherry blossoms, so you can change the look with the seasons. It makes a thoughtful gift for someone who likes puzzles, plants or desk decor, and it is a good first set for an adult who has not built LEGO since childhood.",
+        "Before you check out, make sure the listing is the 878-piece Bonsai Tree sold and shipped by Walmart.com. Walmart's search also turns up third-party lighting kits and the smaller Mini Bonsai Trees set, which are different products. Walmart's return window is shown on the product page; keep the box sealed if you might return a gift.",
+        "For a child, the LEGO Classic Large Creative Brick Box is the better pick and is also on sale at Walmart. For a younger listener, the Toniebox 2 Bluey starter set is another gift on our list."
+      ],
+      "who_for": "Adults who enjoy a calm, hands-on project and like something attractive to display afterwards.",
+      "skip_if": "You are buying for a young child, who will get more play out of a box of loose bricks.",
+      "related": [
+        "lego-classic-large-brick-box-10698",
+        "toniebox-2-bluey-starter-set",
+        "lego-polaroid-onestep-sx-70"
+      ]
+    },
+    {
+      "id": "delonghi-stilosa-walmart",
+      "title": "De'Longhi Stilosa Espresso Machine, Matte Black",
+      "short_name": "De'Longhi Stilosa",
+      "hook": "Starter Espresso Pick",
+      "retailer": "walmart",
+      "url": "https://www.walmart.com/ip/DeLonghi-Pump-Espresso-Machine-Black-AE/20065823228",
+      "category": "home",
+      "blurb": "A compact 15-bar pump espresso machine with a manual frother for milk drinks. The lowest-cost proper espresso machine from a big brand on our list this weekend.",
+      "label": "Black Friday Deal",
+      "added": "2026-11-28",
+      "expires": "2026-11-29",
+      "event": "black-friday",
+      "source": "https://www.walmart.com/ip/DeLonghi-Pump-Espresso-Machine-Black-AE/20065823228",
+      "price": 79,
+      "price_checked": "2026-11-28",
+      "write_up": [
+        "Walmart has the De'Longhi Stilosa in matte black as a Black Friday Deal at $79, sold and shipped by Walmart. Yahoo Shopping named it among the deals still worth buying on Saturday, and Walmart's sale runs through Sunday, November 29.",
+        "The Stilosa is De'Longhi's entry-level pump espresso machine. It uses ground coffee rather than pods, and has a 15-bar pump, a stainless steel boiler and a manual frother for steaming milk, so you can make lattes and cappuccinos as well as espresso. It is compact enough for a small kitchen.",
+        "It is a hands-on machine. You grind or buy ground coffee, fill and tamp the basket, and steam the milk yourself, and it takes a few tries to pull a good shot. People who want a cup at the press of a button will be happier with a pod machine. Before you buy, check that the listing says Stilosa, matte black, sold and shipped by Walmart.com; Walmart's search also shows a different Stilosa listing at a higher price. Walmart's return window is on the product page.",
+        "If you would rather not learn espresso, the Nespresso Vertuo Pop at Walmart is the one-button option. If you want a sturdier machine and will pay more, the De'Longhi Linea Classic at Target is on our site too."
+      ],
+      "who_for": "Coffee drinkers who want to learn real espresso and milk drinks at home without spending much.",
+      "skip_if": "You want coffee at the press of a button, with no grinding, tamping or steaming.",
+      "related": [
+        "nespresso-vertuo-pop-walmart",
+        "delonghi-linea-classic",
+        "ninja-slushi-fs300"
+      ]
+    },
+    {
+      "id": "jbl-flip-7-walmart",
+      "title": "JBL Flip 7 Portable Waterproof Speaker",
+      "retailer": "walmart",
+      "url": "https://www.walmart.com/ip/JBL-FLIP-7-BLUE/13927023108",
+      "category": "outdoors",
+      "blurb": "JBL's waterproof, drop-proof Bluetooth speaker with about 16 hours of play, marked as a Black Friday Deal. It's sold by an authorized JBL dealer on Walmart's marketplace, so check the seller and pick a new unit, not open box.",
+      "label": "Ends Nov 29",
+      "added": "2026-11-28",
+      "expires": "2026-11-29",
+      "event": "black-friday",
+      "source": "https://www.walmart.com/ip/JBL-FLIP-7-BLUE/13927023108"
+    },
+    {
+      "id": "blink-mini-2k-plus",
+      "title": "Blink Mini 2K+ Indoor Security Camera",
+      "short_name": "Blink Mini 2K+",
+      "hook": "Easy Indoor Camera",
+      "retailer": "amazon",
+      "url": "https://www.amazon.com/s?k=Blink+Mini+2K%2B",
+      "category": "smart-home",
+      "blurb": "Amazon's newest small plug-in camera records in 2K and has a built-in spotlight for night. It's an easy way to keep an eye on a pet, a door or a nursery.",
+      "label": "Stocking stuffer",
+      "added": "2026-11-28",
+      "expires": "2026-12-01",
+      "event": "black-friday",
+      "source": "https://www.techradar.com/seasonal-sales/black-friday-deals-28-november-2026",
+      "write_up": [
+        "The Blink Mini 2K+ is in Amazon's Black Friday sale, and both TechRadar and Tom's Guide listed it on Saturday among the deals still running into Cyber Monday. It is the newest version of the small indoor camera from Blink, which Amazon owns.",
+        "It is a compact plug-in camera that sits on a shelf or mounts to a wall. It records in 2K, sends motion alerts to your phone, and has a spotlight that helps at night. It works with Alexa, so you can pull up the view on an Echo Show. It suits renters and anyone who wants to check on a pet, a front hallway or a sleeping baby without wiring anything.",
+        "Check two things before you buy. First, how you will save clips: Blink cameras generally need either a paid Blink subscription for cloud recording or a separate Sync Module with a USB stick for local storage, so read the listing for what is included. Second, make sure the title says Mini 2K+, as Amazon still sells older Blink Mini models nearby. This is an indoor camera and is not built for rain.",
+        "For the front door, the Ring Battery Doorbell 2K at Best Buy is on our site. To make other things in the room smarter, the Kasa smart plug four-pack is an easy add-on."
+      ],
+      "who_for": "Renters, pet owners and new parents who want a simple indoor camera they can set up in minutes.",
+      "skip_if": "You want to avoid a subscription and don't want to buy a separate storage module.",
+      "related": [
+        "ring-battery-doorbell-2k",
+        "kasa-smart-plug-mini-4-pack",
+        "google-home-speaker-2026"
+      ]
+    },
+    {
+      "id": "fire-tv-stick-4k-2026",
+      "title": "Amazon Fire TV Stick 4K",
+      "retailer": "amazon",
+      "url": "https://www.amazon.com/s?k=Amazon+Fire+TV+Stick+4K",
+      "category": "tech",
+      "blurb": "Plugs into any HDMI port and turns an older TV into a 4K streamer with the main apps and an Alexa voice remote. One of the easiest small gifts in Amazon's sale this weekend.",
+      "label": "Gift idea",
+      "added": "2026-11-28",
+      "expires": "2026-12-01",
+      "event": "black-friday",
+      "source": "https://www.tomsguide.com/deals/best-cyber-monday-deals-sales"
     }
   ]
 }
